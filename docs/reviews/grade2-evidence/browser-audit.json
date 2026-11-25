@@ -1,0 +1,262 @@
+{
+  "pages": 117,
+  "errors": [],
+  "clipped": [
+    {
+      "route": "sum-diff/example/4",
+      "text": [
+        {
+          "text": "29 + 19 = 48",
+          "left": 779.557373046875,
+          "right": 18.916748046875,
+          "top": 169.73223876953125,
+          "bottom": -309.93963623046875
+        }
+      ]
+    },
+    {
+      "route": "g2-half-problem/var-1/2",
+      "text": [
+        {
+          "text": "一共 16 颗",
+          "left": 788.7150268554688,
+          "right": 2.23065185546875,
+          "top": 117.07562255859375,
+          "bottom": -362.59625244140625
+        }
+      ]
+    }
+  ],
+  "mobileOverflow": [
+    {
+      "lesson": "g2-queue-overlap",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-bus-ride",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-intervals",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-well-climb",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "tree-planting",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-venn-overlap",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-observe-shapes",
+      "width": 390,
+      "scroll": 482
+    },
+    {
+      "lesson": "g2-mirror-clock",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-fast-calc",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "sum-diff",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-count-segments",
+      "width": 390,
+      "scroll": 442
+    },
+    {
+      "lesson": "g2-count-angles",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-count-figures",
+      "width": 390,
+      "scroll": 442
+    },
+    {
+      "lesson": "g2-permutation",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-pairing",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-combination",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-money-pay",
+      "width": 390,
+      "scroll": 482
+    },
+    {
+      "lesson": "g2-seesaw",
+      "width": 390,
+      "scroll": 455
+    },
+    {
+      "lesson": "g2-substitution",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-half-problem",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-wrong-calc",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-move-balance",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-math-puzzle",
+      "width": 390,
+      "scroll": 415
+    },
+    {
+      "lesson": "g2-logic-clue",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-number-seq",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-shape-pattern",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-measure-clever",
+      "width": 390,
+      "scroll": 429
+    },
+    {
+      "lesson": "g2-matchstick",
+      "width": 390,
+      "scroll": 415
+    },
+    {
+      "lesson": "g2-bottle-exchange",
+      "width": 390,
+      "scroll": 429
+    }
+  ],
+  "captures": [
+    "/tmp/figmath-review/sum-diff-example-2.png",
+    "/tmp/figmath-review/g2-count-figures-var-1-1.png",
+    "/tmp/figmath-review/g2-money-pay-example-2.png",
+    "/tmp/figmath-review/g2-shape-pattern-var-1-1.png",
+    "/tmp/figmath-review/g2-matchstick-var-1-2.png",
+    "/tmp/figmath-review/g2-bottle-exchange-example-2.png"
+  ],
+  "autoCompleted": {
+    "completedVariants": [
+      "g2-queue-overlap:example",
+      "g2-queue-overlap:var-1",
+      "g2-queue-overlap:var-2",
+      "g2-bus-ride:example",
+      "g2-bus-ride:var-1",
+      "g2-bus-ride:var-2",
+      "g2-intervals:example",
+      "g2-intervals:var-1",
+      "g2-intervals:var-2",
+      "g2-well-climb:example",
+      "g2-well-climb:var-1",
+      "tree-planting:example",
+      "tree-planting:var-1",
+      "tree-planting:var-2",
+      "g2-venn-overlap:example",
+      "g2-venn-overlap:var-1",
+      "g2-observe-shapes:example",
+      "g2-observe-shapes:var-1",
+      "g2-mirror-clock:example",
+      "g2-mirror-clock:var-1",
+      "g2-mirror-clock:var-2",
+      "g2-fast-calc:example",
+      "g2-fast-calc:var-1",
+      "sum-diff:example",
+      "sum-diff:var-1",
+      "g2-count-segments:example",
+      "g2-count-segments:var-1",
+      "g2-count-angles:example",
+      "g2-count-angles:var-1",
+      "g2-count-figures:example",
+      "g2-count-figures:var-1",
+      "g2-permutation:example",
+      "g2-permutation:var-1",
+      "g2-pairing:example",
+      "g2-pairing:var-1",
+      "g2-combination:example",
+      "g2-combination:var-1",
+      "g2-money-pay:example",
+      "g2-money-pay:var-1",
+      "g2-seesaw:example",
+      "g2-seesaw:var-1",
+      "g2-substitution:example",
+      "g2-substitution:var-1",
+      "g2-half-problem:example",
+      "g2-half-problem:var-1",
+      "g2-wrong-calc:example",
+      "g2-wrong-calc:var-1",
+      "g2-move-balance:example",
+      "g2-move-balance:var-1",
+      "g2-move-balance:var-2",
+      "g2-math-puzzle:example",
+      "g2-math-puzzle:var-1",
+      "g2-logic-clue:example",
+      "g2-logic-clue:var-1",
+      "g2-number-seq:example",
+      "g2-number-seq:var-1",
+      "g2-shape-pattern:example",
+      "g2-shape-pattern:var-1",
+      "g2-measure-clever:example",
+      "g2-measure-clever:var-1",
+      "g2-matchstick:example",
+      "g2-matchstick:var-1",
+      "g2-bottle-exchange:example",
+      "g2-bottle-exchange:var-1"
+    ],
+    "recentLessons": [
+      "g2-queue-overlap",
+      "g2-bottle-exchange",
+      "g2-matchstick",
+      "g2-measure-clever",
+      "g2-shape-pattern",
+      "g2-number-seq"
+    ]
+  },
+  "teachingCheckpointCount": 0
+}

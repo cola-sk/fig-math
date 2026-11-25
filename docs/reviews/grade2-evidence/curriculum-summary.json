@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-25",
+  "lessons": 29,
+  "variants": 64,
+  "steps": 117,
+  "oneStepVariants": 20,
+  "variantsWithCheckpoint": 10,
+  "parameterCombinationsBuilt": 27912,
+  "nonFiniteOrStepNumberIssues": [],
+  "confirmedFalseEquation": {
+    "variant": "g2-well-climb/example",
+    "params": {
+      "wellDepth": 5,
+      "dayClimb": 4,
+      "nightSlide": 1
+    },
+    "formula": "1 \\div 3 = 1\\text{ (天)}"
+  },
+  "scope": "Structural checks cover declared slider values; mathematical correctness was assessed separately for the cases described in the review."
+}

@@ -1,0 +1,117 @@
+{
+  "g2-money-pay": [
+    {
+      "attribute": "translate(0, 0)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box; opacity: 1;",
+      "y": 357.2194519042969,
+      "x": 213.8227996826172
+    },
+    {
+      "attribute": "translate(0, 48)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box; opacity: 1;",
+      "y": 357.2194519042969,
+      "x": 213.8227996826172
+    },
+    {
+      "attribute": "translate(0, 96)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box; opacity: 1;",
+      "y": 357.2194519042969,
+      "x": 213.8227996826172
+    },
+    {
+      "attribute": "translate(0, 144)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box; opacity: 1;",
+      "y": 357.2194519042969,
+      "x": 213.8227996826172
+    },
+    {
+      "attribute": "translate(0, 192)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box;",
+      "y": 357.2194519042969,
+      "x": 213.8227996826172
+    }
+  ],
+  "g2-substitution": [
+    {
+      "attribute": "translate(0, 0)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box; opacity: 1;",
+      "y": 361.79827880859375,
+      "x": 190.92861938476562
+    },
+    {
+      "attribute": "translate(0, 94)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box; opacity: 1;",
+      "y": 361.79827880859375,
+      "x": 190.92861938476562
+    },
+    {
+      "attribute": "translate(0, 188)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box;",
+      "y": 361.79827880859375,
+      "x": 190.92861938476562
+    }
+  ],
+  "g2-observe-shapes": [
+    {
+      "attribute": "translate(280, 330)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box; opacity: 1;",
+      "y": 251.90625,
+      "x": 65.01065063476562
+    },
+    {
+      "attribute": "translate(280, 284)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box; opacity: 1;",
+      "y": 251.90625,
+      "x": 65.01065063476562
+    },
+    {
+      "attribute": "translate(280, 238)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box;",
+      "y": 251.90625,
+      "x": 65.01065063476562
+    },
+    {
+      "attribute": "translate(340, 330)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box; opacity: 1;",
+      "y": 251.90625,
+      "x": 65.01065063476562
+    },
+    {
+      "attribute": "translate(340, 284)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box;",
+      "y": 251.90625,
+      "x": 65.01065063476562
+    },
+    {
+      "attribute": "translate(400, 330)",
+      "style": "transform: none; transform-origin: 50% 50%; transform-box: fill-box;",
+      "y": 251.90625,
+      "x": 65.01065063476562
+    }
+  ],
+  "bottleAgent": {
+    "ok": true,
+    "steps": [
+      {
+        "step": 0,
+        "ref": "c7",
+        "changes": [
+          {
+            "component": "slider",
+            "label": "先买几瓶汽水",
+            "key": "value",
+            "value": 9
+          }
+        ]
+      }
+    ],
+    "appeared": [],
+    "values": {
+      "c2 选择年级": "2",
+      "c3 切换本年级专题": "g2-bottle-exchange",
+      "c6 切换例题与举一反三变式": "example",
+      "c7 先买几瓶汽水": 9
+    }
+  },
+  "bottleNineNarration": "第 2 步 / 共 2 步\n听一听\n继续换与借瓶\n第 2 步：继续换购，最多喝 12 瓶\n\n把换来的汽水喝完，剩下的空瓶如果够 3 个就接着换，最后总共能喝到 12 瓶！\n\n空瓶换水秘诀\n3 个空瓶换 1 瓶水 = 2 个空瓶就能喝 1 份水（因为喝完还剩 1 个空瓶）！\n上一步\n太棒了，本讲完成！\n算式草稿本\n跟着画面一步步算\n1\n第 1 轮：买 \n9\n 瓶\n→\n9\n 个空瓶\n→\n换 \n3\n 瓶\n第 1 轮：买 9 瓶→9 个空瓶→换 3 瓶\n喝完第 1 轮再去换新汽水\n2\n还剩 \n3\n 个空瓶，继续换直到不足 2 个\n还剩 3 个空瓶，继续换直到不足 2 个\n一共喝到 12 瓶\n关键数字\n最多喝到\n12 瓶"
+}

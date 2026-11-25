@@ -1,0 +1,166 @@
+{
+  "g2-money-pay": [
+    {
+      "text": "方法3：2元×4",
+      "x": 228.4210662841797,
+      "y": 368.8371887207031,
+      "transform": "transform: translateX(-5.24718px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(0, 0)"
+    },
+    {
+      "text": "方法4：2元×3 + 1元×2",
+      "x": 225.26988220214844,
+      "y": 368.8371887207031,
+      "transform": "transform: translateX(-8px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(0, 48)"
+    },
+    {
+      "text": "方法5：2元×2 + 1元×4",
+      "x": 225.26988220214844,
+      "y": 368.8371887207031,
+      "transform": "transform: translateX(-8px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(0, 96)"
+    },
+    {
+      "text": "方法6：2元×1 + 1元×6",
+      "x": 225.26988220214844,
+      "y": 368.8371887207031,
+      "transform": "transform: translateX(-8px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(0, 144)"
+    },
+    {
+      "text": "方法7：1元×8",
+      "x": 225.26988220214844,
+      "y": 368.8371887207031,
+      "transform": "transform: translateX(-8px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(0, 192)"
+    }
+  ],
+  "g2-substitution": [
+    {
+      "text": "○ + ○ + ○ + ○",
+      "x": 237.39646911621094,
+      "y": 391.15899658203125,
+      "transform": "transform: translateY(5.24718px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(0, 0)"
+    },
+    {
+      "text": "○",
+      "x": 301.966796875,
+      "y": 394.3101806640625,
+      "transform": "transform: translateY(8px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(0, 94)"
+    },
+    {
+      "text": "△",
+      "x": 301.966796875,
+      "y": 394.3101806640625,
+      "transform": "transform: translateY(8px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(0, 188)"
+    }
+  ],
+  "g2-observe-shapes": [
+    {
+      "text": "1层",
+      "x": 84.96466827392578,
+      "y": 253.93243408203125,
+      "transform": "transform: translateY(-11.2526px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(280, 330)"
+    },
+    {
+      "text": "2层",
+      "x": 83.61310577392578,
+      "y": 253.07688903808594,
+      "transform": "transform: translateY(-12px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(280, 284)"
+    },
+    {
+      "text": "3层",
+      "x": 83.57404327392578,
+      "y": 253.07688903808594,
+      "transform": "transform: translateY(-12px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(280, 238)"
+    },
+    {
+      "text": "1层",
+      "x": 84.96466827392578,
+      "y": 253.07688903808594,
+      "transform": "transform: translateY(-12px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(340, 330)"
+    },
+    {
+      "text": "2层",
+      "x": 83.61310577392578,
+      "y": 253.07688903808594,
+      "transform": "transform: translateY(-12px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(340, 284)"
+    },
+    {
+      "text": "1层",
+      "x": 84.96466827392578,
+      "y": 253.07688903808594,
+      "transform": "transform: translateY(-12px); transform-origin: 50% 50%; transform-box: fill-box;",
+      "attr": "translate(400, 330)"
+    }
+  ],
+  "freshProgress": {
+    "completedVariants": [
+      "g2-queue-overlap:var-1"
+    ],
+    "recentLessons": [
+      "g2-queue-overlap"
+    ]
+  },
+  "checkpointBeforeTeaching": 1,
+  "checkpointInTeaching": 0,
+  "bottles": [
+    {
+      "bought": 3,
+      "shown": [
+        {
+          "label": "最多喝到",
+          "value": "4 瓶",
+          "tone": "teal"
+        }
+      ],
+      "withoutBorrow": 4,
+      "withBorrow": 4
+    },
+    {
+      "bought": 6,
+      "shown": [
+        {
+          "label": "最多喝到",
+          "value": "9 瓶",
+          "tone": "teal"
+        }
+      ],
+      "withoutBorrow": 8,
+      "withBorrow": 9
+    },
+    {
+      "bought": 9,
+      "shown": [
+        {
+          "label": "最多喝到",
+          "value": "12 瓶",
+          "tone": "teal"
+        }
+      ],
+      "withoutBorrow": 13,
+      "withBorrow": 13
+    },
+    {
+      "bought": 12,
+      "shown": [
+        {
+          "label": "最多喝到",
+          "value": "16 瓶",
+          "tone": "teal"
+        }
+      ],
+      "withoutBorrow": 17,
+      "withBorrow": 18
+    }
+  ]
+}
