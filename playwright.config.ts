@@ -8,13 +8,13 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: "list",
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: "http://127.0.0.1:9173",
     trace: "retain-on-failure",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "pnpm dev --host 127.0.0.1 --port 4173 --strictPort",
-    url: "http://127.0.0.1:4173",
+    command: "pnpm dev --host 127.0.0.1 --port 9173 --strictPort",
+    url: "http://127.0.0.1:9173",
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
   },

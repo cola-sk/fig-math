@@ -189,6 +189,11 @@ export function CountDiagramEngine({ scene }: { scene: CountDiagramSceneState })
           );
         })}
 
+        {Array.from({ length: (scene.triangleLayers ?? 1) - 1 }, (_, index) => {
+          const ratio = (index + 1) / (scene.triangleLayers ?? 1);
+          const y = topY + (baseY - topY) * ratio;
+          return <line key={index} x1={topX + (xLeft - topX) * ratio} y1={y} x2={topX + (xRight - topX) * ratio} y2={y} stroke="var(--ink-primary)" strokeWidth="2.2" />;
+        })}
         <polygon
           points={`${topX},${topY} ${xLeft},${baseY} ${xRight},${baseY}`}
           fill="none"
@@ -396,7 +401,9 @@ export function CountDiagramEngine({ scene }: { scene: CountDiagramSceneState })
       })}
 
       <text x="380" y="394" textAnchor="middle" fontSize="14" fontWeight="800" fill="var(--ink-primary)">
-        {targetH > 0
+        {scene.showCountSummary === false
+          ? "先数已有的方块，再看空出的格子，答案暂时留空"
+          : targetH > 0
           ? `补齐目标 ${heights.length * targetH} 块：已有 ${currentTotal} 块，还缺 ${missingTotal} 块`
           : scene.showHiddenNote
             ? `按列相加：${heights.join(" + ")} = ${currentTotal} 块小正方体`

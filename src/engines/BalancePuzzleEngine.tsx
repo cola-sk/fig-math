@@ -2,11 +2,50 @@ import { motion } from "motion/react";
 import type { BalancePuzzleSceneState } from "../types/lesson";
 import { StageFrame } from "./StageFrame";
 
+function getSeesawBadge(text: string): { icon: string; count: string } {
+  if (text.includes("小狗")) return { icon: "🐶", count: text };
+  if (text.includes("小猫")) return { icon: "🐱", count: text };
+  if (text.includes("小鸭")) return { icon: "🐥", count: text };
+  if (text.includes("西瓜")) return { icon: "🍉", count: text };
+  if (text.includes("菠萝")) return { icon: "🍍", count: text };
+  return { icon: "⚖️", count: text };
+}
+
+const DIGIT_STICKS: Record<string, string> = {
+  "0": "abcdef", "1": "bc", "2": "abged", "3": "abgcd",
+  "4": "fgbc", "5": "afgcd", "6": "afgecd", "7": "abc", "8": "abcdefg", "9": "abfgcd",
+};
+const STICK_POINTS: Record<string, [number, number, number, number]> = {
+  a: [4, 0, 26, 0], b: [30, 4, 30, 16], c: [30, 24, 30, 36],
+  d: [4, 40, 26, 40], e: [0, 24, 0, 36], f: [0, 4, 0, 16], g: [4, 20, 26, 20],
+};
+
+function MatchEquation({ text, y }: { text: string; y: number }) {
+  const characters = text.replaceAll(" ", "").split("");
+  const startX = (760 - (characters.length - 1) * 64 - 30) / 2;
+  return <g aria-label={text}>
+    {characters.map((character, index) => {
+      const points: [number, number, number, number][] = DIGIT_STICKS[character]
+        ? DIGIT_STICKS[character].split("").map((part) => STICK_POINTS[part])
+        : character === "=" ? [[0, 13, 30, 13], [0, 27, 30, 27]]
+        : character === "+" ? [[0, 20, 30, 20], [15, 5, 15, 35]] : [[0, 20, 30, 20]];
+      return <g key={index} transform={`translate(${startX + index * 64}, ${y})`}>
+        {points.map(([x1, y1, x2, y2], stick) => <g key={stick}>
+          <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--accent-amber)" strokeWidth="4" strokeLinecap="round" />
+          <circle cx={x1} cy={y1} r="2.5" fill="var(--accent-coral)" />
+        </g>)}
+      </g>;
+    })}
+  </g>;
+}
+
 export function BalancePuzzleEngine({ scene }: { scene: BalancePuzzleSceneState }) {
   if (scene.mode === "seesaw") {
     const tilt = scene.tiltDeg ?? 0;
     const left = scene.leftItems ?? ["1只小狗"];
     const right = scene.rightItems ?? ["3只小猫"];
+    const leftBadge = getSeesawBadge(left.join(" + "));
+    const rightBadge = getSeesawBadge(right.join(" + "));
 
     return (
       <StageFrame ariaLabel="跷跷板轻重天平舞台">
@@ -20,31 +59,37 @@ export function BalancePuzzleEngine({ scene }: { scene: BalancePuzzleSceneState 
         )}
 
         {/* Fulcrum Triangle */}
-        <polygon points="380,260 345,332 415,332" fill="var(--accent-amber)" fillOpacity="0.85" stroke="var(--ink-primary)" strokeWidth="2.5" strokeLinejoin="round" />
+        <polygon points="380,268 342,338 418,338" fill="var(--accent-amber)" fillOpacity="0.85" stroke="var(--ink-primary)" strokeWidth="2.5" strokeLinejoin="round" />
 
         {/* Tilting Beam */}
         <motion.g
           initial={false}
           animate={{ rotate: tilt }}
-          style={{ originX: "380px", originY: "260px" }}
+          style={{ originX: "380px", originY: "268px" }}
           transition={{ type: "spring", stiffness: 160, damping: 18 }}
         >
-          <line x1="150" y1="260" x2="610" y2="260" stroke="var(--ink-primary)" strokeWidth="7" strokeLinecap="round" />
+          <line x1="145" y1="268" x2="615" y2="268" stroke="var(--ink-primary)" strokeWidth="7" strokeLinecap="round" />
 
           {/* Left Tray */}
-          <rect x="135" y="198" width="150" height="54" rx="12" fill="var(--accent-coral-soft)" stroke="var(--accent-coral)" strokeWidth="2" />
-          <text x="210" y="230" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--ink-primary)">
-            {left.join(" + ")}
+          <rect x="125" y="188" width="170" height="72" rx="14" fill="var(--accent-coral-soft)" stroke="var(--accent-coral)" strokeWidth="2.2" />
+          <text x="210" y="220" textAnchor="middle" fontSize="24">
+            {leftBadge.icon}
+          </text>
+          <text x="210" y="246" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--ink-primary)">
+            {leftBadge.count}
           </text>
 
           {/* Right Tray */}
-          <rect x="475" y="198" width="150" height="54" rx="12" fill="var(--accent-teal-soft)" stroke="var(--accent-teal)" strokeWidth="2" />
-          <text x="550" y="230" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--ink-primary)">
-            {right.join(" + ")}
+          <rect x="465" y="188" width="170" height="72" rx="14" fill="var(--accent-teal-soft)" stroke="var(--accent-teal)" strokeWidth="2.2" />
+          <text x="550" y="220" textAnchor="middle" fontSize="24">
+            {rightBadge.icon}
+          </text>
+          <text x="550" y="246" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--ink-primary)">
+            {rightBadge.count}
           </text>
         </motion.g>
 
-        <text x="380" y="378" textAnchor="middle" fontSize="14" fontWeight="700" fill="var(--ink-secondary)">
+        <text x="380" y="384" textAnchor="middle" fontSize="14" fontWeight="700" fill="var(--ink-secondary)">
           {tilt === 0 ? "两边一样重（天平平衡）" : tilt < 0 ? "左边沉下去 → 左边更重！" : "右边沉下去 → 右边更重！"}
         </text>
       </StageFrame>
@@ -162,9 +207,7 @@ export function BalancePuzzleEngine({ scene }: { scene: BalancePuzzleSceneState 
       <text x="156" y="134" fontSize="12" fontWeight="700" fill="var(--ink-muted)">
         移动前（不成立）：
       </text>
-      <text x="380" y="172" textAnchor="middle" fontFamily="var(--font-mono)" fontSize="28" fontWeight="800" fill="var(--ink-secondary)">
-        {scene.matchBefore ?? "6 + 4 = 4"}
-      </text>
+      <MatchEquation text={scene.matchBefore ?? "6 + 4 = 4"} y={146} />
 
       {scene.matchMoveNote && (
         <text x="380" y="232" textAnchor="middle" fontSize="14" fontWeight="800" fill="var(--accent-coral)">
@@ -178,9 +221,7 @@ export function BalancePuzzleEngine({ scene }: { scene: BalancePuzzleSceneState 
           <text x="156" y="282" fontSize="12" fontWeight="700" fill="var(--accent-teal)">
             移动后（成立！）：
           </text>
-          <text x="380" y="320" textAnchor="middle" fontFamily="var(--font-mono)" fontSize="28" fontWeight="800" fill="var(--ink-primary)">
-            {scene.matchAfter}
-          </text>
+          <MatchEquation text={scene.matchAfter} y={294} />
         </motion.g>
       )}
     </StageFrame>

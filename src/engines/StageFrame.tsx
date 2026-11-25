@@ -1,3 +1,4 @@
+import { Button } from "@ui-sdk/react/button";
 import { useState, type ReactNode } from "react";
 import { RotateCcw } from "lucide-react";
 import { MotionConfig } from "motion/react";
@@ -75,7 +76,7 @@ export function StageFrame({
         </svg>
 
         {/* Kid-friendly replay button */}
-        <button
+        <Button
           type="button"
           onClick={() => setReplayTick((t) => t + 1)}
           aria-label="再看一遍这一步动画"
@@ -83,7 +84,7 @@ export function StageFrame({
         >
           <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
           <span>再看一遍</span>
-        </button>
+        </Button>
       </div>
     </MotionConfig>
   );

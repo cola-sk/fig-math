@@ -13,6 +13,7 @@ import { motion } from "motion/react";
 import { SceneRenderer } from "../engines/SceneRenderer";
 import type { FormulaLine, LessonStep, LessonVariant, MathLesson } from "../types/lesson";
 import { isSpeechSupported, speakChinese } from "../utils/speech";
+import { StepNarrativeCard } from "./StepNarrativeCard";
 import { FormulaCard } from "./FormulaCard";
 
 interface TeachingStageProps {
@@ -124,7 +125,7 @@ export function TeachingStage({
             {problemStatement}
           </p>
           {isSpeechSupported() && (
-            <button
+            <Button
               type="button"
               onClick={() => speakChinese(problemStatement)}
               aria-label="朗读题目"
@@ -132,7 +133,7 @@ export function TeachingStage({
             >
               <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
               <span>读题</span>
-            </button>
+            </Button>
           )}
         </div>
 
@@ -141,35 +142,18 @@ export function TeachingStage({
           <SceneRenderer scene={currentStep.sceneState} />
         </div>
 
-        {/* Concise Step Narration Strip */}
-        <div className="fig-card px-5 py-4">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <span className="rounded-full bg-[var(--accent-coral-soft)] px-2.5 py-0.5 text-xs font-bold text-[var(--accent-coral)]">
-                第 {currentStep.step} 步 / 共 {steps.length} 步 · {currentStep.tag}
-              </span>
-              <h2 className="text-base font-extrabold text-[var(--ink-primary)] sm:text-lg">
-                {currentStep.title}
-              </h2>
-            </div>
-            {isSpeechSupported() && (
-              <button
-                type="button"
-                onClick={() =>
-                  speakChinese(`${currentStep.title}。${currentStep.narration}`)
-                }
-                aria-label="朗读当前步骤"
-                className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-stage)] px-2.5 py-1 text-xs font-bold text-[var(--ink-secondary)] hover:text-[var(--accent-coral)]"
-              >
-                <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>听一听</span>
-              </button>
-            )}
-          </div>
-          <p className="mt-2 text-sm leading-relaxed text-[var(--ink-secondary)] sm:text-[15.5px]">
-            {currentStep.narration}
-          </p>
-        </div>
+        <StepNarrativeCard
+          key={`${lesson.id}/${variant.id}/${clampedIdx}`}
+          step={currentStep}
+          totalSteps={steps.length}
+          isYoungLearner={lesson.grade <= 2}
+          isLastStep={isLastStep}
+          nextLessonTitle={nextLessonTitle}
+          onPrev={() => onSelectStep(Math.max(0, clampedIdx - 1))}
+          onNext={() => onSelectStep(Math.min(steps.length - 1, clampedIdx + 1))}
+          onNextLesson={onNextLesson ?? onExit}
+          showNavigation={false}
+        />
 
         {/* Final Step Formula Reveal (hidden on earlier steps unless toggled) */}
         {shouldShowFormulas && (
@@ -204,7 +188,7 @@ export function TeachingStage({
             {steps.map((s, idx) => {
               const isCurrent = idx === clampedIdx;
               return (
-                <button
+                <Button
                   key={s.step}
                   type="button"
                   onClick={() => onSelectStep(idx)}
@@ -217,7 +201,7 @@ export function TeachingStage({
                   }`}
                 >
                   {s.step}
-                </button>
+                </Button>
               );
             })}
           </div>

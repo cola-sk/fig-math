@@ -1,3 +1,4 @@
+import { teachingSteps, numberCheckpoint } from "../teachingSteps";
 import type { MathLesson } from "../../types/lesson";
 
 export const g2MeasureCleverLesson: MathLesson = {
@@ -23,11 +24,11 @@ export const g2MeasureCleverLesson: MathLesson = {
   variants: [
     {
       id: "example",
-      modeLabel: "断尺量铅笔",
+      modeLabel: "基础例题 · 断尺量铅笔",
       bookPart: "A版",
       tier: "base",
       title: "断尺从 3 厘米开始量，铅笔尖对准 11 厘米，铅笔长几厘米？",
-      subtitle: "数一数从 3 到 11 中间有几大格（几厘米），就是 11 - 3！",
+      subtitle: "先观察条件，动手想一想，再逐步验证。",
       defaultParams: {
         startCm: 3,
         endCm: 11,
@@ -46,18 +47,8 @@ export const g2MeasureCleverLesson: MathLesson = {
             { id: "mc-1", latex: `\\text{物体长度} = \\text{终点刻度} - \\text{起点刻度}`, comment: "断尺测量核心公式" },
             { id: "mc-2", latex: `${endCm} - ${startCm} = ${len}\\text{ (厘米)}`, comment: `一共跨越了 ${len} 个 1 厘米` },
           ],
-          steps: [
-            {
-              step: 1,
-              tag: "看清起点与终点",
-              title: `第 1 步：铅笔从 ${startCm} 厘米到 ${endCm} 厘米，不是 ${endCm} 厘米哦！`,
-              narration: `千万别直接读 ${endCm} 厘米！因为前面 ${startCm} 厘米是空的、没有放铅笔！我们要数一数从 ${startCm} 到 ${endCm} 中间有几段 1 厘米。`,
-              activeFormulaIndices: [0],
-              liveStats: [
-                { label: "起点刻度", value: `${startCm} cm` },
-                { label: "终点刻度", value: `${endCm} cm`, tone: "coral" },
-              ],
-              sceneState: {
+          steps: teachingSteps([
+{ title: `铅笔从零刻度开始吗？`, narration: `这把尺子的前面断了，铅笔起点是 ${startCm}，终点是 ${endCm}。只读终点刻度，就一定是铅笔长度吗？`, sceneState: { ...({
                 kind: "number-line",
                 layout: "line",
                 totalLength: endCm + 2,
@@ -67,21 +58,33 @@ export const g2MeasureCleverLesson: MathLesson = {
                   { id: "m-end", posRatio: endCm / (endCm + 2), label: `终点 ${endCm}`, tone: "coral" },
                 ],
                 highlightGap: { fromRatio: startCm / (endCm + 2), toRatio: endCm / (endCm + 2), label: `? cm` },
-              },
-            },
-            {
-              step: 2,
-              tag: "大数减小数",
-              title: `第 2 步：用终点减起点 → ${endCm} - ${startCm} = ${len} 厘米`,
-              narration: `把前面的 ${startCm} 厘米减掉：${endCm} - ${startCm} = ${len} 厘米！所以这支铅笔的真实长度是 ${len} 厘米！`,
-              tipTitle: "断尺测量口诀",
-              tipBody: "尺子没从 0 开始别害怕，终点刻度减去起点刻度，就是物体的真实长度！",
-              activeFormulaIndices: [0, 1],
-              liveStats: [
+              }), highlightGap: { fromRatio: startCm / (endCm + 2), toRatio: endCm / (endCm + 2), label: `? 厘米` } }, activeFormulaIndices: [] },
+{ title: `从起点向前走一大格，量到的是多长？`, narration: `尺子相邻两个厘米刻度之间是 1 厘米。先从 ${startCm} 走到 ${startCm+1}，数一格，再照这样数到终点。`, sceneState: { ...({
+                kind: "number-line",
+                layout: "line",
+                totalLength: endCm + 2,
+                unitLabel: "cm",
+                markers: [
+                  { id: "m-start", posRatio: startCm / (endCm + 2), label: `起点 ${startCm}`, tone: "neutral" },
+                  { id: "m-end", posRatio: endCm / (endCm + 2), label: `终点 ${endCm}`, tone: "coral" },
+                ],
+                highlightGap: { fromRatio: startCm / (endCm + 2), toRatio: endCm / (endCm + 2), label: `? cm` },
+              }), highlightGap: { fromRatio: startCm / (endCm + 2), toRatio: (startCm + 1) / (endCm + 2), label: `1 厘米` } }, activeFormulaIndices: [] },
+{ title: `完整的这一段，实际跨了多少厘米？`, narration: `真正量的是从 ${startCm} 到 ${endCm} 的距离。前面没有放铅笔的部分要去掉，想想该怎样求。`, sceneState: { ...({
+                kind: "number-line",
+                layout: "line",
+                totalLength: endCm + 2,
+                unitLabel: "cm",
+                markers: [
+                  { id: "m-start", posRatio: startCm / (endCm + 2), label: `起点 ${startCm}`, tone: "neutral" },
+                  { id: "m-end", posRatio: endCm / (endCm + 2), label: `终点 ${endCm}`, tone: "coral" },
+                ],
+                highlightGap: { fromRatio: startCm / (endCm + 2), toRatio: endCm / (endCm + 2), label: `? cm` },
+              }), highlightGap: { fromRatio: startCm / (endCm + 2), toRatio: endCm / (endCm + 2), label: `? 厘米` } }, activeFormulaIndices: [], checkpoint: numberCheckpoint(`铅笔长多少厘米？`, len, ` 厘米`, `终点刻度减去起点刻度。`) },
+{ tag: `验证与回顾`, title: `用终点减起点 → ${endCm} - ${startCm} = ${len} 厘米`, narration: `铅笔长 ${len} 厘米。检验：从起点 ${startCm} 向前量 ${len} 厘米，正好走到 ${endCm}。`, tipTitle: "断尺测量口诀", tipBody: "尺子没从 0 开始别害怕，终点刻度减去起点刻度，就是物体的真实长度！", activeFormulaIndices: [0, 1], liveStats: [
                 { label: "列式", value: `${endCm} - ${startCm}` },
                 { label: "铅笔长度", value: `${len} 厘米`, tone: "teal" },
-              ],
-              sceneState: {
+              ], sceneState: {
                 kind: "number-line",
                 layout: "line",
                 totalLength: endCm + 2,
@@ -91,19 +94,18 @@ export const g2MeasureCleverLesson: MathLesson = {
                   { id: "m-end", posRatio: endCm / (endCm + 2), label: `终点 ${endCm}`, tone: "coral" },
                 ],
                 highlightGap: { fromRatio: startCm / (endCm + 2), toRatio: endCm / (endCm + 2), label: `实际长 ${len} cm` },
-              },
-            },
-          ],
+              } }
+]),
         };
       },
     },
     {
       id: "var-1",
-      modeLabel: "一把尺子量出多种长度",
+      modeLabel: "拓展拔高 · 一把尺子量出多种长度",
       bookPart: "B版",
       tier: "challenge",
-      title: "拓展提高：只有 0、2、5 三个刻度，一次能直接量出几种长度？",
-      subtitle: "任意两个刻度之间都能量出一段长度！像数线段一样不重不漏！",
+      title: "拓展拔高：只有 0、2、5 三个刻度，一次能直接量出几种长度？",
+      subtitle: "先观察条件，动手想一想，再逐步验证。",
       defaultParams: {},
       paramDefs: [],
       build: () => ({
@@ -111,18 +113,8 @@ export const g2MeasureCleverLesson: MathLesson = {
         formulas: [
           { id: "mc-3", latex: `2 - 0 = 2,\\quad 5 - 0 = 5,\\quad 5 - 2 = 3`, comment: "任意两个刻度做差，共 3 种" },
         ],
-        steps: [
-          {
-            step: 1,
-            tag: "看作数线段",
-            title: "第 1 步：0、2、5 三个刻度点，两两配对算差值！",
-            narration: `把 0、2、5 想成一条直线上的 3 个点，任意两个点之间就是一段长度！这不就是我们学过的“数线段”吗？3 个点有 2 + 1 = 3 条线段！`,
-            activeFormulaIndices: [0],
-            liveStats: [
-              { label: "刻度点", value: "0, 2, 5（3 个点）" },
-              { label: "配对数", value: "3 种", tone: "coral" },
-            ],
-            sceneState: {
+        steps: teachingSteps([
+{ title: `只有三个刻度，物体一定要从零放起吗？`, narration: `尺子上有 0、2、5 三个刻度。只要两端都对齐刻度，就能直接量一段长度。试试挑两个刻度。`, sceneState: { ...({
               kind: "number-line",
               layout: "line",
               totalLength: 6,
@@ -133,19 +125,35 @@ export const g2MeasureCleverLesson: MathLesson = {
                 { id: "t5", posRatio: 5 / 6, label: "5", tone: "coral" },
               ],
               highlightGap: { fromRatio: 2 / 6, toRatio: 5 / 6, label: "5 - 2 = 3 cm" },
-            },
-          },
-          {
-            step: 2,
-            tag: "列出全部 3 种",
-            title: "第 2 步：能直接量出 2cm、3cm 和 5cm 一共 3 种！",
-            narration: `从 0 到 2 是 2 厘米；从 0 到 5 是 5 厘米；别忘了从 2 到 5 是 5 - 2 = 3 厘米！一共 3 种长度！`,
-            activeFormulaIndices: [0],
-            liveStats: [
+            }), highlightGap: undefined }, activeFormulaIndices: [] },
+{ title: `从零开始的两段，分别有多长？`, narration: `0 到 2 可以量 2 厘米，0 到 5 可以量 5 厘米。还有哪两个刻度可以配成一对，量出新的长度？`, sceneState: { ...({
+              kind: "number-line",
+              layout: "line",
+              totalLength: 6,
+              unitLabel: "cm",
+              markers: [
+                { id: "t0", posRatio: 0, label: "0", tone: "teal" },
+                { id: "t2", posRatio: 2 / 6, label: "2", tone: "neutral" },
+                { id: "t5", posRatio: 5 / 6, label: "5", tone: "coral" },
+              ],
+              highlightGap: { fromRatio: 2 / 6, toRatio: 5 / 6, label: "5 - 2 = 3 cm" },
+            }), highlightGap: { fromRatio: 0/6, toRatio: 2/6, label: `2 厘米` } }, activeFormulaIndices: [] },
+{ title: `2 到 5 这段，会带来新长度吗？`, narration: `把物体两端对齐 2 和 5，长度是两刻度的差。算出这一段后，再数一数所有不同的长度。`, sceneState: { ...({
+              kind: "number-line",
+              layout: "line",
+              totalLength: 6,
+              unitLabel: "cm",
+              markers: [
+                { id: "t0", posRatio: 0, label: "0", tone: "teal" },
+                { id: "t2", posRatio: 2 / 6, label: "2", tone: "neutral" },
+                { id: "t5", posRatio: 5 / 6, label: "5", tone: "coral" },
+              ],
+              highlightGap: { fromRatio: 2 / 6, toRatio: 5 / 6, label: "5 - 2 = 3 cm" },
+            }), highlightGap: { fromRatio: 2/6, toRatio: 5/6, label: `? 厘米` } }, activeFormulaIndices: [], checkpoint: numberCheckpoint(`2 到 5 之间长多少厘米？`, 3, ` 厘米`, `终点减起点，物体不一定要从 0 开始放。`) },
+{ tag: `验证与回顾`, title: "能直接量出 2cm、3cm 和 5cm 一共 3 种！", narration: `能直接量出 2、3、5 厘米，共 3 种。按起点列举：从 0 出发量到 2 或 5，从 2 出发量到 5，三对刻度都检查到了。`, activeFormulaIndices: [0], liveStats: [
               { label: "可量出长度", value: "2cm, 3cm, 5cm", tone: "teal" },
               { label: "总计", value: "3 种", tone: "coral" },
-            ],
-            sceneState: {
+            ], sceneState: {
               kind: "number-line",
               layout: "line",
               totalLength: 6,
@@ -156,9 +164,8 @@ export const g2MeasureCleverLesson: MathLesson = {
                 { id: "t5", posRatio: 5 / 6, label: "5", tone: "coral" },
               ],
               highlightGap: { fromRatio: 0, toRatio: 5 / 6, label: "可量 2cm / 3cm / 5cm" },
-            },
-          },
-        ],
+            }, tipBody: `两个刻度配一对，终点减起点；相同长度只算一次。` }
+]),
       }),
     },
   ],

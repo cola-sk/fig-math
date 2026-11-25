@@ -85,6 +85,7 @@ export interface SegmentBarSceneState {
     getOff: number;
     getOn: number;
     phase: "observe" | "offset" | "total";
+    hideNetChange?: boolean;
   };
   rows: SegmentBarRow[];
   totalBrace?: {
@@ -104,6 +105,8 @@ export interface NumberLineSceneState {
   kind: "number-line";
   layout: "line" | "circle" | "track";
   totalLength: number;
+  hideLengthLabel?: boolean;
+  hideCountSummary?: boolean;
   unitLabel: string;
   /** For tree planting */
   intervals?: number;
@@ -193,6 +196,7 @@ export interface VennSetSceneState {
   rightTotal: number;
   overlapCount: number;
   neitherCount: number;
+  visibleValues?: Array<"overlap" | "neither" | "union" | "disjoint">;
   highlightZone: "all" | "overlap" | "disjoint" | "neither";
   annotation?: string;
 }
@@ -202,6 +206,8 @@ export interface CountDiagramSceneState {
   mode: "segments" | "angles" | "triangles" | "blocks";
   /** For segments/angles/triangles: number of base units */
   baseCount: number;
+  triangleLayers?: number;
+  showCountSummary?: boolean;
   /** Which group size is currently highlighted: 1 = single, 2 = 2-unit, etc., 0 = none */
   highlightSpan: number;
   /** For blocks mode: column heights */
@@ -225,7 +231,8 @@ export interface MirrorClockSceneState {
 
 export interface ComboVisualSceneState {
   kind: "combo-visual";
-  mode: "pairing" | "permutation" | "handshake" | "money" | "make-ten";
+  mode: "pairing" | "permutation" | "handshake" | "money" | "make-ten" | "pattern";
+  patternCorners?: Array<number | null>;
   leftItems?: string[];
   rightItems?: string[];
   highlightLeftIdx?: number;

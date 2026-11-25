@@ -10,6 +10,8 @@ export function VennSetEngine({ scene }: { scene: VennSetSceneState }) {
 
   const onlyLeft = Math.max(0, scene.leftTotal - scene.overlapCount);
   const onlyRight = Math.max(0, scene.rightTotal - scene.overlapCount);
+  const visible = (key: NonNullable<VennSetSceneState["visibleValues"]>[number]) =>
+    !scene.visibleValues || scene.visibleValues.includes(key);
   const unionCount = onlyLeft + scene.overlapCount + onlyRight;
 
   return (
@@ -131,7 +133,7 @@ export function VennSetEngine({ scene }: { scene: VennSetSceneState }) {
           fontWeight="800"
           fill="var(--accent-coral)"
         >
-          {onlyLeft}人
+          {visible("disjoint") ? onlyLeft : "?"}人
         </text>
       </g>
 
@@ -154,7 +156,7 @@ export function VennSetEngine({ scene }: { scene: VennSetSceneState }) {
           fontWeight="800"
           fill="var(--accent-teal)"
         >
-          {onlyRight}人
+          {visible("disjoint") ? onlyRight : "?"}人
         </text>
       </g>
 
@@ -199,14 +201,14 @@ export function VennSetEngine({ scene }: { scene: VennSetSceneState }) {
           fontWeight="800"
           fill="var(--accent-coral)"
         >
-          {scene.overlapCount}人
+          {visible("overlap") ? scene.overlapCount : "?"}人
         </text>
       </motion.g>
 
       {/* Union / Neither Summary Footer */}
       <g transform="translate(102, 386)">
         <text fontSize="13.5" fontWeight="700" fill="var(--ink-primary)">
-          至少喜欢一项：{unionCount} 人
+          至少喜欢一项：{visible("union") ? unionCount : "?"} 人
         </text>
       </g>
       <g transform="translate(658, 386)">
@@ -220,7 +222,7 @@ export function VennSetEngine({ scene }: { scene: VennSetSceneState }) {
               : "var(--ink-secondary)"
           }
         >
-          两样都不喜欢：{scene.neitherCount} 人
+          两样都不喜欢：{visible("neither") ? scene.neitherCount : "?"} 人
         </text>
       </g>
     </StageFrame>

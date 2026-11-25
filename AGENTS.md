@@ -5,7 +5,7 @@
 ## 奥数内容与图解规范
 
 - 新增或修改奥数课程数据（`src/data/lessons/*`）、讲解文案、变式/小考题或可视化图解引擎（`src/engines/*`）前，**必须先阅读项目技能** `.agents/skills/olympiad-lesson-authoring/SKILL.md`。
-- 坚持适合 6–12 岁小学生的简洁清晰风格：以平面/绘本图解为主，仅立体几何题（如数方块）使用 3D 表现；严禁在同一 `<motion.g>` 上混用 `transform="translate(...)"` 与 `animate={{ x/y }}`。
+- 坚持适合 6–12 岁小学生的引导式讲解与简洁视觉：**全流程「先问后答」**（开头审题、中间转化节点、出最终结果前都要留出思考步与设问/小考，不提前剧透答案或亮出算式）；优先用 2D 平面绘本场景代入，仅立体几何题使用 3D；严禁在同一 `<motion.g>` 上混用 `transform="translate(...)"` 与 `animate={{ x/y }}`。
 
 ## UI SDK
 
@@ -30,6 +30,6 @@
   - 每个界面测试需校验 `agent.snapshot()` 中可见控件全部具备非空且唯一的 `label`，并在 `act()` 后独立断言 DOM、URL hash 或 `localStorage` 结果（不能只看 `result.ok`）。
 - **第二层（按需运行，真实浏览器 Playwright）**：`pnpm test:e2e`（`e2e/`）。
   - 仅在涉及 **jsdom 无法覆盖的行为** 时新增或重跑 Playwright：top-layer 弹窗定位、真实键盘 Tab / Enter / Escape 焦点流转与焦点返回、响应式布局或明暗主题对比度。
-  - 首次运行前使用 `pnpm exec playwright install chromium` 安装浏览器；测试配置会在本地非 CI 环境复用已有 4173 服务，各用例使用隔离浏览器上下文。
+  - 首次运行前使用 `pnpm exec playwright install chromium` 安装浏览器；测试配置会在本地非 CI 环境复用已有 9173 服务，各用例使用隔离浏览器上下文。
   - 在浏览器中通过 `window.__FIGMATH_AGENT__.snapshot()` / `act()` 操作时，不要硬编码跨页面或重载后可能变化的组件 ref，且需独立断言页面或持久化状态。
 - **收尾验证**：AI 完成改动前运行 `pnpm build` 与 `pnpm test`（及适用时的 `pnpm test:e2e`）。结果报告需列出通过的检查、未验证项及原因；不能因测试无法运行而声称验证通过。

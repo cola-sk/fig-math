@@ -1,3 +1,4 @@
+import { teachingSteps, numberCheckpoint } from "../teachingSteps";
 import type { MathLesson } from "../../types/lesson";
 
 export const g2CombinationLesson: MathLesson = {
@@ -23,11 +24,11 @@ export const g2CombinationLesson: MathLesson = {
   variants: [
     {
       id: "example",
-      modeLabel: "握手问题例题",
+      modeLabel: "基础例题 · 握手问题例题",
       bookPart: "A版",
       tier: "base",
       title: "4 个好朋友每两人握一次手，共握几次？",
-      subtitle: "甲握 3 次、乙再握 2 次、丙再握 1 次",
+      subtitle: "先观察条件，动手想一想，再逐步验证。",
       defaultParams: { people: 4 },
       paramDefs: [
         { key: "people", label: "小朋友人数", min: 3, max: 5, step: 1, unit: "人" },
@@ -46,56 +47,31 @@ export const g2CombinationLesson: MathLesson = {
           formulas: [
             { id: "cb-1", latex: `${expr} = ${total}\\text{ (次)}`, comment: "每人依次和“后面还没握过的人”握手" },
           ],
-          steps: [
-            {
-              step: 1,
-              tag: "甲先握手",
-              title: `甲先和后面 ${n} 个人各握 1 次（${n} 次）`,
-              narration: `甲分别和后面的每个人握 1 次手，连出 ${n} 条橙色线。接下来轮到乙时，乙已经和甲握过了，就不用再回头握啦！`,
-              activeFormulaIndices: [],
-              liveStats: [
-                { label: "总人数", value: `${p} 人` },
-                { label: "甲握了", value: `${n} 次`, tone: "coral" },
-              ],
-              sceneState: {
-                kind: "combo-visual",
-                mode: "handshake",
-                leftItems: names,
-                revealedCount: n,
-                annotation: `甲先和另外 ${n} 个人握手（橙色线）`,
-              },
-            },
-            {
-              step: 2,
-              tag: "依次向后连",
-              title: `不回头不重复：${expr} = ${total} 次！`,
-              narration: `每个人只向“还没握过手的朋友”伸手，次数依次减少 1：${expr} = ${total} 次！`,
-              tipTitle: "排列 vs 组合怎么分？",
-              tipBody: "交换两个位置算不算新结果？12 和 21 不同（排列）；甲乙握手和乙甲握手是同一件事（组合）！",
-              activeFormulaIndices: [0],
-              liveStats: [
+          steps: teachingSteps([
+{ title: `交换两个人的顺序，要再算一次吗？`, narration: `每两人之间握一次手。甲和乙、乙和甲说的是同一对人，想想连线时该怎样避免重复？`, sceneState: { kind: "combo-visual", mode: "handshake", leftItems: names, revealedCount: 0, annotation: `两人之间只连一次线` }, activeFormulaIndices: [] },
+{ title: `先轮到第一人，可以连几条线？`, narration: `第一个人和其他每个人各连一次。轮到下一个人时，已经连过的线还需要再连吗？`, sceneState: { kind: "combo-visual", mode: "handshake", leftItems: names, revealedCount: 1, annotation: `两人之间只连一次线` }, activeFormulaIndices: [], checkpoint: numberCheckpoint(`第一人要连几条线？`, n, ` 条`, `除了自己，其他每人各连一次。`) },
+{ title: `第一组完成了，后面还要怎样数？`, narration: `第一组连了 ${n} 条。以后只找没连过的人，每组少一条。把 ${expr} 合起来，自己算出总数。`, sceneState: { kind: "combo-visual", mode: "handshake", leftItems: names, revealedCount: n, annotation: `两人之间只连一次线` }, activeFormulaIndices: [], checkpoint: numberCheckpoint(`总共是几次？`, total, ` 次`, `已经连过的两个人，不要回头再算。`) },
+{ tag: `验证与回顾`, title: `不回头不重复：${expr} = ${total} 次！`, narration: `每个人只向“还没握过手的朋友”伸手，次数依次减少 1：${expr} = ${total} 次！`, tipTitle: "排列 vs 组合怎么分？", tipBody: `一对只算一次，按人向后连线。`, activeFormulaIndices: [0], liveStats: [
                 { label: "算式", value: expr },
                 { label: "握手总次数", value: `${total} 次`, tone: "teal" },
-              ],
-              sceneState: {
+              ], sceneState: {
                 kind: "combo-visual",
                 mode: "handshake",
                 leftItems: names,
                 revealedCount: total,
                 annotation: `一共连出 ${expr} = ${total} 条线 → 共握 ${total} 次手`,
-              },
-            },
-          ],
+              } }
+]),
         };
       },
     },
     {
       id: "var-1",
-      modeLabel: "乒乓球单循环赛",
+      modeLabel: "拓展拔高 · 乒乓球单循环赛",
       bookPart: "B版",
       tier: "challenge",
-      title: "拓展提高：5 名队员单循环比赛，共赛几场？",
-      subtitle: "每两人打一场，和握手问题完全相同！",
+      title: "拓展拔高：5 名队员单循环比赛，共赛几场？",
+      subtitle: "先观察条件，动手想一想，再逐步验证。",
       defaultParams: {},
       paramDefs: [],
       build: () => ({
@@ -103,26 +79,21 @@ export const g2CombinationLesson: MathLesson = {
         formulas: [
           { id: "cbv-1", latex: `4 + 3 + 2 + 1 = 10\\text{ (场)}`, comment: "每两人连一条线，不重复计数" },
         ],
-        steps: [
-          {
-            step: 1,
-            tag: "连线求解",
-            title: "4 + 3 + 2 + 1 = 10 场",
-            narration: `5 个人围成一圈，每两人之间连 1 条比赛线，共有 4 + 3 + 2 + 1 = 10 场比赛！`,
-            activeFormulaIndices: [0],
-            liveStats: [
+        steps: teachingSteps([
+{ title: `交换两个人的顺序，要再算一次吗？`, narration: `每两人之间比赛一场。甲和乙、乙和甲说的是同一对人，想想连线时该怎样避免重复？`, sceneState: { kind: "combo-visual", mode: "handshake", leftItems: ["1号", "2号", "3号", "4号", "5号"], revealedCount: 0, annotation: `两人之间只连一次线` }, activeFormulaIndices: [] },
+{ title: `先轮到第一人，可以连几条线？`, narration: `第一个人和其他每个人各连一次。轮到下一个人时，已经连过的线还需要再连吗？`, sceneState: { kind: "combo-visual", mode: "handshake", leftItems: ["1号", "2号", "3号", "4号", "5号"], revealedCount: 1, annotation: `两人之间只连一次线` }, activeFormulaIndices: [], checkpoint: numberCheckpoint(`第一人要连几条线？`, 4, ` 条`, `除了自己，其他每人各连一次。`) },
+{ title: `第一组完成了，后面还要怎样数？`, narration: `第一组连了 ${4} 条。以后只找没连过的人，每组少一条。把 ${"4 + 3 + 2 + 1"} 合起来，自己算出总数。`, sceneState: { kind: "combo-visual", mode: "handshake", leftItems: ["1号", "2号", "3号", "4号", "5号"], revealedCount: 4, annotation: `两人之间只连一次线` }, activeFormulaIndices: [], checkpoint: numberCheckpoint(`总共是几场？`, 10, ` 场`, `已经连过的两个人，不要回头再算。`) },
+{ tag: `验证与回顾`, title: "4 + 3 + 2 + 1 = 10 场", narration: `5 个人围成一圈，每两人之间连 1 条比赛线，共有 4 + 3 + 2 + 1 = 10 场比赛！`, activeFormulaIndices: [0], liveStats: [
               { label: "参赛队员", value: "5 人" },
               { label: "比赛总场数", value: "10 场", tone: "coral" },
-            ],
-            sceneState: {
+            ], sceneState: {
               kind: "combo-visual",
               mode: "handshake",
               leftItems: ["1号", "2号", "3号", "4号", "5号"],
               revealedCount: 10,
               annotation: "5 人单循环：4 + 3 + 2 + 1 = 10 场",
-            },
-          },
-        ],
+            }, tipBody: `一对只算一次，按人向后连线。` }
+]),
       }),
     },
   ],

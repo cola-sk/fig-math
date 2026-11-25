@@ -22,6 +22,7 @@ interface StepNarrativeCardProps {
   isYoungLearner: boolean;
   isLastStep: boolean;
   nextLessonTitle?: string;
+  showNavigation?: boolean;
   onPrev: () => void;
   onNext: () => void;
   onNextLesson?: () => void;
@@ -33,6 +34,7 @@ export function StepNarrativeCard({
   isYoungLearner,
   isLastStep,
   nextLessonTitle,
+  showNavigation = true,
   onPrev,
   onNext,
   onNextLesson,
@@ -172,7 +174,7 @@ export function StepNarrativeCard({
       )}
 
       {/* Chunky Touch-Friendly Step Navigation */}
-      <div className="flex items-center gap-2.5 pt-1">
+      {showNavigation && <div className="flex items-center gap-2.5 pt-1">
         <Button
           onClick={onPrev}
           disabled={step.step <= 1}
@@ -208,7 +210,7 @@ export function StepNarrativeCard({
             )}
           </Button>
         )}
-      </div>
+      </div>}
     </section>
   );
 }

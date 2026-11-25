@@ -2,6 +2,7 @@ import { act, render, screen } from "@testing-library/react";
 import { createAgent } from "@ui-sdk/react/agent";
 import { beforeEach, describe, expect, it } from "vitest";
 import App from "../App";
+import { getLessonsByGrade } from "../data/lessons";
 
 const agent = createAgent();
 
@@ -26,6 +27,7 @@ describe("FigMath agent-ready flows (jsdom)", () => {
     }
 
     const labels = components.map((entry) => entry.label);
+    expect(new Set(labels).size).toBe(labels.length);
     for (const expected of [
       "选择年级",
       "切换本年级专题",
@@ -181,5 +183,66 @@ describe("FigMath agent-ready flows (jsdom)", () => {
     );
     expect(closePanel.ok, closePanel.error?.message).toBe(true);
     expect(screen.queryByText("恢复原题")).toBeNull();
+  });
+});
+
+function visibleControls() {
+  const controls = agent.snapshot().filter((entry) => !entry.offPage && entry.component !== "more");
+  const labels = controls.map((entry) => entry.label);
+  expect(labels.every((label) => Boolean(label?.trim()))).toBe(true);
+  expect(new Set(labels).size).toBe(labels.length);
+  return controls;
+}
+
+describe("reviewed Grade 2 lesson journeys", () => {
+  beforeEach(() => { localStorage.clear(); });
+  for (const lesson of getLessonsByGrade("2")) {
+    for (const variant of lesson.variants) {
+      it(`${lesson.id}/${variant.id} pauses, answers quizzes, and reveals through agent.act()`, async () => {
+        window.history.replaceState(null, "", `#/${lesson.id}/${variant.id}/1`);
+        const view = render(<App />);
+        const built = variant.build(variant.defaultParams);
+        expect(view.container.querySelector(".katex")).toBeNull();
+        expect(screen.getByRole("heading", { level: 2, name: built.steps[0].title })).toBeTruthy();
+        for (let index = 0; index < built.steps.length; index++) {
+          const step = built.steps[index];
+          const controls = visibleControls();
+          expect(window.location.hash).toBe(`#/${lesson.id}/${variant.id}/${index + 1}`);
+          expect(screen.getByRole("heading", { level: 2, name: step.title })).toBeTruthy();
+          if (step.checkpoint) {
+            const checkpoint = step.checkpoint;
+            const group = controls.find((entry) => entry.component === "radio-group");
+            expect(group, JSON.stringify(controls)).toBeDefined();
+            const item = group?.items?.find((option) => option.label === checkpoint.options[checkpoint.correctIndex]);
+            expect(item).toBeDefined();
+            const result = await act(() => agent.act({ steps: [{ ref: group!.ref, action: "setValue", args: [item!.value] }] }));
+            expect(result.ok, result.error?.message).toBe(true);
+            expect(screen.getByText(checkpoint.feedbackCorrect)).toBeTruthy();
+          }
+          if (index < built.steps.length - 1) {
+            const next = visibleControls().find((entry) => entry.label === "下一步");
+            const result = await act(() => agent.act({ steps: [{ ref: next!.ref, action: "press" }] }));
+            expect(result.ok, result.error?.message).toBe(true);
+          }
+        }
+        expect(view.container.querySelectorAll(".katex").length).toBe(built.formulas.length);
+      });
+    }
+  }
+
+  it("keeps quizzes available in teaching mode and future formulas hidden", async () => {
+    window.history.replaceState(null, "", "#/g2-seesaw/example/2");
+    const view = render(<App />);
+    const enter = visibleControls().find((entry) => entry.label === "进入授课模式");
+    await act(() => agent.act({ steps: [{ ref: enter!.ref, action: "press" }] }));
+    expect(screen.getByText("授课模式")).toBeTruthy();
+    expect(screen.getByRole("radiogroup")).toBeTruthy();
+    await act(() => agent.act({ steps: [{ ref: "显示算式", action: "setPressed", args: [true] }] }));
+    expect(view.container.querySelectorAll(".katex")).toHaveLength(1);
+    expect(view.container.querySelector(".katex")?.textContent).not.toContain("6");
+    const next = visibleControls().find((entry) => entry.label === "下一步");
+    await act(() => agent.act({ steps: [{ ref: next!.ref, action: "press" }] }));
+    expect(window.location.hash).toBe("#/g2-seesaw/example/3");
+    expect(view.container.querySelectorAll(".katex")).toHaveLength(2);
   });
 });

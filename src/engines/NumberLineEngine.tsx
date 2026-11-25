@@ -57,7 +57,7 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
         >
           周长 {scene.totalLength} {scene.unitLabel}
         </text>
-        {scene.intervals && (
+        {scene.intervals && !scene.hideCountSummary && (
           <text
             x={cx}
             y={cy + 20}
@@ -476,7 +476,7 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
           fontWeight="700"
           fill="var(--ink-primary)"
         >
-          总长 {scene.totalLength} {scene.unitLabel}
+          {scene.hideLengthLabel ? "观察位置与间隔" : `总长 ${scene.totalLength} ${scene.unitLabel}`}
         </text>
       </g>
     </StageFrame>

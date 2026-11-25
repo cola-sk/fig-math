@@ -296,7 +296,7 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
                   fontWeight="900"
                   fill="var(--accent-coral)"
                 >
-                  多出 {netChange} 人！
+                  多出 {scene.busVisual?.hideNetChange ? "?" : netChange} 人！
                 </text>
               </motion.g>
             )}
@@ -325,7 +325,7 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
             </text>
             <rect x="486" y="294" width="146" height="40" rx="10" fill="var(--accent-coral-soft)" stroke="var(--accent-coral)" strokeWidth="2" />
             <text x="559" y="319" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--accent-coral)">
-              多出 +{netChange} 人
+              多出 +{scene.busVisual?.hideNetChange ? "?" : netChange} 人
             </text>
             <text x="380" y="364" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--ink-primary)">
               合起来：{initial} + {netChange} = {finalCount} 人（顺序验算：{initial} - {getOff} + {getOn} = {finalCount} 人 ✓）

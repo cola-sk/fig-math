@@ -1,12 +1,13 @@
+import { teachingSteps, numberCheckpoint } from "../teachingSteps";
 import type { MathLesson } from "../../types/lesson";
 
 export const g2WellClimbLesson: MathLesson = {
   id: "g2-well-climb",
   chapterId: "g2-mapping-thinking",
-  chapterTitle: "对应思维训练",
+  chapterTitle: "02. 对应思维训练",
   grade: 2,
   gradeLabel: "二年级",
-  weekLabel: "第 14 页",
+  weekLabel: "p.14",
   title: "爬井问题（蜗牛爬井周期）",
   summary: "白天往上爬、夜里往下滑！动画演给你看：最后一天白天一爬出井口，夜里就不会再滑下来了！",
   engine: "well-climb",
@@ -23,11 +24,11 @@ export const g2WellClimbLesson: MathLesson = {
   variants: [
     {
       id: "example",
-      modeLabel: "蜗牛爬井例题",
+      modeLabel: "基础例题 · 蜗牛爬井例题",
       bookPart: "A版",
       tier: "base",
       title: "10 米深井，白天爬 3 米夜里滑 2 米，几天爬出？",
-      subtitle: "红线代表白天向上爬，蓝虚线代表夜里向下滑",
+      subtitle: "先观察条件，动手想一想，再逐步验证。",
       defaultParams: { wellDepth: 7, dayClimb: 3, nightSlide: 2 },
       paramDefs: [
         { key: "wellDepth", label: "井深", min: 5, max: 11, step: 1, unit: "米" },
@@ -61,107 +62,37 @@ export const g2WellClimbLesson: MathLesson = {
           if (escaped) break;
         }
 
-        const midDay = Math.max(1, Math.min(2, preDays));
-        const midHeight = trails[midDay - 1]?.endH ?? net;
 
         return {
           problemStatement: `一口井深 ${depth} 米，一只小蜗牛从井底往上爬。它白天向上爬 ${day} 米，夜里向下滑 ${slide} 米。请问小蜗牛第几天能爬出井口？`,
           formulas: [
             { id: "wc-1", latex: `${day} - ${slide} = ${net}\\text{ (米/天)}`, comment: "每天昼夜实际净爬高度" },
             { id: "wc-2", latex: `${depth} - ${day} = ${preTarget}\\text{ (米)}`, comment: "预留最后1天白天冲刺的米数" },
-            { id: "wc-3", latex: `${preTarget} \\div ${net} = ${preDays}\\text{ (天)}`, comment: "前面需要爬的天数" },
+            { id: "wc-3", latex: `${preTarget} \\div ${net} ${preTarget % net === 0 ? "=" : "\\approx"} ${Number((preTarget / net).toFixed(2))}\\text{，需 }${preDays}\\text{ 天（不足一天算一天）}`, comment: "前面需要爬的天数" },
             { id: "wc-4", latex: `${preDays} + 1 = ${totalDays}\\text{ (天)}`, comment: "加上最后爬出井口的第1天" },
           ],
-          steps: [
-            {
-              step: 1,
-              tag: "看懂陷阱",
-              title: `每天净爬 ${net} 米，但千万别直接用 ${depth} ÷ ${net}！`,
-              narration: `小蜗牛一天一夜净向上爬 ${day} - ${slide} = ${net} 米。看井口橙色斜线区域：只要它爬到 ${preTarget} 米处，最后一天白天一口气爬 ${day} 米就直接出井了，夜里不会再滑下来！`,
-              tipTitle: "爬井防坑口诀",
-              tipBody: "先减最后一天白天爬的米数，再用剩下的除以净爬高度，最后加 1 天！",
-              activeFormulaIndices: [0, 1],
-              liveStats: [
-                { label: "井深", value: `${depth} 米` },
-                { label: "每天净爬", value: `${net} 米`, tone: "blue" },
-                { label: "最后1天冲刺", value: `${day} 米`, tone: "coral" },
-                { label: "前几天要爬到", value: `${preTarget} 米` },
-              ],
-              sceneState: {
-                kind: "well-climb",
-                wellDepth: depth,
-                dayClimb: day,
-                nightSlide: slide,
-                currentHeight: 0,
-                trails: [],
-                reserveTopBand: true,
-                annotation: `先留出顶部 ${day} 米“最后冲刺区”，前面只需爬到 ${preTarget} 米！`,
-              },
-            },
-            {
-              step: 2,
-              tag: "昼夜循环",
-              title: `前 ${preDays} 天，白天爬 ${day} 米、夜里滑 ${slide} 米`,
-              narration: `第 1 天到第 ${preDays} 天，小蜗牛反复“爬上去又滑下来”，到第 ${preDays} 天夜里结束时，它刚好停在 ${trails[preDays - 1]?.endH ?? preTarget} 米的位置！`,
-              activeFormulaIndices: [2],
-              liveStats: [
-                { label: "已完成天数", value: `${preDays} 天` },
-                { label: "当前高度", value: `${trails[preDays - 1]?.endH ?? midHeight} 米`, tone: "blue" },
-                { label: "离井口还差", value: `${depth - (trails[preDays - 1]?.endH ?? midHeight)} 米`, tone: "coral" },
-                { label: "总天数", value: "还差最后1天" },
-              ],
-              checkpoint: {
-                question: `当小蜗牛在第 ${totalDays} 天白天爬到 ${depth} 米井口时，晚上还会往下滑吗？`,
-                options: ["会再滑下去", "不会了，已经爬出井口啦！"],
-                correctIndex: 1,
-                feedbackCorrect: "答对了！爬出井口就站在地面上啦，再也不会滑下去！",
-                feedbackWrong: "想想看：已经爬到井口外面了，就没有滑下去这回事啦！",
-              },
-              sceneState: {
-                kind: "well-climb",
-                wellDepth: depth,
-                dayClimb: day,
-                nightSlide: slide,
-                currentHeight: trails[preDays - 1]?.endH ?? midHeight,
-                trails: trails.slice(0, preDays),
-                reserveTopBand: true,
-                annotation: `第 ${preDays} 天结束时停在 ${trails[preDays - 1]?.endH ?? preTarget} 米，只差最后冲刺！`,
-              },
-            },
-            {
-              step: 3,
-              tag: "成功出井",
-              title: `第 ${totalDays} 天白天直接爬出井口！`,
-              narration: `第 ${totalDays} 天白天，小蜗牛从 ${trails[preDays - 1]?.endH ?? preTarget} 米再向上爬 ${day} 米，直接冲出 ${depth} 米井口！一共用了 ${preDays} + 1 = ${totalDays} 天！`,
-              activeFormulaIndices: [3],
-              liveStats: [
+          steps: teachingSteps([
+{ title: `到了井口后，还会再滑回井里吗？`, narration: `井深 ${depth} 米，白天上升 ${day} 米，夜里滑下 ${slide} 米。先想一想，已经到井外的小动物，还需要经历井里的夜晚吗？`, sceneState: { kind: "well-climb", wellDepth: depth, dayClimb: day, nightSlide: slide, currentHeight: 0, trails: [], reserveTopBand: false, annotation: `白天先向上，到井口就结束` }, activeFormulaIndices: [] },
+{ title: `没有出井的日子，一昼夜升高几米？`, narration: `没到井口时，要先上升再滑下。请算一天一夜之后，比早上高了多少米。`, sceneState: { kind: "well-climb", wellDepth: depth, dayClimb: day, nightSlide: slide, currentHeight: trails[0].endH, trails: trails.slice(0, 1), reserveTopBand: false, annotation: `白天先向上，到井口就结束` }, activeFormulaIndices: [], checkpoint: numberCheckpoint(`没出井时，一昼夜净上升多少米？`, net, ` 米`, `白天爬的减去夜里滑的，最后出井那天单独算。`) },
+{ title: `最后一天前，至少要到哪里？`, narration: `普通一昼夜净升 ${net} 米。最后一天可以直接上升 ${day} 米，不再往下滑。要够到 ${depth} 米的井口，前一晚至少要到几米高？`, sceneState: { kind: "well-climb", wellDepth: depth, dayClimb: day, nightSlide: slide, currentHeight: trails[0].endH, trails: trails.slice(0, 1), reserveTopBand: true, annotation: `白天先向上，到井口就结束` }, activeFormulaIndices: [0], checkpoint: numberCheckpoint(`最后一天前，至少要到几米高？`, preTarget, ` 米`, `从井深里先留出最后一个白天能爬的高度。`) },
+{ title: `前面需要几天？别忘最后冲出井口的那天`, narration: `前面至少要升到 ${preTarget} 米，每个完整昼夜净升 ${net} 米，需要 ${preDays} 天；不足一天也要算一天。再加最后一个白天，是第几天？`, sceneState: { kind: "well-climb", wellDepth: depth, dayClimb: day, nightSlide: slide, currentHeight: trails[preDays - 1]?.endH ?? 0, trails: trails.slice(0, preDays), reserveTopBand: true, annotation: `白天先向上，到井口就结束` }, activeFormulaIndices: [0, 1], checkpoint: numberCheckpoint(`第几天能到井口？`, totalDays, ` 天`, `到井口的最后一天不再滑下，要单独加上。`) },
+{ tag: `验证与回顾`, title: `第 ${totalDays} 天白天直接爬出井口！`, narration: `第 ${totalDays} 天到达井口。顺着图逐天检查：最后一天从 ${trails[trails.length - 1].fromH} 米出发，再上升 ${day} 米就够到井口了。`, activeFormulaIndices: [0, 1, 2, 3], liveStats: [
                 { label: "井深", value: `${depth} 米` },
                 { label: "前面循环", value: `${preDays} 天` },
                 { label: "最后冲刺", value: "1 天" },
                 { label: "出井总天数", value: `第 ${totalDays} 天`, tone: "teal" },
-              ],
-              sceneState: {
-                kind: "well-climb",
-                wellDepth: depth,
-                dayClimb: day,
-                nightSlide: slide,
-                currentHeight: depth,
-                trails,
-                reserveTopBand: true,
-                annotation: `恭喜！第 ${totalDays} 天白天爬出井口（总用时 ${totalDays} 天）`,
-              },
-            },
-          ],
+              ], sceneState: { kind: "well-climb", wellDepth: depth, dayClimb: day, nightSlide: slide, currentHeight: depth, trails: trails, reserveTopBand: true, annotation: `白天先向上，到井口就结束` }, tipBody: `普通昼夜算净升，最后白天不再滑。` }
+]),
         };
       },
     },
     {
       id: "var-1",
-      modeLabel: "有余数爬井",
+      modeLabel: "拓展拔高 · 有余数爬井",
       bookPart: "B版",
       tier: "challenge",
-      title: "拓展提高：剩下高度除不尽怎么办？",
-      subtitle: "有余数就要多等 1 天，千万别把小数点丢掉！",
+      title: "拓展拔高：剩下高度除不尽怎么办？",
+      subtitle: "先观察条件，动手想一想，再逐步验证。",
       defaultParams: { wellDepth: 10, dayClimb: 4, nightSlide: 2 },
       paramDefs: [
         { key: "wellDepth", label: "井深", min: 8, max: 14, step: 1, unit: "米" },
@@ -171,7 +102,7 @@ export const g2WellClimbLesson: MathLesson = {
       build: (params) => {
         const depth = params.wellDepth ?? 10;
         const day = params.dayClimb ?? 4;
-        const slide = params.nightSlide ?? 2;
+        const slide = Math.min(day - 1, params.nightSlide ?? 2);
         const net = day - slide;
         const preTarget = Math.max(0, depth - day);
         const preDays = Math.ceil(preTarget / net);
@@ -201,31 +132,18 @@ export const g2WellClimbLesson: MathLesson = {
             { id: "wcv-2", latex: `${depth} - ${day} = ${preTarget}\\text{ (米)}`, comment: "最后1天之前至少要到的高度" },
             { id: "wcv-3", latex: `${preDays} + 1 = ${totalDays}\\text{ (天)}`, comment: "前面天数（有余数进1）+ 最后1天" },
           ],
-          steps: [
-            {
-              step: 1,
-              tag: "B版推演",
-              title: `一步步看轨迹：第 ${totalDays} 天跳出井口！`,
-              narration: `留出顶部 ${day} 米冲刺区，前 ${preDays} 天已经爬到 ${trails[preDays - 1]?.endH ?? preTarget} 米，第 ${totalDays} 天白天一跳就超过 ${depth} 米出井啦！`,
-              activeFormulaIndices: [0, 1, 2],
-              liveStats: [
+          steps: teachingSteps([
+{ title: `到了井口后，还会再滑回井里吗？`, narration: `井深 ${depth} 米，白天上升 ${day} 米，夜里滑下 ${slide} 米。先想一想，已经到井外的小动物，还需要经历井里的夜晚吗？`, sceneState: { kind: "well-climb", wellDepth: depth, dayClimb: day, nightSlide: slide, currentHeight: 0, trails: [], reserveTopBand: false, annotation: `白天先向上，到井口就结束` }, activeFormulaIndices: [] },
+{ title: `没有出井的日子，一昼夜升高几米？`, narration: `没到井口时，要先上升再滑下。请算一天一夜之后，比早上高了多少米。`, sceneState: { kind: "well-climb", wellDepth: depth, dayClimb: day, nightSlide: slide, currentHeight: trails[0].endH, trails: trails.slice(0, 1), reserveTopBand: false, annotation: `白天先向上，到井口就结束` }, activeFormulaIndices: [], checkpoint: numberCheckpoint(`没出井时，一昼夜净上升多少米？`, net, ` 米`, `白天爬的减去夜里滑的，最后出井那天单独算。`) },
+{ title: `最后一天前，至少要到哪里？`, narration: `普通一昼夜净升 ${net} 米。最后一天可以直接上升 ${day} 米，不再往下滑。要够到 ${depth} 米的井口，前一晚至少要到几米高？`, sceneState: { kind: "well-climb", wellDepth: depth, dayClimb: day, nightSlide: slide, currentHeight: trails[0].endH, trails: trails.slice(0, 1), reserveTopBand: true, annotation: `白天先向上，到井口就结束` }, activeFormulaIndices: [0], checkpoint: numberCheckpoint(`最后一天前，至少要到几米高？`, preTarget, ` 米`, `从井深里先留出最后一个白天能爬的高度。`) },
+{ title: `前面需要几天？别忘最后冲出井口的那天`, narration: `前面至少要升到 ${preTarget} 米，每个完整昼夜净升 ${net} 米，需要 ${preDays} 天；不足一天也要算一天。再加最后一个白天，是第几天？`, sceneState: { kind: "well-climb", wellDepth: depth, dayClimb: day, nightSlide: slide, currentHeight: trails[preDays - 1]?.endH ?? 0, trails: trails.slice(0, preDays), reserveTopBand: true, annotation: `白天先向上，到井口就结束` }, activeFormulaIndices: [0, 1], checkpoint: numberCheckpoint(`第几天能到井口？`, totalDays, ` 天`, `到井口的最后一天不再滑下，要单独加上。`) },
+{ tag: `验证与回顾`, title: `一步步看轨迹：第 ${totalDays} 天跳出井口！`, narration: `第 ${totalDays} 天到达井口。顺着图逐天检查：最后一天从 ${trails[trails.length - 1].fromH} 米出发，再上升 ${day} 米就够到井口了。`, activeFormulaIndices: [0, 1, 2], liveStats: [
                 { label: "井深", value: `${depth} 米` },
                 { label: "每天净爬", value: `${net} 米` },
                 { label: "冲刺前高度", value: `${trails[preDays - 1]?.endH ?? preTarget} 米` },
                 { label: "跳出天数", value: `第 ${totalDays} 天`, tone: "teal" },
-              ],
-              sceneState: {
-                kind: "well-climb",
-                wellDepth: depth,
-                dayClimb: day,
-                nightSlide: slide,
-                currentHeight: depth,
-                trails,
-                reserveTopBand: true,
-                annotation: `第 ${totalDays} 天白天跳出 ${depth} 米井口！`,
-              },
-            },
-          ],
+              ], sceneState: { kind: "well-climb", wellDepth: depth, dayClimb: day, nightSlide: slide, currentHeight: depth, trails: trails, reserveTopBand: true, annotation: `白天先向上，到井口就结束` }, tipBody: `普通昼夜算净升，最后白天不再滑。` }
+]),
         };
       },
     },

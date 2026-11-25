@@ -3,6 +3,22 @@ import type { ComboVisualSceneState } from "../types/lesson";
 import { StageFrame } from "./StageFrame";
 
 export function ComboVisualEngine({ scene }: { scene: ComboVisualSceneState }) {
+  if (scene.mode === "pattern") {
+    const positions = [{ x: 12, y: 12 }, { x: 88, y: 12 }, { x: 88, y: 88 }, { x: 12, y: 88 }];
+    return (
+      <StageFrame ariaLabel="正方形黑点位置推理舞台">
+        <text x="380" y="43" textAnchor="middle" fontSize="16" fontWeight="700" fill="var(--ink-primary)">{scene.annotation}</text>
+        {(scene.patternCorners ?? []).map((corner, index) => (
+          <g key={index} transform={`translate(${85 + index * 155}, 160)`}>
+            <rect width="100" height="100" rx="8" fill="var(--bg-surface)" stroke="var(--ink-primary)" strokeWidth="2.5" />
+            {corner === null ? <text x="50" y="62" textAnchor="middle" fontSize="34" fill="var(--accent-coral)">?</text> : <circle cx={positions[corner].x} cy={positions[corner].y} r="8" fill="var(--accent-coral)" />}
+            <text x="50" y="132" textAnchor="middle" fontSize="16" fill="var(--ink-primary)">第 {index + 1} 幅</text>
+          </g>
+        ))}
+      </StageFrame>
+    );
+  }
+
   if (scene.mode === "pairing") {
     const left = scene.leftItems ?? ["上衣A", "上衣B"];
     const right = scene.rightItems ?? ["裤子1", "裤子2", "裤子3"];
@@ -190,26 +206,26 @@ export function ComboVisualEngine({ scene }: { scene: ComboVisualSceneState }) {
       )}
 
       {rows.length > 0 && (
-        <g transform={`translate(130, ${cards.length > 0 ? 186 : 92})`}>
+        <g transform={`translate(100, ${cards.length > 0 ? 86 + Math.ceil(cards.length / 4) * 70 + 12 : 92})`}>
           {rows.map((r, idx) => (
-            <g key={r.label} transform={`translate(0, ${idx * 48})`}>
+            <g key={r.label} transform={`translate(0, ${idx * Math.min(62, (380 - (cards.length > 0 ? 86 + Math.ceil(cards.length / 4) * 70 + 12 : 92)) / rows.length)})`}>
               <motion.g
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.06 }}
               >
                 <rect
-                  width="500"
-                  height="40"
+                  width="560"
+                  height="52"
                   rx="10"
                   fill={r.active ? "var(--accent-teal-soft)" : "var(--bg-surface)"}
                   stroke={r.active ? "var(--accent-teal)" : "var(--border-subtle)"}
                   strokeWidth="1.5"
                 />
-                <text x="18" y="25" fontSize="14" fontWeight="700" fill="var(--ink-primary)">
+                <text x="18" y="21" fontSize="14" fontWeight="700" fill="var(--ink-primary)">
                   {r.label}
                 </text>
-                <text x="482" y="25" textAnchor="end" fontSize="13" fontWeight="700" fill="var(--accent-coral)">
+                <text x="542" y="43" textAnchor="end" fontSize="13" fontWeight="700" fill="var(--accent-coral)">
                   {r.badge}
                 </text>
               </motion.g>

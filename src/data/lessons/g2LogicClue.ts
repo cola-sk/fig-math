@@ -1,3 +1,4 @@
+import { teachingSteps } from "../teachingSteps";
 import type { MathLesson } from "../../types/lesson";
 
 export const g2LogicClueLesson: MathLesson = {
@@ -23,11 +24,11 @@ export const g2LogicClueLesson: MathLesson = {
   variants: [
     {
       id: "example",
-      modeLabel: "三人拿书推理",
+      modeLabel: "基础例题 · 三人拿书推理",
       bookPart: "A版",
       tier: "base",
-      title: "甲乙丙拿语文、数学、英语书，已知甲拿语文，乙不拿数学…",
-      subtitle: "先锁死最确定的条件（甲拿语文），剩下的二选一立刻秒解！",
+      title: "三人各拿一本书，怎样根据线索确定？",
+      subtitle: "先观察条件，动手想一想，再逐步验证。",
       defaultParams: {},
       paramDefs: [],
       build: () => ({
@@ -36,42 +37,15 @@ export const g2LogicClueLesson: MathLesson = {
           { id: "lc-1", latex: `\\text{线索 1：小宇不拿数学、不拿英语} \\implies \\text{小宇 = 语文书}`, comment: "先锁定最确定的那个人" },
           { id: "lc-2", latex: `\\text{线索 2：小乐不拿数学} \\implies \\text{小乐 = 英语书，小琪 = 数学书}`, comment: "剩下的二选一排除即可" },
         ],
-        steps: [
-          {
-            step: 1,
-            tag: "锁定第一条线索",
-            title: "第 1 步：小宇不是数学也不是英语 → 小宇拿语文书",
-            narration: `破案第一步：找最确定的线索！三本书里排除了数学和英语，小宇手里只能是“语文书”！`,
-            activeFormulaIndices: [0],
-            liveStats: [
-              { label: "小宇锁定", value: "语文书", tone: "coral" },
-              { label: "还剩书本", value: "数学、英语" },
-            ],
-            sceneState: {
-              kind: "combo-visual",
-              mode: "money",
-              rows: [
-                { label: "小宇（不是数学、不是英语）", badge: "→ 语文书", active: true },
-                { label: "小乐（待确定）", badge: "数学 / 英语" },
-                { label: "小琪（待确定）", badge: "数学 / 英语" },
-              ],
-              annotation: "第一步锁定：小宇 = 语文书！",
-            },
-          },
-          {
-            step: 2,
-            tag: "排除剩下两人",
-            title: "第 2 步：小乐不是数学 → 小乐拿英语，小琪拿数学",
-            narration: `只剩下数学和英语两本书。小乐说自己拿的不是数学，所以小乐只能拿“英语书”，最后剩下的“数学书”就归小琪啦！`,
-            tipTitle: "小侦探破案法",
-            tipBody: "遇到“不是这个、也不是那个”的推理题，先把能直接锁定的找出来，剩下的用排除法！",
-            activeFormulaIndices: [0, 1],
-            liveStats: [
+        steps: teachingSteps([
+{ title: `谁的线索能先排除两种书？`, narration: `小宇说不是数学、不是英语；小乐只说不是数学。先看哪条线索限制最多，能最快确定一个人？`, sceneState: { kind: "combo-visual", mode: "money", cards: [{ id: `c0`, text: `📚 语文`, tone: "coral" },{ id: `c1`, text: `📗 数学`, tone: "teal" },{ id: `c2`, text: `📘 英语`, tone: "teal" }], rows: [{ label: `小宇`, badge: `非数学、非英语`, active: true },{ label: `小乐`, badge: `非数学`, active: true },{ label: `小琪`, badge: `?`, active: true }], annotation: `` }, activeFormulaIndices: [] },
+{ title: `排除两本后，小宇还能拿什么？`, narration: `三本书每人各拿一本，不重复。小宇排除数学和英语后，只剩哪本书能拿？`, sceneState: { kind: "combo-visual", mode: "money", cards: [{ id: `c0`, text: `语文`, tone: "coral" },{ id: `c1`, text: `数学 ×`, tone: "teal" },{ id: `c2`, text: `英语 ×`, tone: "teal" }], rows: [{ label: `小宇拿的书`, badge: `?`, active: true }], annotation: `` }, activeFormulaIndices: [], checkpoint: { question: `小宇拿什么书？`, options: ["英语书", "语文书", "数学书"], correctIndex: 1, feedbackCorrect: `对，排除数学和英语，只剩语文。`, feedbackWrong: `把小宇说不拿的两本书先划掉。` } },
+{ title: `小宇确定后，小乐和小琪怎样分？`, narration: `小宇拿语文，剩下数学和英语。小乐不拿数学，所以小乐拿哪本？最后剩下的一本又归谁？`, sceneState: { kind: "combo-visual", mode: "money", cards: [{ id: `c0`, text: `小宇：语文`, tone: "coral" }], rows: [{ label: `剩下两本`, badge: `数学、英语`, active: true },{ label: `小乐`, badge: `不是数学`, active: true },{ label: `小琪`, badge: `?`, active: true }], annotation: `` }, activeFormulaIndices: [0], checkpoint: { question: `小乐拿什么书？`, options: ["数学书", "英语书", "语文书"], correctIndex: 1, feedbackCorrect: `对，小乐拿英语，剩下数学给小琪。`, feedbackWrong: `语文已经给小宇，只在剩下的两本里排除。` } },
+{ tag: `验证与回顾`, title: "小乐不是数学 → 小乐拿英语，小琪拿数学", narration: `小宇拿语文、小乐拿英语、小琪拿数学。检查：三本各不相同，小宇不拿数学也不拿英语，小乐不拿数学，两条线索都符合。`, tipTitle: "小侦探破案法", tipBody: `先看确定多的，再在剩下里面排除。`, activeFormulaIndices: [0, 1], liveStats: [
               { label: "小宇", value: "语文书" },
               { label: "小乐", value: "英语书", tone: "teal" },
               { label: "小琪", value: "数学书", tone: "coral" },
-            ],
-            sceneState: {
+            ], sceneState: {
               kind: "combo-visual",
               mode: "money",
               rows: [
@@ -80,18 +54,17 @@ export const g2LogicClueLesson: MathLesson = {
                 { label: "小琪（最后剩下）", badge: "→ 数学书", active: true },
               ],
               annotation: "全员破案！小宇=语文，小乐=英语，小琪=数学！",
-            },
-          },
-        ],
+            } }
+]),
       }),
     },
     {
       id: "var-1",
-      modeLabel: "真话假话推理",
+      modeLabel: "拓展拔高 · 真话假话推理",
       bookPart: "B版",
       tier: "challenge",
-      title: "拓展提高：只有一个人说了真话，谁做的好事？",
-      subtitle: "三个人各说一句，假设其中一个说真话，看看另外两句是不是刚好都是假话！",
+      title: "拓展拔高：只有一个人说了真话，谁做的好事？",
+      subtitle: "先观察条件，动手想一想，再逐步验证。",
       defaultParams: {},
       paramDefs: [],
       build: () => ({
@@ -100,36 +73,13 @@ export const g2LogicClueLesson: MathLesson = {
           { id: "lc-3", latex: `\\text{乙和丙说的话正好相反（必有一真一假）}`, comment: "抓住互相矛盾的两句话" },
           { id: "lc-4", latex: `\\text{甲必说假话} \\implies \\text{是甲擦的}`, comment: "一共只有 1 句真话，所以甲说假话" },
         ],
-        steps: [
-          {
-            step: 1,
-            tag: "找矛盾的两句话",
-            title: "第 1 步：乙说“是丙”，丙说“不是丙” → 一真一假在乙丙之间",
-            narration: `仔细看！乙说“是丙擦的”，丙说“不是我擦的”，这两句话完全相反，所以那一唯一句真话肯定藏在乙和丙中间！`,
-            activeFormulaIndices: [0],
-            liveStats: [
-              { label: "唯一真话", value: "在乙和丙之间", tone: "teal" },
-            ],
-            sceneState: {
-              kind: "combo-visual",
-              mode: "money",
-              rows: [
-                { label: "乙：是丙擦的  vs  丙：不是我擦的", badge: "一真一假", active: true },
-                { label: "甲：不是我擦的", badge: "必定说假话" },
-              ],
-              annotation: "乙和丙互相打架，唯一真话就在他俩中间，所以甲一定在说假话！",
-            },
-          },
-          {
-            step: 2,
-            tag: "锁定做好事的人",
-            title: "第 2 步：甲说“不是我”是假话 → 其实就是甲擦的！",
-            narration: `既然甲说“不是我擦的”是假话，那就证明正好是甲擦的！检验一下：如果是甲，甲说假话，乙说假话，丙说“不是我”是真话，刚好只有 1 个真话！`,
-            activeFormulaIndices: [1],
-            liveStats: [
+        steps: teachingSteps([
+{ title: `先找两句谈同一件事的话`, narration: `只有一人说真话。乙说是丙擦的，丙说不是自己擦的。这两句话在说同一件事，能同时都真吗？能同时都假吗？`, sceneState: { kind: "combo-visual", mode: "money", cards: [{ id: `c0`, text: `甲：不是我`, tone: "coral" },{ id: `c1`, text: `乙：是丙`, tone: "teal" },{ id: `c2`, text: `丙：不是我`, tone: "teal" }], rows: [], annotation: `先比较乙、丙两句` }, activeFormulaIndices: [] },
+{ title: `互相相反的两句话，一共占几句真话？`, narration: `乙说是丙，丙说不是丙。无论到底是谁擦的，这两句一定是一真一假。一共只有一句真话，甲还能说真话吗？`, sceneState: { kind: "combo-visual", mode: "money", cards: [{ id: `c0`, text: `乙：是丙`, tone: "coral" },{ id: `c1`, text: `丙：不是丙`, tone: "teal" }], rows: [{ label: `两句话`, badge: `一真一假`, active: true },{ label: `甲说的话`, badge: `?`, active: true }], annotation: `` }, activeFormulaIndices: [0], checkpoint: { question: `甲说的是真话还是假话？`, options: ["真话", "假话"], correctIndex: 1, feedbackCorrect: `对，唯一的真话已经在乙和丙之间，甲只能说假话。`, feedbackWrong: `所有人合计只有一句真话。` } },
+{ title: `甲说“不是我”是假话，到底是谁？`, narration: `甲说“不是我擦的”，这句是假话。把它反过来想，擦玻璃的人是谁？先选一个人，再检查三句话。`, sceneState: { kind: "combo-visual", mode: "money", cards: [{ id: `c0`, text: `甲：不是我`, tone: "coral" },{ id: `c1`, text: `这句是假话`, tone: "teal" }], rows: [{ label: `擦玻璃的人`, badge: `?`, active: true }], annotation: `` }, activeFormulaIndices: [0], checkpoint: { question: `玻璃是谁擦的？`, options: ["甲", "乙", "丙"], correctIndex: 0, feedbackCorrect: `对，否定“不是我”，就是“是我”。`, feedbackWrong: `把甲这句假话变成与它相反的真话。` } },
+{ tag: `验证与回顾`, title: "甲说“不是我”是假话 → 其实就是甲擦的！", narration: `既然甲说“不是我擦的”是假话，那就证明正好是甲擦的！检验一下：如果是甲，甲说假话，乙说假话，丙说“不是我”是真话，刚好只有 1 个真话！`, activeFormulaIndices: [0, 1], liveStats: [
               { label: "做好事的是", value: "甲同学", tone: "coral" },
-            ],
-            sceneState: {
+            ], sceneState: {
               kind: "combo-visual",
               mode: "money",
               rows: [
@@ -138,9 +88,8 @@ export const g2LogicClueLesson: MathLesson = {
                 { label: "丙（不是我擦的）", badge: "真话（唯一）", active: true },
               ],
               annotation: "破案了！是甲同学擦的，只有丙说了真话！",
-            },
-          },
-        ],
+            }, tipBody: `相反两句先找出，真假总数再核对。` }
+]),
       }),
     },
   ],

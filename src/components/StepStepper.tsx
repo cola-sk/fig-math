@@ -1,3 +1,4 @@
+import { Button } from "@ui-sdk/react/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { LessonStep } from "../types/lesson";
 
@@ -24,25 +25,26 @@ export function StepStepper({
       </div>
 
       <div className="flex items-center gap-2">
-        <button
+        <Button
           type="button"
-          aria-label="上一步"
+          aria-label="步骤条向前回看"
           disabled={currentStepIndex === 0}
           onClick={() => onSelectStep(Math.max(0, currentStepIndex - 1))}
           className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--ink-secondary)] transition hover:border-[var(--border-strong)] disabled:cursor-not-allowed disabled:opacity-40"
         >
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-        </button>
+        </Button>
 
         <div className="flex flex-1 items-center gap-1.5 overflow-x-auto py-1">
           {steps.map((s, idx) => {
             const isCurrent = idx === currentStepIndex;
             const isPast = idx < currentStepIndex;
             return (
-              <button
+              <Button
                 key={s.step}
                 type="button"
                 onClick={() => onSelectStep(idx)}
+                aria-label={`跳到第 ${s.step} 步`}
                 aria-current={isCurrent ? "step" : undefined}
                 className={`group flex min-w-[92px] flex-1 cursor-pointer items-center gap-2 rounded-xl border px-2.5 py-1.5 text-left transition ${
                   isCurrent
@@ -70,16 +72,16 @@ export function StepStepper({
                       : "font-medium text-[var(--ink-secondary)]"
                   }`}
                 >
-                  {s.title}
+                  {s.tag}
                 </span>
-              </button>
+              </Button>
             );
           })}
         </div>
 
-        <button
+        <Button
           type="button"
-          aria-label="下一步"
+          aria-label="步骤条继续推演"
           disabled={currentStepIndex >= steps.length - 1}
           onClick={() =>
             onSelectStep(Math.min(steps.length - 1, currentStepIndex + 1))
@@ -87,7 +89,7 @@ export function StepStepper({
           className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--ink-secondary)] transition hover:border-[var(--border-strong)] disabled:cursor-not-allowed disabled:opacity-40"
         >
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
-        </button>
+        </Button>
       </div>
     </div>
   );

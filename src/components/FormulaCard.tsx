@@ -32,8 +32,12 @@ export function FormulaCard({ formulas, activeIndices }: FormulaCardProps) {
       </div>
 
       <div className="space-y-1.5 p-3">
+        {activeIndices.length === 0 && (
+          <p className="px-3 py-2 text-sm text-[var(--ink-secondary)]">先看图想一想，算式会在讲解后揭晓。</p>
+        )}
         {formulas.map((line, idx) => {
-          const isActive = activeIndices.includes(idx);
+          if (!activeIndices.includes(idx)) return null;
+          const isActive = true;
           return (
             <div
               key={line.id}

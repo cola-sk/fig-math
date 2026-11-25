@@ -17,6 +17,7 @@ export function QuantityBoardCard({
   stats,
   compact = false,
 }: QuantityBoardCardProps) {
+  if (stats.length === 0) return null;
   if (compact) {
     return (
       <section className="fig-card px-4 py-3">
