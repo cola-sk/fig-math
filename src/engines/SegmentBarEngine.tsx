@@ -25,7 +25,317 @@ const COLOR_MAP: Record<SegmentBarRow["color"], { fill: string; stroke: string; 
   },
 };
 
+function FlatPersonIcon({
+  x,
+  y,
+  fill,
+  faded = false,
+}: {
+  x: number;
+  y: number;
+  fill: string;
+  faded?: boolean;
+}) {
+  return (
+    <g transform={`translate(${x}, ${y})`} opacity={faded ? 0.36 : 1}>
+      <circle cx="0" cy="-9" r="5" fill={fill} stroke="var(--ink-primary)" strokeWidth="1.2" />
+      <path
+        d="M -6.5 3 C -6.5 -4, 6.5 -4, 6.5 3 Z"
+        fill={fill}
+        stroke="var(--ink-primary)"
+        strokeWidth="1.2"
+      />
+    </g>
+  );
+}
+
 export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
+  // Flat 2D storybook bus stop scene for Bus Ride lessons
+  if (scene.visualMode === "bus" && scene.busVisual) {
+    const { initial, getOff, getOn, phase } = scene.busVisual;
+    const netChange = getOn - getOff;
+    const finalCount = initial + netChange;
+    const isOffset = phase === "offset";
+    const isTotal = phase === "total";
+
+    const maxRowCount = Math.max(getOff, getOn, 1);
+    const dotStep = Math.min(28, 390 / maxRowCount);
+    const rowStartX = 212;
+    const offY = 312;
+    const onY = 362;
+    const extraBoxX = rowStartX + getOff * dotStep - 10;
+    const extraBoxW = Math.max(24, netChange * dotStep - 4);
+    const extraLabelX = Math.min(640, Math.max(extraBoxX + extraBoxW / 2, rowStartX + getOff * dotStep + 22));
+
+    return (
+      <StageFrame ariaLabel="平面公交车上下车场景舞台">
+        {scene.annotation && (
+          <motion.g initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}>
+            <rect x="90" y="18" width="580" height="36" rx="12" fill="var(--bg-surface)" stroke="var(--border-strong)" />
+            <text x="380" y="41" textAnchor="middle" fontSize="14" fontWeight="700" fill="var(--ink-primary)">
+              {scene.annotation}
+            </text>
+          </motion.g>
+        )}
+
+        {/* Road & Bus Stop Sign (Clean Flat 2D) */}
+        <line x1="56" y1="226" x2="704" y2="226" stroke="var(--border-strong)" strokeWidth="2.5" strokeLinecap="round" />
+        <g transform="translate(626, 132)">
+          <line x1="16" y1="24" x2="16" y2="94" stroke="var(--ink-secondary)" strokeWidth="3" strokeLinecap="round" />
+          <rect x="-12" y="0" width="56" height="28" rx="8" fill="var(--accent-teal-soft)" stroke="var(--accent-teal)" strokeWidth="2" />
+          <text x="16" y="18" textAnchor="middle" fontSize="11.5" fontWeight="800" fill="var(--accent-teal)">
+            少年宫站
+          </text>
+        </g>
+
+        {/* Left Side: Getting Off indicator */}
+        <g transform="translate(74, 140)">
+          <motion.g
+            initial={false}
+            animate={{ opacity: isTotal ? 0.35 : 1, x: isTotal ? -8 : 0 }}
+            transition={{ type: "spring", stiffness: 220, damping: 22 }}
+          >
+            <rect x="0" y="0" width="104" height="58" rx="14" fill="rgba(199, 125, 25, 0.14)" stroke="var(--accent-amber)" strokeWidth="2" />
+            <text x="52" y="23" textAnchor="middle" fontSize="12" fontWeight="700" fill="var(--accent-amber)">
+              ← 下车
+            </text>
+            <text x="52" y="45" textAnchor="middle" fontSize="16" fontWeight="900" fill="var(--ink-primary)">
+              {getOff} 人
+            </text>
+          </motion.g>
+        </g>
+
+        {/* Center: Cute Flat 2D Side-View School Bus */}
+        <g transform="translate(216, 98)" filter="url(#fig-soft-shadow)">
+          <rect
+            x="0"
+            y="0"
+            width="284"
+            height="112"
+            rx="20"
+            fill="#ffd66b"
+            stroke="var(--ink-primary)"
+            strokeWidth="2.5"
+          />
+          <rect x="2" y="74" width="280" height="12" fill="#f5a623" fillOpacity="0.45" />
+          {[18, 66, 114, 162].map((wx, i) => (
+            <rect
+              key={i}
+              x={wx}
+              y="16"
+              width="38"
+              height="32"
+              rx="7"
+              fill="#e6f5fc"
+              stroke="var(--ink-primary)"
+              strokeWidth="1.8"
+            />
+          ))}
+          <path
+            d="M 214 16 H 260 C 266 16 270 20 270 26 V 48 H 214 Z"
+            fill="#d7effa"
+            stroke="var(--ink-primary)"
+            strokeWidth="1.8"
+          />
+          <circle cx="274" cy="86" r="5" fill="#fff5cc" stroke="var(--ink-primary)" strokeWidth="1.5" />
+          <circle cx="64" cy="112" r="17" fill="#32302e" stroke="var(--bg-surface)" strokeWidth="3" />
+          <circle cx="64" cy="112" r="6" fill="#d9d4cb" />
+          <circle cx="222" cy="112" r="17" fill="#32302e" stroke="var(--bg-surface)" strokeWidth="3" />
+          <circle cx="222" cy="112" r="6" fill="#d9d4cb" />
+
+          {/* Passenger Counter inside Bus */}
+          <motion.g
+            initial={false}
+            animate={{ scale: isTotal ? 1.04 : 1 }}
+            style={{ originX: "142px", originY: "78px" }}
+            transition={{ type: "spring", stiffness: 220, damping: 18 }}
+          >
+            <rect
+              x="54"
+              y="60"
+              width="176"
+              height="34"
+              rx="11"
+              fill={isTotal ? "var(--accent-teal)" : "var(--bg-surface)"}
+              stroke="var(--ink-primary)"
+              strokeWidth="1.8"
+            />
+            <text
+              x="142"
+              y="82"
+              textAnchor="middle"
+              fontSize="14.5"
+              fontWeight="800"
+              fill={isTotal ? "#ffffff" : "var(--ink-primary)"}
+            >
+              {isTotal ? `现在车上：${finalCount} 人` : `车上原有：${initial} 人`}
+            </text>
+          </motion.g>
+        </g>
+
+        {/* Right Side: Getting On indicator */}
+        <g transform="translate(518, 140)">
+          <motion.g
+            initial={false}
+            animate={{
+              x: isTotal ? -92 : 0,
+              y: isTotal ? -58 : 0,
+              opacity: isTotal ? 0.96 : 1,
+            }}
+            transition={{ type: "spring", stiffness: 190, damping: 20 }}
+          >
+            <rect
+              x="0"
+              y="0"
+              width="98"
+              height="58"
+              rx="14"
+              fill={isTotal ? "var(--accent-teal-soft)" : "var(--accent-coral-soft)"}
+              stroke={isTotal ? "var(--accent-teal)" : "var(--accent-coral)"}
+              strokeWidth="2"
+            />
+            <text
+              x="49"
+              y="23"
+              textAnchor="middle"
+              fontSize="12"
+              fontWeight="700"
+              fill={isTotal ? "var(--accent-teal)" : "var(--accent-coral)"}
+            >
+              {isTotal ? "净多出" : "← 上车"}
+            </text>
+            <text x="49" y="45" textAnchor="middle" fontSize="16" fontWeight="900" fill="var(--ink-primary)">
+              +{isTotal ? netChange : getOn} 人
+            </text>
+          </motion.g>
+        </g>
+
+        {/* Bottom Visual Math Area: Observe -> One-to-One Offset -> Total */}
+        {!isTotal ? (
+          <g>
+            <rect
+              x="74"
+              y="258"
+              width="612"
+              height="146"
+              rx="16"
+              fill="var(--bg-surface)"
+              stroke="var(--border-subtle)"
+              strokeWidth="1.5"
+            />
+            <text x="192" y={offY} textAnchor="end" fontSize="13.5" fontWeight="800" fill="var(--ink-primary)">
+              下车 ({getOff}人)
+            </text>
+            <text x="192" y={onY} textAnchor="end" fontSize="13.5" fontWeight="800" fill="var(--ink-primary)">
+              上车 ({getOn}人)
+            </text>
+
+            {Array.from({ length: getOff }).map((_, i) => (
+              <FlatPersonIcon
+                key={`off-p-${i}`}
+                x={rowStartX + i * dotStep}
+                y={offY - 2}
+                fill="#e59a38"
+                faded={isOffset}
+              />
+            ))}
+
+            {Array.from({ length: getOn }).map((_, i) => {
+              const isMatched = i < getOff;
+              return (
+                <FlatPersonIcon
+                  key={`on-p-${i}`}
+                  x={rowStartX + i * dotStep}
+                  y={onY - 2}
+                  fill={isOffset && !isMatched ? "var(--accent-coral)" : "var(--accent-teal)"}
+                  faded={isOffset && isMatched}
+                />
+              );
+            })}
+
+            {isOffset && (
+              <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <rect
+                  x={rowStartX - 14}
+                  y={offY - 22}
+                  width={getOff * dotStep}
+                  height={onY - offY + 32}
+                  rx="10"
+                  fill="var(--bg-surface-muted)"
+                  fillOpacity="0.28"
+                  stroke="var(--ink-muted)"
+                  strokeWidth="1.6"
+                  strokeDasharray="5 4"
+                />
+                <text
+                  x={rowStartX - 14 + (getOff * dotStep) / 2}
+                  y={offY - 28}
+                  textAnchor="middle"
+                  fontSize="11.5"
+                  fontWeight="800"
+                  fill="var(--ink-secondary)"
+                >
+                  一进一出抵消 {getOff} 人
+                </text>
+
+                <rect
+                  x={extraBoxX}
+                  y={onY - 22}
+                  width={extraBoxW}
+                  height="32"
+                  rx="10"
+                  fill="var(--accent-coral-soft)"
+                  stroke="var(--accent-coral)"
+                  strokeWidth="2"
+                />
+                <text
+                  x={extraLabelX}
+                  y={offY + 4}
+                  textAnchor="middle"
+                  fontSize="13"
+                  fontWeight="900"
+                  fill="var(--accent-coral)"
+                >
+                  多出 {netChange} 人！
+                </text>
+              </motion.g>
+            )}
+
+            {!isOffset && (
+              <text x="656" y="336" textAnchor="end" fontSize="13" fontWeight="700" fill="var(--accent-coral)">
+                比一比：哪一排更长？
+              </text>
+            )}
+          </g>
+        ) : (
+          <motion.g initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
+            <rect
+              x="96"
+              y="268"
+              width="568"
+              height="112"
+              rx="16"
+              fill="var(--bg-surface)"
+              stroke="var(--accent-teal)"
+              strokeWidth="2"
+            />
+            <rect x="128" y="294" width="350" height="40" rx="10" fill="var(--accent-teal-soft)" stroke="var(--accent-teal)" strokeWidth="2" />
+            <text x="303" y="319" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--ink-primary)">
+              原来车上：{initial} 人
+            </text>
+            <rect x="486" y="294" width="146" height="40" rx="10" fill="var(--accent-coral-soft)" stroke="var(--accent-coral)" strokeWidth="2" />
+            <text x="559" y="319" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--accent-coral)">
+              多出 +{netChange} 人
+            </text>
+            <text x="380" y="364" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--ink-primary)">
+              合起来：{initial} + {netChange} = {finalCount} 人（顺序验算：{initial} - {getOff} + {getOn} = {finalCount} 人 ✓）
+            </text>
+          </motion.g>
+        )}
+      </StageFrame>
+    );
+  }
+
   // Concrete countable token mode for young learners (6-8yo Grade 1-2)
   if (scene.visualMode === "dots" && scene.dotVisual) {
     const {

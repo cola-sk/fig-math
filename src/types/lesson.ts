@@ -68,8 +68,8 @@ export interface SegmentBarRow {
 
 export interface SegmentBarSceneState {
   kind: "segment-bar";
-  /** "dots" renders countable concrete tokens (great for 6-8yo Grade 1-2) */
-  visualMode?: "bars" | "dots";
+  /** "dots" renders countable concrete tokens; "bus" renders flat 2D storybook bus scene */
+  visualMode?: "bars" | "dots" | "bus";
   dotVisual?: {
     unitName: string; // e.g. "朵小红花" | "颗糖"
     row1Label: string;
@@ -79,6 +79,12 @@ export interface SegmentBarSceneState {
     /** Number of tokens flying from row1 to row2 in this step */
     movedCount: number;
     showSplitGuide?: boolean;
+  };
+  busVisual?: {
+    initial: number;
+    getOff: number;
+    getOn: number;
+    phase: "observe" | "offset" | "total";
   };
   rows: SegmentBarRow[];
   totalBrace?: {

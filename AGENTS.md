@@ -2,6 +2,11 @@
 
 本项目使用 React 19、TypeScript、Vite、Tailwind CSS 4 和 ui-sdk。使用 pnpm 管理依赖。
 
+## 奥数内容与图解规范
+
+- 新增或修改奥数课程数据（`src/data/lessons/*`）、讲解文案、变式/小考题或可视化图解引擎（`src/engines/*`）前，**必须先阅读项目技能** `.agents/skills/olympiad-lesson-authoring/SKILL.md`。
+- 坚持适合 6–12 岁小学生的简洁清晰风格：以平面/绘本图解为主，仅立体几何题（如数方块）使用 3D 表现；严禁在同一 `<motion.g>` 上混用 `transform="translate(...)"` 与 `animate={{ x/y }}`。
+
 ## UI SDK
 
 - 修改或新增 ui-sdk 界面、组件、交互或 agent bridge 时，先阅读项目技能 `.agents/skills/ui-sdk/SKILL.md`，再按需阅读其中引用的文档。
