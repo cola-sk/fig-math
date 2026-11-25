@@ -9,9 +9,12 @@ import { NumberLineEngine } from "./NumberLineEngine";
 import { SegmentBarEngine } from "./SegmentBarEngine";
 import { VennSetEngine } from "./VennSetEngine";
 import { WellClimbEngine } from "./WellClimbEngine";
+import { OverlapStoryEngine } from "./OverlapStoryEngine";
 
 export function SceneRenderer({ scene }: { scene: SceneState }) {
   switch (scene.kind) {
+    case "overlap-story":
+      return <OverlapStoryEngine scene={scene} />;
     case "array-swap":
       return <ArraySwapEngine scene={scene} />;
     case "segment-bar":

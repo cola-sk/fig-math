@@ -214,6 +214,7 @@ export const g2ShapePatternLesson: MathLesson = {
               mode: "pattern",
               patternCorners: [0, 1, 2, null],
               annotation: `按第 1、2、3、4 幅的顺序看小黑点`,
+              patternActiveIndex: 1,
             },
             activeFormulaIndices: [],
             checkpoint: {
@@ -232,6 +233,7 @@ export const g2ShapePatternLesson: MathLesson = {
               mode: "pattern",
               patternCorners: [0, 1, 2, null],
               annotation: `按第 1、2、3、4 幅的顺序看小黑点`,
+              patternActiveIndex: 2,
             },
             activeFormulaIndices: [],
             checkpoint: {
@@ -255,6 +257,7 @@ export const g2ShapePatternLesson: MathLesson = {
               mode: "pattern",
               patternCorners: [0, 1, 2, 3],
               annotation: `按第 1、2、3、4 幅的顺序看小黑点`,
+              patternActiveIndex: 3,
             },
             tipBody: `先看方向和步长，再走一步来检验。`,
           },

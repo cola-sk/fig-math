@@ -30,7 +30,7 @@ export function ComboVisualEngine({ scene }: { scene: ComboVisualSceneState }) {
               rx="8"
               fill="var(--bg-surface)"
               stroke="var(--ink-primary)"
-              strokeWidth="2.5"
+              strokeWidth={scene.patternActiveIndex === index ? 5 : 2.5}
             />
             {corner === null ? (
               <text

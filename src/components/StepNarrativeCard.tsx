@@ -21,10 +21,12 @@ interface StepNarrativeCardProps {
   totalSteps: number;
   isYoungLearner: boolean;
   isLastStep: boolean;
+  nextVariantLabel?: string;
   nextLessonTitle?: string;
   showNavigation?: boolean;
   onPrev: () => void;
   onNext: () => void;
+  onNextVariant?: () => void;
   onNextLesson?: () => void;
 }
 
@@ -33,10 +35,12 @@ export function StepNarrativeCard({
   totalSteps,
   isYoungLearner,
   isLastStep,
+  nextVariantLabel,
   nextLessonTitle,
   showNavigation = true,
   onPrev,
   onNext,
+  onNextVariant,
   onNextLesson,
 }: StepNarrativeCardProps) {
   const [selectedOpt, setSelectedOpt] = useState<string | null>(null);
@@ -189,41 +193,62 @@ export function StepNarrativeCard({
 
       {/* Chunky Touch-Friendly Step Navigation */}
       {showNavigation && (
-        <div className="flex items-center gap-2.5 pt-1">
-          <Button
-            onClick={onPrev}
-            disabled={step.step <= 1}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-3 text-sm font-bold text-[var(--ink-secondary)] transition hover:border-[var(--border-strong)] disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            上一步
-          </Button>
+        <div className="space-y-2.5 pt-1">
+          <div className="flex items-center gap-2.5">
+            <Button
+              onClick={onPrev}
+              disabled={step.step <= 1}
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-3 text-sm font-bold text-[var(--ink-secondary)] transition hover:border-[var(--border-strong)] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              上一步
+            </Button>
 
-          {!isLastStep ? (
             <Button
               onClick={onNext}
-              className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-coral)] px-5 py-3 text-[15px] font-extrabold text-white shadow-sm transition hover:brightness-105"
+              disabled={isLastStep}
+              className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-coral)] px-5 py-3 text-[15px] font-extrabold text-white shadow-sm transition hover:brightness-105 disabled:cursor-not-allowed disabled:bg-[var(--bg-surface-muted)] disabled:text-[var(--ink-muted)] disabled:shadow-none"
             >
-              <span>下一步</span>
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Button>
-          ) : (
-            <Button
-              onClick={onNextLesson}
-              className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-teal)] px-5 py-3 text-[15px] font-extrabold text-white shadow-sm transition hover:brightness-105"
-            >
-              {nextLessonTitle ? (
+              {isLastStep ? (
                 <>
-                  <Sparkles className="h-4 w-4" aria-hidden="true" />
-                  <span>下一讲：{nextLessonTitle}</span>
+                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                  <span>已是最后一步</span>
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                  <span>太棒了，本讲完成！</span>
+                  <span>下一步</span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </>
               )}
             </Button>
+          </div>
+
+          {isLastStep && (onNextVariant || (onNextLesson && nextLessonTitle)) && (
+            <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-stage)] p-2.5">
+              {onNextVariant && nextVariantLabel && (
+                <Button
+                  onClick={onNextVariant}
+                  className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-teal)] px-4 py-2.5 text-sm font-extrabold text-white shadow-xs transition hover:brightness-105"
+                >
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+                  <span>下一题：{nextVariantLabel}</span>
+                </Button>
+              )}
+
+              {onNextLesson && nextLessonTitle && (
+                <Button
+                  onClick={onNextLesson}
+                  className={`inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
+                    onNextVariant
+                      ? "border border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--ink-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--ink-primary)]"
+                      : "flex-1 bg-[var(--accent-teal)] text-sm font-extrabold text-white shadow-xs hover:brightness-105"
+                  }`}
+                >
+                  <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>下一讲：{nextLessonTitle}</span>
+                </Button>
+              )}
+            </div>
           )}
         </div>
       )}

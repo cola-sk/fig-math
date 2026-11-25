@@ -2,6 +2,7 @@ import { act, render, screen } from "@testing-library/react";
 import { createAgent } from "@ui-sdk/react/agent";
 import { beforeEach, describe, expect, it } from "vitest";
 import App from "../App";
+import { StepNarrativeCard } from "../components/StepNarrativeCard";
 import { SceneRenderer } from "../engines/SceneRenderer";
 import { getLessonsByGrade } from "../data/lessons";
 
@@ -315,25 +316,150 @@ describe("diagram quantities and reveal boundaries", () => {
     }
   });
 
-  it("keeps the Venn diagram's requested count hidden until the answer step", () => {
-    const lesson = getLessonsByGrade("2").find(
-      (item) => item.id === "g2-venn-overlap",
-    )!;
-    for (const variant of lesson.variants) {
-      const built = variant.build(variant.defaultParams);
-      const view = render(<SceneRenderer scene={built.steps[0].sceneState} />);
-      visibleControls();
-      const hiddenText =
-        variant.id === "example" ? "两样都不喜欢：? 人" : "?人";
-      expect(view.container.textContent).toContain(hiddenText);
-      view.rerender(<SceneRenderer scene={built.steps.at(-1)!.sceneState} />);
-      const lastScene = built.steps.at(-1)!.sceneState;
-      if (lastScene.kind !== "venn-set") throw new Error("Missing Venn scene");
-      expect(view.container.textContent).toContain(
-        `两样都不喜欢：${lastScene.neitherCount} 人`,
-      );
-      expect(view.container.textContent).not.toContain("?人");
-      view.unmount();
-    }
+  it("keeps the reverse polygon answer hidden until the answer step", () => {
+    const lesson = getLessonsByGrade("2").find((item) => item.id === "g2-venn-overlap")!;
+    const variant = lesson.variants.find((item) => item.id === "d2-challenge-6")!;
+    const built = variant.build(variant.defaultParams);
+    const before = built.steps[0].sceneState;
+    const after = built.steps.at(-1)!.sceneState;
+    expect(before.kind).toBe("overlap-story");
+    expect(after.kind).toBe("overlap-story");
+    if (before.kind !== "overlap-story" || after.kind !== "overlap-story") throw new Error("Missing overlap scene");
+    expect(before.perSide).toBe(0);
+    expect(after.perSide).toBe(5);
+    const view = render(<SceneRenderer scene={before} />);
+    visibleControls();
+    expect(view.container.querySelectorAll("circle")).toHaveLength(0);
+    view.rerender(<SceneRenderer scene={after} />);
+    expect(view.container.querySelectorAll("circle")).toHaveLength(12);
+    view.unmount();
   });
+
+  it("switches 小例题大发现 sections and 我要练一练 questions in g2-venn-overlap", async () => {
+    window.history.replaceState(null, "", "#/g2-venn-overlap/example/1");
+    render(<App />);
+
+    const components = visibleControls();
+    for (const entry of components) {
+      expect(entry.label).toBeTruthy();
+    }
+    const labels = components.map((entry) => entry.label);
+    expect(new Set(labels).size).toBe(labels.length);
+
+    const sectionControl = components.find(
+      (entry) => entry.label === "切换小例题大发现板块",
+    );
+    expect(sectionControl).toBeDefined();
+
+    const resWarmup = await act(() =>
+      agent.act({
+        steps: [
+          {
+            ref: "小例题大发现 1 · 小试牛刀 第 1 题",
+            action: "press",
+          },
+        ],
+      }),
+    );
+    expect(resWarmup.ok, resWarmup.error?.message).toBe(true);
+    expect(window.location.hash).toBe("#/g2-venn-overlap/d1-warmup-1/1");
+    expect(screen.getByText(/学校举办知识竞赛/)).toBeTruthy();
+
+    const resSection2 = await act(() =>
+      agent.act({
+        steps: [
+          {
+            ref: sectionControl!.ref,
+            action: "setValue",
+            args: ["discovery-2"],
+          },
+        ],
+      }),
+    );
+    expect(resSection2.ok, resSection2.error?.message).toBe(true);
+    expect(window.location.hash).toBe("#/g2-venn-overlap/d2-example/1");
+
+    const resChallenge = await act(() =>
+      agent.act({
+        steps: [
+          {
+            ref: "小例题大发现 2 · 挑战自我 第 6 题",
+            action: "press",
+          },
+        ],
+      }),
+    );
+    expect(resChallenge.ok, resChallenge.error?.message).toBe(true);
+    expect(window.location.hash).toBe("#/g2-venn-overlap/d2-challenge-6/1");
+    expect(screen.getByText(/同学们准备在校园里种12棵树/)).toBeTruthy();
+
+    // Switch back to discovery-1 and step to the last step of example
+    // Should disable "下一步" (show "已是最后一步") and offer "下一题：我要练一练 1 · 第 1 题"
+    await act(() =>
+      agent.act({
+        steps: [
+          {
+            ref: sectionControl!.ref,
+            action: "setValue",
+            args: ["discovery-1"],
+          },
+        ],
+      }),
+    );
+    await act(() =>
+      agent.act({
+        steps: [
+          { ref: "下一步", action: "press" },
+          { ref: "下一步", action: "press" },
+          { ref: "下一步", action: "press" },
+        ],
+      }),
+    );
+    expect(window.location.hash).toBe("#/g2-venn-overlap/example/4");
+    const lastStepControls = visibleControls().map((c) => c.label);
+    expect(lastStepControls).toContain("已是最后一步");
+    expect(lastStepControls).toContain("下一题：我要练一练 1 · 第 1 题");
+
+    const resNextVariant = await act(() =>
+      agent.act({
+        steps: [{ ref: "下一题：我要练一练 1 · 第 1 题", action: "press" }],
+      }),
+    );
+    expect(resNextVariant.ok, resNextVariant.error?.message).toBe(true);
+    expect(window.location.hash).toBe("#/g2-venn-overlap/d1-warmup-1/1");
+  });
+});
+
+it("clears a quiz answer when new parameters rebuild the same step", async () => {
+  const variant = getLessonsByGrade("2").find(
+    (lesson) => lesson.id === "g2-money-pay",
+  )!.variants[1];
+  const original = variant.build({ price: 27 }).steps[2];
+  const changed = variant.build({ price: 28 }).steps[2];
+  const props = {
+    totalSteps: 4,
+    isYoungLearner: true,
+    isLastStep: false,
+    onPrev: () => {},
+    onNext: () => {},
+  };
+  const view = render(<StepNarrativeCard {...props} step={original} />);
+  const quiz = visibleControls().find((entry) => entry.component === "radio")!;
+  const correct = quiz.items!.find(
+    (item) =>
+      item.label ===
+      original.checkpoint!.options[original.checkpoint!.correctIndex],
+  )!;
+  await act(() =>
+    agent.act({
+      steps: [{ ref: quiz.ref, action: "setValue", args: [correct.value] }],
+    }),
+  );
+  expect(screen.getByText(original.checkpoint!.feedbackCorrect)).toBeTruthy();
+  view.rerender(<StepNarrativeCard {...props} step={changed} />);
+  visibleControls();
+  expect(screen.queryByText(original.checkpoint!.feedbackCorrect)).toBeNull();
+  expect(
+    view.container.querySelector('[role="radio"][aria-checked="true"]'),
+  ).toBeNull();
 });

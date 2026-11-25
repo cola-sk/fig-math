@@ -261,6 +261,19 @@ export function App() {
       ? lessonsInGrade[lessonIdx + 1]
       : undefined;
 
+  const variantPool = useMemo(() => {
+    const tierFiltered =
+      selectedTier === "all"
+        ? lesson.variants
+        : lesson.variants.filter((v) => v.tier === selectedTier);
+    return tierFiltered.length > 0 ? tierFiltered : lesson.variants;
+  }, [lesson.variants, selectedTier]);
+  const variantIdx = variantPool.findIndex((v) => v.id === variant.id);
+  const nextVariant =
+    variantIdx >= 0 && variantIdx < variantPool.length - 1
+      ? variantPool[variantIdx + 1]
+      : undefined;
+
   if (teachingMode && lessonsInGrade.length > 0) {
     return (
       <TeachingStage
@@ -318,7 +331,24 @@ export function App() {
                 onSelectVariant={handleSelectVariant}
               />
 
-              <SceneRenderer scene={currentStep.sceneState} />
+              {variant.isPlaceholder ? (
+                <div
+                  className="fig-card flex flex-col items-center justify-center gap-2 border-dashed border-[var(--border-strong)] bg-[var(--bg-stage)] px-6 py-10 text-center"
+                  role="status"
+                >
+                  <span className="rounded-full border border-[var(--accent-coral-border)] bg-[var(--accent-coral-soft)] px-3 py-1 text-xs font-bold text-[var(--accent-coral)]">
+                    框架占位 · {variant.modeLabel}
+                  </span>
+                  <h2 className="text-lg font-extrabold text-[var(--ink-primary)]">
+                    {variant.title}
+                  </h2>
+                  <p className="max-w-md text-sm text-[var(--ink-secondary)]">
+                    {variant.subtitle}
+                  </p>
+                </div>
+              ) : (
+                <SceneRenderer scene={currentStep.sceneState} />
+              )}
 
               <ParamControls
                 paramDefs={variant.paramDefs}
@@ -341,12 +371,18 @@ export function App() {
                 totalSteps={built.steps.length}
                 isYoungLearner={lesson.grade <= 2}
                 isLastStep={clampedStepIndex >= built.steps.length - 1}
+                nextVariantLabel={nextVariant?.modeLabel}
                 nextLessonTitle={nextLesson?.title}
                 onPrev={() => setStepIndex(Math.max(0, clampedStepIndex - 1))}
                 onNext={() =>
                   setStepIndex(
                     Math.min(built.steps.length - 1, clampedStepIndex + 1),
                   )
+                }
+                onNextVariant={
+                  nextVariant
+                    ? () => handleSelectVariant(nextVariant.id)
+                    : undefined
                 }
                 onNextLesson={
                   nextLesson

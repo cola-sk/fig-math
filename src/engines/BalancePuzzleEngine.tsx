@@ -11,6 +11,38 @@ function getSeesawBadge(text: string): { icon: string; count: string } {
   return { icon: "⚖️", count: text };
 }
 
+function SeesawItems({ text, x }: { text: string; x: number }) {
+  const badge = getSeesawBadge(text);
+  const count = Math.min(6, Number(text.match(/^\d+/)?.[0] ?? 1));
+  const columns = Math.min(3, count);
+  const rows = Math.ceil(count / columns);
+  return (
+    <g>
+      {Array.from({ length: count }, (_, index) => (
+        <text
+          key={index}
+          x={x + ((index % columns) - (columns - 1) / 2) * 30}
+          y={rows > 1 ? 208 + Math.floor(index / columns) * 21 : 220}
+          textAnchor="middle"
+          fontSize={rows > 1 ? 19 : 24}
+        >
+          {badge.icon}
+        </text>
+      ))}
+      <text
+        x={x}
+        y="248"
+        textAnchor="middle"
+        fontSize="14.5"
+        fontWeight="800"
+        fill="var(--ink-primary)"
+      >
+        {badge.count}
+      </text>
+    </g>
+  );
+}
+
 const DIGIT_STICKS: Record<string, string> = {
   "0": "abcdef",
   "1": "bc",
@@ -86,8 +118,6 @@ export function BalancePuzzleEngine({
     const tilt = scene.tiltDeg ?? 0;
     const left = scene.leftItems ?? ["1只小狗"];
     const right = scene.rightItems ?? ["3只小猫"];
-    const leftBadge = getSeesawBadge(left.join(" + "));
-    const rightBadge = getSeesawBadge(right.join(" + "));
 
     return (
       <StageFrame ariaLabel="跷跷板轻重天平舞台">
@@ -153,19 +183,7 @@ export function BalancePuzzleEngine({
             stroke="var(--accent-coral)"
             strokeWidth="2.2"
           />
-          <text x="210" y="220" textAnchor="middle" fontSize="24">
-            {leftBadge.icon}
-          </text>
-          <text
-            x="210"
-            y="246"
-            textAnchor="middle"
-            fontSize="14.5"
-            fontWeight="800"
-            fill="var(--ink-primary)"
-          >
-            {leftBadge.count}
-          </text>
+          <SeesawItems text={left.join(" + ")} x={210} />
 
           {/* Right Tray */}
           <rect
@@ -178,19 +196,7 @@ export function BalancePuzzleEngine({
             stroke="var(--accent-teal)"
             strokeWidth="2.2"
           />
-          <text x="550" y="220" textAnchor="middle" fontSize="24">
-            {rightBadge.icon}
-          </text>
-          <text
-            x="550"
-            y="246"
-            textAnchor="middle"
-            fontSize="14.5"
-            fontWeight="800"
-            fill="var(--ink-primary)"
-          >
-            {rightBadge.count}
-          </text>
+          <SeesawItems text={right.join(" + ")} x={550} />
         </motion.g>
 
         <text

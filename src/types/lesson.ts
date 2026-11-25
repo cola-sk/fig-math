@@ -3,6 +3,14 @@ export type GradeFilter = "all" | `${GradeNumber}`;
 export type EditionId = "doubanjiang" | "xueersi" | "gaosi" | "keben";
 export type DifficultyTier = "base" | "standard" | "challenge";
 export type TierFilter = "all" | DifficultyTier;
+export type BookSectionKind = "example" | "warmup" | "practice" | "challenge";
+
+export interface LessonSectionGroup {
+  id: string;
+  title: string;
+  subtitle?: string;
+  pageRange?: string;
+}
 
 export interface EditionMapping {
   edition: EditionId;
@@ -233,6 +241,7 @@ export interface MirrorClockSceneState {
   hour?: number;
   minute?: number;
   showMirrored?: boolean;
+  focus?: "axis" | "hands" | "row";
   /** Mirror shape grid cells (4x4 boolean) */
   leftCells?: number[][];
   annotation?: string;
@@ -243,6 +252,7 @@ export interface ComboVisualSceneState {
   mode:
     "pairing" | "permutation" | "handshake" | "money" | "make-ten" | "pattern";
   patternCorners?: Array<number | null>;
+  patternActiveIndex?: number;
   leftItems?: string[];
   rightItems?: string[];
   highlightLeftIdx?: number;
@@ -277,7 +287,17 @@ export interface BalancePuzzleSceneState {
   annotation?: string;
 }
 
+export interface OverlapStorySceneState {
+  kind: "overlap-story";
+  visual: "sets" | "boards" | "barrels" | "polygon";
+  phase: number;
+  labels: string[];
+  sides?: number;
+  perSide?: number;
+}
+
 export type SceneState =
+  | OverlapStorySceneState
   | ArraySwapSceneState
   | SegmentBarSceneState
   | NumberLineSceneState
@@ -342,6 +362,10 @@ export interface LessonVariant {
   modeLabel: string; // e.g. "例题精讲" | "举一反三 · 1" | "B版 · 拔高"
   bookPart: "A版" | "B版";
   tier: DifficultyTier;
+  sectionId?: string;
+  sectionKind?: BookSectionKind;
+  questionNo?: number;
+  isPlaceholder?: boolean;
   title: string;
   subtitle: string;
   defaultParams: Record<string, number>;
@@ -361,5 +385,6 @@ export interface MathLesson {
   engine: EngineKind;
   keywords: string[];
   editionMappings: EditionMapping[];
+  sections?: LessonSectionGroup[];
   variants: LessonVariant[];
 }

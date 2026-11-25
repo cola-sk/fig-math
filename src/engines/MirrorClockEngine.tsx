@@ -9,6 +9,7 @@ function ClockFace({
   minute,
   label,
   tone,
+  focus,
 }: {
   cx: number;
   cy: number;
@@ -16,25 +17,55 @@ function ClockFace({
   minute: number;
   label: string;
   tone: "coral" | "teal";
+  focus?: "axis" | "hands" | "row";
 }) {
   const r = 82;
   const minAngle = (minute * 6 - 90) * (Math.PI / 180);
   const hourAngle = (((hour % 12) + minute / 60) * 30 - 90) * (Math.PI / 180);
-  const stroke = tone === "coral" ? "var(--accent-coral)" : "var(--accent-teal)";
+  const stroke =
+    tone === "coral" ? "var(--accent-coral)" : "var(--accent-teal)";
 
   return (
     <g>
-      <circle cx={cx} cy={cy} r={r} fill="var(--bg-surface)" stroke={stroke} strokeWidth="3" filter="url(#fig-soft-shadow)" />
+      <circle
+        cx={cx}
+        cy={cy}
+        r={r}
+        fill="var(--bg-surface)"
+        stroke={stroke}
+        strokeWidth="3"
+        filter="url(#fig-soft-shadow)"
+      />
       {Array.from({ length: 12 }).map((_, i) => {
         const a = ((i * 30 - 90) * Math.PI) / 180;
         const tx = cx + Math.cos(a) * (r - 16);
         const ty = cy + Math.sin(a) * (r - 16) + 4;
         return (
-          <text key={i} x={tx} y={ty} textAnchor="middle" fontSize="11" fontWeight="700" fill="var(--ink-muted)">
+          <text
+            key={i}
+            x={tx}
+            y={ty}
+            textAnchor="middle"
+            fontSize="11"
+            fontWeight="700"
+            fill="var(--ink-muted)"
+          >
             {i === 0 ? 12 : i}
           </text>
         );
       })}
+      {focus === "axis" &&
+        [cy - r + 16, cy + r - 16].map((y) => (
+          <circle
+            key={y}
+            cx={cx}
+            cy={y}
+            r="13"
+            fill="none"
+            stroke="var(--accent-blue)"
+            strokeWidth="3"
+          />
+        ))}
       {/* Hour hand */}
       <line
         x1={cx}
@@ -42,7 +73,7 @@ function ClockFace({
         x2={cx + Math.cos(hourAngle) * 42}
         y2={cy + Math.sin(hourAngle) * 42}
         stroke="var(--ink-primary)"
-        strokeWidth="4.5"
+        strokeWidth={focus === "hands" ? 7 : 4.5}
         strokeLinecap="round"
       />
       {/* Minute hand */}
@@ -56,7 +87,14 @@ function ClockFace({
         strokeLinecap="round"
       />
       <circle cx={cx} cy={cy} r="5" fill="var(--ink-primary)" />
-      <text x={cx} y={cy + r + 28} textAnchor="middle" fontSize="14" fontWeight="700" fill={stroke}>
+      <text
+        x={cx}
+        y={cy + r + 28}
+        textAnchor="middle"
+        fontSize="14"
+        fontWeight="700"
+        fill={stroke}
+      >
         {label}
       </text>
     </g>
@@ -76,17 +114,54 @@ export function MirrorClockEngine({ scene }: { scene: MirrorClockSceneState }) {
       <StageFrame ariaLabel="镜面时钟对称舞台">
         {scene.annotation && (
           <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <rect x="90" y="20" width="580" height="36" rx="12" fill="var(--bg-surface)" stroke="var(--border-strong)" />
-            <text x="380" y="43" textAnchor="middle" fontSize="14" fontWeight="700" fill="var(--ink-primary)">
+            <rect
+              x="90"
+              y="20"
+              width="580"
+              height="36"
+              rx="12"
+              fill="var(--bg-surface)"
+              stroke="var(--border-strong)"
+            />
+            <text
+              x="380"
+              y="43"
+              textAnchor="middle"
+              fontSize="14"
+              fontWeight="700"
+              fill="var(--ink-primary)"
+            >
               {scene.annotation}
             </text>
           </motion.g>
         )}
 
         {/* Mirror Axis */}
-        <line x1={mirrorX} y1="88" x2={mirrorX} y2="378" stroke="var(--accent-blue)" strokeWidth="4" strokeDasharray="8 5" />
-        <rect x={mirrorX - 30} y="74" width="60" height="22" rx="11" fill="var(--accent-blue)" />
-        <text x={mirrorX} y="89" textAnchor="middle" fontSize="11" fontWeight="700" fill="#ffffff">
+        <line
+          x1={mirrorX}
+          y1="88"
+          x2={mirrorX}
+          y2="378"
+          stroke="var(--accent-blue)"
+          strokeWidth="4"
+          strokeDasharray="8 5"
+        />
+        <rect
+          x={mirrorX - 30}
+          y="74"
+          width="60"
+          height="22"
+          rx="11"
+          fill="var(--accent-blue)"
+        />
+        <text
+          x={mirrorX}
+          y="89"
+          textAnchor="middle"
+          fontSize="11"
+          fontWeight="700"
+          fill="#ffffff"
+        >
           镜面
         </text>
 
@@ -97,10 +172,14 @@ export function MirrorClockEngine({ scene }: { scene: MirrorClockSceneState }) {
           minute={m}
           label={`镜子里的钟：${h}:${String(m).padStart(2, "0")}`}
           tone="coral"
+          focus={scene.focus}
         />
 
         {scene.showMirrored && (
-          <motion.g initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}>
+          <motion.g
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
             <ClockFace
               cx={550}
               cy={232}
@@ -129,19 +208,77 @@ export function MirrorClockEngine({ scene }: { scene: MirrorClockSceneState }) {
     <StageFrame ariaLabel="镜面对称翻折舞台">
       {scene.annotation && (
         <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <rect x="90" y="20" width="580" height="36" rx="12" fill="var(--bg-surface)" stroke="var(--border-strong)" />
-          <text x="380" y="43" textAnchor="middle" fontSize="14" fontWeight="700" fill="var(--ink-primary)">
+          <rect
+            x="90"
+            y="20"
+            width="580"
+            height="36"
+            rx="12"
+            fill="var(--bg-surface)"
+            stroke="var(--border-strong)"
+          />
+          <text
+            x="380"
+            y="43"
+            textAnchor="middle"
+            fontSize="14"
+            fontWeight="700"
+            fill="var(--ink-primary)"
+          >
             {scene.annotation}
           </text>
         </motion.g>
       )}
 
-      <line x1={mirrorX} y1="92" x2={mirrorX} y2="372" stroke="var(--accent-blue)" strokeWidth="4" strokeDasharray="8 5" />
-      <rect x={mirrorX - 30} y="78" width="60" height="22" rx="11" fill="var(--accent-blue)" />
-      <text x={mirrorX} y="93" textAnchor="middle" fontSize="11" fontWeight="700" fill="#ffffff">
+      <line
+        x1={mirrorX}
+        y1="92"
+        x2={mirrorX}
+        y2="372"
+        stroke="var(--accent-blue)"
+        strokeWidth="4"
+        strokeDasharray="8 5"
+      />
+      <rect
+        x={mirrorX - 30}
+        y="78"
+        width="60"
+        height="22"
+        rx="11"
+        fill="var(--accent-blue)"
+      />
+      <text
+        x={mirrorX}
+        y="93"
+        textAnchor="middle"
+        fontSize="11"
+        fontWeight="700"
+        fill="#ffffff"
+      >
         镜子
       </text>
 
+      {scene.focus === "row" && (
+        <rect
+          x="180"
+          y={startY - 4}
+          width="400"
+          height={cellSize + 4}
+          rx="8"
+          fill="var(--accent-amber)"
+          fillOpacity="0.12"
+        />
+      )}
+      {scene.focus === "axis" && (
+        <line
+          x1={mirrorX}
+          y1="110"
+          x2={mirrorX}
+          y2="360"
+          stroke="var(--accent-coral)"
+          strokeWidth="7"
+        />
+      )}
       {grid.map((row, rIdx) =>
         row.map((val, cIdx) => {
           const lx = mirrorX - (4 - cIdx) * cellSize - 16;

@@ -1,5 +1,5 @@
 import { teachingSteps, numberCheckpoint } from "../teachingSteps";
-import type { MathLesson } from "../../types/lesson";
+import type { BuiltLessonVariant, MathLesson } from "../../types/lesson";
 export const g2WellClimbLesson: MathLesson = {
   id: "g2-well-climb",
   chapterId: "g2-mapping-thinking",
@@ -60,6 +60,7 @@ export const g2WellClimbLesson: MathLesson = {
         const depth = params.wellDepth ?? 7;
         const day = params.dayClimb ?? 3;
         const slide = Math.min(day - 1, params.nightSlide ?? 2);
+        if (day >= depth) return firstDayEscape(depth, day, slide, "小蜗牛");
         const net = day - slide;
         const preTarget = Math.max(0, depth - day);
         const preDays = Math.ceil(preTarget / net);
@@ -96,7 +97,7 @@ export const g2WellClimbLesson: MathLesson = {
             },
             {
               id: "wc-3",
-              latex: `${preTarget} \\div ${net} ${preTarget % net === 0 ? "=" : "\\approx"} ${Number((preTarget / net).toFixed(2))}\\text{，需 }${preDays}\\text{ 天（不足一天算一天）}`,
+              latex: `${preTarget} \\div ${net} = ${Math.floor(preTarget / net)}${preTarget % net === 0 ? "" : `\\cdots\\cdots ${preTarget % net}`}\\text{，需 }${preDays}\\text{ 天（不足一天算一天）}`,
               comment: "前面需要爬的天数",
             },
             {
@@ -253,6 +254,7 @@ export const g2WellClimbLesson: MathLesson = {
         const depth = params.wellDepth ?? 10;
         const day = params.dayClimb ?? 4;
         const slide = Math.min(day - 1, params.nightSlide ?? 2);
+        if (day >= depth) return firstDayEscape(depth, day, slide, "小青蛙");
         const net = day - slide;
         const preTarget = Math.max(0, depth - day);
         const preDays = Math.ceil(preTarget / net);
@@ -407,3 +409,79 @@ export const g2WellClimbLesson: MathLesson = {
     },
   ],
 };
+
+function firstDayEscape(
+  depth: number,
+  day: number,
+  slide: number,
+  animal: string,
+): BuiltLessonVariant {
+  const scene = {
+    kind: "well-climb" as const,
+    wellDepth: depth,
+    dayClimb: day,
+    nightSlide: slide,
+    currentHeight: 0,
+    trails: [],
+  };
+  return {
+    problemStatement: `井深 ${depth} 米，${animal}白天能向上爬 ${day} 米，没出井时夜里会滑下 ${slide} 米。第几天能出井？`,
+    formulas: [
+      {
+        id: "first-day",
+        latex: `${day} \\ge ${depth}\\text{，白天已经能到井口，用时 1 天}`,
+        comment: "先判断白天能否直接到井口",
+      },
+    ],
+    steps: teachingSteps([
+      {
+        title: "先比一比，白天能爬多高？",
+        narration: `井深 ${depth} 米，白天能爬 ${day} 米。先比较这两个数，今天白天的路程够到井口吗？`,
+        sceneState: scene,
+      },
+      {
+        title: "这一次需要等到夜里吗？",
+        narration: `用手指沿井壁从井底走到井口。井口离井底 ${depth} 米，白天能走 ${day} 米，够不够？`,
+        sceneState: { ...scene, reserveTopBand: true },
+        checkpoint: {
+          question: "白天的路程够到井口吗？",
+          options: ["够", "不够"],
+          correctIndex: 0,
+          feedbackCorrect: "对，白天能爬的高度不小于井深。",
+          feedbackWrong: "比较井深和白天能爬的高度，哪一个更大？",
+        },
+      },
+      {
+        title: "已经能到井口，夜里还滑吗？",
+        narration: `白天能走的路程够到井口。到井外后就结束了，还需要把井里的夜晚算进去吗？`,
+        sceneState: {
+          ...scene,
+          reserveTopBand: true,
+          annotation: "先判断是否出井，再决定要不要算夜晚",
+        },
+        checkpoint: {
+          question: "到井口后，还要算夜里滑落吗？",
+          options: ["要", "不用"],
+          correctIndex: 1,
+          feedbackCorrect: "对，已经出井，就不再算井里的夜晚。",
+          feedbackWrong: "想一想：小动物已经在井外，爬井过程结束了。",
+        },
+      },
+      {
+        title: "一个白天就够，第 1 天出井",
+        narration: `${day} 米不小于 ${depth} 米，${animal}第 1 天白天就出井了。验证：还没到夜里就结束，不发生下滑。`,
+        sceneState: {
+          ...scene,
+          currentHeight: depth,
+          trails: [
+            { day: 1, fromH: 0, peakH: depth, endH: depth, escaped: true },
+          ],
+          annotation: "第 1 天到井口，结束",
+        },
+        activeFormulaIndices: [0],
+        tipBody: "先看白天够不够，已经出井不再滑。",
+        liveStats: [{ label: "出井时间", value: "第 1 天" }],
+      },
+    ]),
+  };
+}

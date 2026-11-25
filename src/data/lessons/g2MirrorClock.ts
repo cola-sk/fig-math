@@ -76,6 +76,7 @@ export const g2MirrorClockLesson: MathLesson = {
                 minute: 0,
                 showMirrored: false,
                 annotation: `镜子里的钟已知，实际时间暂时留空`,
+                focus: "axis",
               },
               activeFormulaIndices: [],
             },
@@ -89,6 +90,7 @@ export const g2MirrorClockLesson: MathLesson = {
                 minute: 0,
                 showMirrored: false,
                 annotation: `镜子里的钟已知，实际时间暂时留空`,
+                focus: "hands",
               },
               activeFormulaIndices: [],
               checkpoint: numberCheckpoint(
@@ -161,6 +163,7 @@ export const g2MirrorClockLesson: MathLesson = {
               mode: "shape",
               showMirrored: false,
               annotation: `竖直镜面：先看格子与镜面的距离`,
+              focus: "axis",
             },
             activeFormulaIndices: [],
             checkpoint: {
@@ -179,6 +182,7 @@ export const g2MirrorClockLesson: MathLesson = {
               mode: "shape",
               showMirrored: false,
               annotation: `竖直镜面：先看格子与镜面的距离`,
+              focus: "row",
             },
             activeFormulaIndices: [],
           },
@@ -266,6 +270,7 @@ export const g2MirrorClockLesson: MathLesson = {
                 minute: m,
                 showMirrored: false,
                 annotation: `镜子里的钟已知，实际时间暂时留空`,
+                focus: "axis",
               },
               activeFormulaIndices: [],
               checkpoint: {
@@ -286,6 +291,7 @@ export const g2MirrorClockLesson: MathLesson = {
                 minute: m,
                 showMirrored: false,
                 annotation: `镜子里的钟已知，实际时间暂时留空`,
+                focus: "hands",
               },
               activeFormulaIndices: [],
               checkpoint: {

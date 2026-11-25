@@ -213,32 +213,36 @@ export function TeachingStage({
             })}
           </div>
 
-          {!isLastStep ? (
+          <div className="flex items-center gap-2">
             <Button
               onClick={() =>
                 onSelectStep(Math.min(steps.length - 1, clampedIdx + 1))
               }
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-[var(--accent-coral)] px-5 py-2.5 text-sm font-extrabold text-white shadow-sm transition hover:brightness-105"
+              disabled={isLastStep}
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-[var(--accent-coral)] px-5 py-2.5 text-sm font-extrabold text-white shadow-sm transition hover:brightness-105 disabled:cursor-not-allowed disabled:bg-[var(--bg-surface-muted)] disabled:text-[var(--ink-muted)] disabled:shadow-none"
             >
-              <span>下一步</span>
+              <span>{isLastStep ? "已是最后一步" : "下一步"}</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Button>
-          ) : onNextLesson && nextLessonTitle ? (
-            <Button
-              onClick={onNextLesson}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-extrabold text-white shadow-sm transition hover:brightness-105"
-            >
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
-              <span>下一讲：{nextLessonTitle}</span>
-            </Button>
-          ) : (
-            <Button
-              onClick={onExit}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-extrabold text-white shadow-sm transition hover:brightness-105"
-            >
-              <span>完成并退出授课</span>
-            </Button>
-          )}
+
+            {isLastStep &&
+              (onNextLesson && nextLessonTitle ? (
+                <Button
+                  onClick={onNextLesson}
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-[var(--accent-teal)] px-4 py-2.5 text-sm font-extrabold text-white shadow-sm transition hover:brightness-105"
+                >
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+                  <span>下一讲：{nextLessonTitle}</span>
+                </Button>
+              ) : (
+                <Button
+                  onClick={onExit}
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-[var(--accent-teal)] px-4 py-2.5 text-sm font-extrabold text-white shadow-sm transition hover:brightness-105"
+                >
+                  <span>完成并退出授课</span>
+                </Button>
+              ))}
+          </div>
         </div>
       </main>
     </div>
