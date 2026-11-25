@@ -198,8 +198,9 @@ export interface CountDiagramSceneState {
   baseCount: number;
   /** Which group size is currently highlighted: 1 = single, 2 = 2-unit, etc., 0 = none */
   highlightSpan: number;
-  /** For blocks mode: 2D height map [col][row] or simple grid */
+  /** For blocks mode: column heights */
   blockHeights?: number[];
+  targetBlockHeight?: number;
   showHiddenNote?: boolean;
   annotation?: string;
 }

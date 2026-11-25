@@ -66,42 +66,42 @@ export function BalancePuzzleEngine({ scene }: { scene: BalancePuzzleSceneState 
 
         <g transform="translate(110, 96)">
           {rows.map((row, idx) => (
-            <motion.g
-              key={`${row.left}-${idx}`}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.08 }}
-              transform={`translate(0, ${idx * 94})`}
-            >
-              <rect
-                width="210"
-                height="62"
-                rx="14"
-                fill={row.highlight ? "var(--accent-coral-soft)" : "var(--bg-surface)"}
-                stroke={row.highlight ? "var(--accent-coral)" : "var(--border-strong)"}
-                strokeWidth="2"
-              />
-              <text x="105" y="37" textAnchor="middle" fontSize="16" fontWeight="800" fill="var(--ink-primary)">
-                {row.left}
-              </text>
+            <g key={`${row.left}-${idx}`} transform={`translate(0, ${idx * 94})`}>
+              <motion.g
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.08 }}
+              >
+                <rect
+                  width="210"
+                  height="62"
+                  rx="14"
+                  fill={row.highlight ? "var(--accent-coral-soft)" : "var(--bg-surface)"}
+                  stroke={row.highlight ? "var(--accent-coral)" : "var(--border-strong)"}
+                  strokeWidth="2"
+                />
+                <text x="105" y="37" textAnchor="middle" fontSize="16" fontWeight="800" fill="var(--ink-primary)">
+                  {row.left}
+                </text>
 
-              <text x="270" y="38" textAnchor="middle" fontSize="22" fontWeight="900" fill="var(--accent-coral)">
-                =
-              </text>
+                <text x="270" y="38" textAnchor="middle" fontSize="22" fontWeight="900" fill="var(--accent-coral)">
+                  =
+                </text>
 
-              <rect
-                x="330"
-                width="210"
-                height="62"
-                rx="14"
-                fill={row.highlight ? "var(--accent-teal-soft)" : "var(--bg-surface)"}
-                stroke={row.highlight ? "var(--accent-teal)" : "var(--border-strong)"}
-                strokeWidth="2"
-              />
-              <text x="435" y="37" textAnchor="middle" fontSize="16" fontWeight="800" fill="var(--ink-primary)">
-                {row.right}
-              </text>
-            </motion.g>
+                <rect
+                  x="330"
+                  width="210"
+                  height="62"
+                  rx="14"
+                  fill={row.highlight ? "var(--accent-teal-soft)" : "var(--bg-surface)"}
+                  stroke={row.highlight ? "var(--accent-teal)" : "var(--border-strong)"}
+                  strokeWidth="2"
+                />
+                <text x="435" y="37" textAnchor="middle" fontSize="16" fontWeight="800" fill="var(--ink-primary)">
+                  {row.right}
+                </text>
+              </motion.g>
+            </g>
           ))}
         </g>
       </StageFrame>

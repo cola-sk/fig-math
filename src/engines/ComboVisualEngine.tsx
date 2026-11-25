@@ -172,18 +172,18 @@ export function ComboVisualEngine({ scene }: { scene: ComboVisualSceneState }) {
                     : "var(--border-strong)";
 
             return (
-              <motion.g
-                key={card.id}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                transform={`translate(${x}, ${y})`}
-              >
-                <rect width={cardW} height="52" rx="12" fill={fill} stroke={stroke} strokeWidth="2" />
-                <text x={cardW / 2} y="32" textAnchor="middle" fontSize="16" fontWeight="800" fill="var(--ink-primary)">
-                  {card.text}
-                </text>
-              </motion.g>
+              <g key={card.id} transform={`translate(${x}, ${y})`}>
+                <motion.g
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                >
+                  <rect width={cardW} height="52" rx="12" fill={fill} stroke={stroke} strokeWidth="2" />
+                  <text x={cardW / 2} y="32" textAnchor="middle" fontSize="16" fontWeight="800" fill="var(--ink-primary)">
+                    {card.text}
+                  </text>
+                </motion.g>
+              </g>
             );
           })}
         </g>
@@ -192,28 +192,28 @@ export function ComboVisualEngine({ scene }: { scene: ComboVisualSceneState }) {
       {rows.length > 0 && (
         <g transform={`translate(130, ${cards.length > 0 ? 186 : 92})`}>
           {rows.map((r, idx) => (
-            <motion.g
-              key={r.label}
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: idx * 0.06 }}
-              transform={`translate(0, ${idx * 48})`}
-            >
-              <rect
-                width="500"
-                height="40"
-                rx="10"
-                fill={r.active ? "var(--accent-teal-soft)" : "var(--bg-surface)"}
-                stroke={r.active ? "var(--accent-teal)" : "var(--border-subtle)"}
-                strokeWidth="1.5"
-              />
-              <text x="18" y="25" fontSize="14" fontWeight="700" fill="var(--ink-primary)">
-                {r.label}
-              </text>
-              <text x="482" y="25" textAnchor="end" fontSize="13" fontWeight="700" fill="var(--accent-coral)">
-                {r.badge}
-              </text>
-            </motion.g>
+            <g key={r.label} transform={`translate(0, ${idx * 48})`}>
+              <motion.g
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.06 }}
+              >
+                <rect
+                  width="500"
+                  height="40"
+                  rx="10"
+                  fill={r.active ? "var(--accent-teal-soft)" : "var(--bg-surface)"}
+                  stroke={r.active ? "var(--accent-teal)" : "var(--border-subtle)"}
+                  strokeWidth="1.5"
+                />
+                <text x="18" y="25" fontSize="14" fontWeight="700" fill="var(--ink-primary)">
+                  {r.label}
+                </text>
+                <text x="482" y="25" textAnchor="end" fontSize="13" fontWeight="700" fill="var(--accent-coral)">
+                  {r.badge}
+                </text>
+              </motion.g>
+            </g>
           ))}
         </g>
       )}

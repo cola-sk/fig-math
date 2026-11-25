@@ -214,12 +214,19 @@ export function CountDiagramEngine({ scene }: { scene: CountDiagramSceneState })
     );
   }
 
-  // Blocks / isometric cube counting mode
-  const heights = scene.blockHeights ?? [3, 2, 1, 1];
-  const baseX = 280;
-  const baseY = 330;
-  const cubeW = 54;
+  // Blocks / 3D cube counting mode
+  const heights = scene.blockHeights ?? [3, 2, 1];
+  const cubeW = 62;
   const cubeH = 44;
+  const depthX = 16;
+  const depthY = 12;
+  const colGap = 24;
+  const totalW = heights.length * cubeW + (heights.length - 1) * colGap;
+  const startX = (760 - totalW) / 2 - depthX / 2;
+  const baseY = 304;
+  const targetH = scene.targetBlockHeight ?? 0;
+  const currentTotal = heights.reduce((a, b) => a + b, 0);
+  const missingTotal = targetH > 0 ? heights.reduce((sum, h) => sum + Math.max(0, targetH - h), 0) : 0;
 
   return (
     <StageFrame ariaLabel="观察与数立体方块舞台">
@@ -232,37 +239,168 @@ export function CountDiagramEngine({ scene }: { scene: CountDiagramSceneState })
         </motion.g>
       )}
 
-      {heights.map((h, colIdx) =>
-        Array.from({ length: h }).map((_, levelIdx) => {
-          const cx = baseX + colIdx * (cubeW + 6);
-          const cy = baseY - levelIdx * (cubeH + 2);
-          const isHidden = levelIdx < h - 1 && colIdx === 0 && scene.showHiddenNote;
-          return (
-            <motion.g
-              key={`cube-${colIdx}-${levelIdx}`}
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: (colIdx + levelIdx) * 0.06 }}
-              transform={`translate(${cx}, ${cy})`}
-            >
-              <rect
-                width={cubeW}
-                height={cubeH}
-                rx="7"
-                fill={isHidden ? "var(--accent-coral-soft)" : "var(--bg-surface)"}
-                stroke={isHidden ? "var(--accent-coral)" : "var(--ink-primary)"}
-                strokeWidth="2.2"
-              />
-              <text x={cubeW / 2} y={cubeH / 2 + 5} textAnchor="middle" fontSize="13" fontWeight="700" fill="var(--ink-primary)">
-                {levelIdx + 1}层
-              </text>
-            </motion.g>
-          );
-        }),
-      )}
+      {heights.map((h, colIdx) => {
+        const cx = startX + colIdx * (cubeW + colGap);
+        const maxDrawH = Math.max(h, targetH);
+        const topY = baseY - (maxDrawH - 1) * cubeH;
 
-      <text x={baseX + 115} y={baseY + 72} textAnchor="middle" fontSize="13.5" fontWeight="700" fill="var(--ink-secondary)">
-        分层/分列数：一共 {heights.reduce((a, b) => a + b, 0)} 块小正方体
+        return (
+          <g key={`col-${colIdx}`}>
+            {/* Existing solid 3D cubes from bottom to top */}
+            {Array.from({ length: h }).map((_, levelIdx) => {
+              const cy = baseY - levelIdx * cubeH;
+              const isHidden = levelIdx < h - 1 && Boolean(scene.showHiddenNote);
+              const frontFill = isHidden ? "var(--accent-coral-soft)" : "var(--bg-surface)";
+              const topFill = isHidden ? "#ffd9cf" : "var(--bg-stage)";
+              const sideFill = isHidden ? "#f8bfb0" : "var(--bg-surface-muted)";
+              const strokeCol = isHidden ? "var(--accent-coral)" : "var(--ink-primary)";
+
+              return (
+                <g key={`cube-${colIdx}-${levelIdx}`} transform={`translate(${cx}, ${cy})`}>
+                  <motion.g
+                    initial={{ opacity: 0, y: -16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: (colIdx * 2 + levelIdx) * 0.07, type: "spring", stiffness: 220, damping: 20 }}
+                  >
+                    {/* Top face */}
+                    <polygon
+                      points={`0,0 ${depthX},${-depthY} ${cubeW + depthX},${-depthY} ${cubeW},0`}
+                      fill={topFill}
+                      stroke={strokeCol}
+                      strokeWidth="2"
+                      strokeLinejoin="round"
+                    />
+                    {/* Right side face */}
+                    <polygon
+                      points={`${cubeW},0 ${cubeW + depthX},${-depthY} ${cubeW + depthX},${cubeH - depthY} ${cubeW},${cubeH}`}
+                      fill={sideFill}
+                      stroke={strokeCol}
+                      strokeWidth="2"
+                      strokeLinejoin="round"
+                    />
+                    {/* Front face */}
+                    <rect
+                      x="0"
+                      y="0"
+                      width={cubeW}
+                      height={cubeH}
+                      rx="3"
+                      fill={frontFill}
+                      stroke={strokeCol}
+                      strokeWidth="2.2"
+                    />
+                    <text
+                      x={cubeW / 2}
+                      y={cubeH / 2 + 5}
+                      textAnchor="middle"
+                      fontSize="13"
+                      fontWeight="800"
+                      fill={isHidden ? "var(--accent-coral)" : "var(--ink-primary)"}
+                    >
+                      {isHidden ? "压住" : `${levelIdx + 1}层`}
+                    </text>
+                  </motion.g>
+                </g>
+              );
+            })}
+
+            {/* Ghost missing cubes for "补齐" variant */}
+            {targetH > h &&
+              Array.from({ length: targetH - h }).map((_, offset) => {
+                const levelIdx = h + offset;
+                const cy = baseY - levelIdx * cubeH;
+                return (
+                  <g key={`ghost-${colIdx}-${levelIdx}`} transform={`translate(${cx}, ${cy})`}>
+                    <motion.g
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.25 + offset * 0.08 }}
+                    >
+                      <polygon
+                        points={`0,0 ${depthX},${-depthY} ${cubeW + depthX},${-depthY} ${cubeW},0`}
+                        fill="var(--accent-teal-soft)"
+                        fillOpacity="0.6"
+                        stroke="var(--accent-teal)"
+                        strokeWidth="1.8"
+                        strokeDasharray="4 3"
+                      />
+                      <polygon
+                        points={`${cubeW},0 ${cubeW + depthX},${-depthY} ${cubeW + depthX},${cubeH - depthY} ${cubeW},${cubeH}`}
+                        fill="var(--accent-teal-soft)"
+                        fillOpacity="0.45"
+                        stroke="var(--accent-teal)"
+                        strokeWidth="1.8"
+                        strokeDasharray="4 3"
+                      />
+                      <rect
+                        x="0"
+                        y="0"
+                        width={cubeW}
+                        height={cubeH}
+                        rx="3"
+                        fill="var(--accent-teal-soft)"
+                        fillOpacity="0.7"
+                        stroke="var(--accent-teal)"
+                        strokeWidth="2"
+                        strokeDasharray="5 4"
+                      />
+                      <text x={cubeW / 2} y={cubeH / 2 + 5} textAnchor="middle" fontSize="13" fontWeight="800" fill="var(--accent-teal)">
+                        +1缺
+                      </text>
+                    </motion.g>
+                  </g>
+                );
+              })}
+
+            {/* Column height badge on top */}
+            {scene.showHiddenNote && (
+              <motion.g
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 + colIdx * 0.08 }}
+              >
+                <rect
+                  x={cx + cubeW / 2 - 22}
+                  y={topY - 46}
+                  width="54"
+                  height="24"
+                  rx="12"
+                  fill={targetH > 0 && targetH > h ? "var(--accent-teal)" : "var(--accent-coral)"}
+                />
+                <text
+                  x={cx + cubeW / 2 + 5}
+                  y={topY - 30}
+                  textAnchor="middle"
+                  fontSize="12"
+                  fontWeight="800"
+                  fill="#ffffff"
+                >
+                  {targetH > 0 && targetH > h ? `缺${targetH - h}块` : `${h} 块`}
+                </text>
+              </motion.g>
+            )}
+
+            {/* Column label below */}
+            <text
+              x={cx + cubeW / 2}
+              y={baseY + cubeH + 22}
+              textAnchor="middle"
+              fontSize="12.5"
+              fontWeight="700"
+              fill="var(--ink-secondary)"
+            >
+              第{colIdx + 1}摞
+            </text>
+          </g>
+        );
+      })}
+
+      <text x="380" y="394" textAnchor="middle" fontSize="14" fontWeight="800" fill="var(--ink-primary)">
+        {targetH > 0
+          ? `补齐目标 ${heights.length * targetH} 块：已有 ${currentTotal} 块，还缺 ${missingTotal} 块`
+          : scene.showHiddenNote
+            ? `按列相加：${heights.join(" + ")} = ${currentTotal} 块小正方体`
+            : "数一数每一摞有多高（上面的块踩在下面的块上）"}
       </text>
     </StageFrame>
   );

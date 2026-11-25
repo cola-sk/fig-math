@@ -138,6 +138,7 @@ export const g2ObserveShapesLesson: MathLesson = {
                 baseCount: 3,
                 highlightSpan: 1,
                 blockHeights: [c1, c2, c3],
+                targetBlockHeight: 3,
                 showHiddenNote: true,
                 annotation: `总目标 9 块 - 已有 ${current} 块 = 还缺 ${need} 块`,
               },
