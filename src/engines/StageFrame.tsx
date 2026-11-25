@@ -54,7 +54,12 @@ export function StageFrame({
               patternUnits="userSpaceOnUse"
               patternTransform="rotate(45)"
             >
-              <rect width="8" height="8" fill="var(--accent-coral)" fillOpacity="0.12" />
+              <rect
+                width="8"
+                height="8"
+                fill="var(--accent-coral)"
+                fillOpacity="0.12"
+              />
               <line
                 x1="0"
                 y1="0"
@@ -66,8 +71,20 @@ export function StageFrame({
               />
             </pattern>
             {/* Soft drop shadow */}
-            <filter id="fig-soft-shadow" x="-15%" y="-15%" width="130%" height="140%">
-              <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="#1e1e1e" floodOpacity="0.1" />
+            <filter
+              id="fig-soft-shadow"
+              x="-15%"
+              y="-15%"
+              width="130%"
+              height="140%"
+            >
+              <feDropShadow
+                dx="0"
+                dy="6"
+                stdDeviation="6"
+                floodColor="#1e1e1e"
+                floodOpacity="0.1"
+              />
             </filter>
           </defs>
 

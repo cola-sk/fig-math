@@ -14,15 +14,150 @@ function TreeIcon({ status }: { status: "active" | "ghost" | "highlight" }) {
   return (
     <g opacity={opacity}>
       <rect x="-3" y="-12" width="6" height="14" rx="2" fill="#8b6647" />
-      <circle cx="0" cy="-22" r="13" fill={leafFill} fillOpacity="0.88" stroke="var(--ink-primary)" strokeWidth="1.5" />
+      <circle
+        cx="0"
+        cy="-22"
+        r="13"
+        fill={leafFill}
+        fillOpacity="0.88"
+        stroke="var(--ink-primary)"
+        strokeWidth="1.5"
+      />
       {status === "ghost" && (
-        <path d="M -8 -30 L 8 -14 M 8 -30 L -8 -14" stroke="var(--accent-coral)" strokeWidth="2.5" strokeLinecap="round" />
+        <path
+          d="M -8 -30 L 8 -14 M 8 -30 L -8 -14"
+          stroke="var(--accent-coral)"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
       )}
     </g>
   );
 }
 
 export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
+  if (scene.measurement) {
+    const { marks, from, to, label, pencil } = scene.measurement;
+    const start = Math.min(...marks);
+    const end = Math.max(...marks);
+    const xAt = (value: number) =>
+      90 + ((value - start) / Math.max(1, end - start)) * 580;
+    return (
+      <StageFrame ariaLabel="尺子刻度与铅笔测量舞台">
+        <text
+          x="380"
+          y="43"
+          textAnchor="middle"
+          fontSize="18"
+          fontWeight="700"
+          fill="var(--ink-primary)"
+        >
+          两端对准刻度，数中间的距离
+        </text>
+        {pencil && (
+          <g>
+            <rect
+              x={xAt(pencil.start)}
+              y="154"
+              width={Math.max(1, xAt(pencil.end) - xAt(pencil.start) - 20)}
+              height="28"
+              rx="3"
+              fill="var(--accent-amber)"
+              stroke="var(--ink-primary)"
+              strokeWidth="2"
+            />
+            <path
+              d={`M ${xAt(pencil.end) - 20} 154 L ${xAt(pencil.end)} 168 L ${xAt(pencil.end) - 20} 182 Z`}
+              fill="var(--accent-coral-soft)"
+              stroke="var(--ink-primary)"
+              strokeWidth="2"
+            />
+            <path
+              d={`M ${xAt(pencil.end) - 7} 163 L ${xAt(pencil.end)} 168 L ${xAt(pencil.end) - 7} 173 Z`}
+              fill="var(--ink-primary)"
+            />
+            {[pencil.start, pencil.end].map((value) => (
+              <line
+                key={value}
+                x1={xAt(value)}
+                y1="186"
+                x2={xAt(value)}
+                y2="240"
+                stroke="var(--accent-coral)"
+                strokeWidth="2"
+                strokeDasharray="5 4"
+              />
+            ))}
+          </g>
+        )}
+        <rect
+          x="76"
+          y="242"
+          width="608"
+          height="58"
+          rx="5"
+          fill="var(--bg-surface)"
+          stroke="var(--ink-primary)"
+          strokeWidth="2"
+        />
+        {start > 0 && (
+          <path
+            d="M 76 242 l 8 10 l -8 10 l 8 10 l -8 10 l 8 10 l -8 8"
+            fill="var(--bg-stage)"
+            stroke="var(--ink-primary)"
+            strokeWidth="2"
+          />
+        )}
+        {marks.map((value) => (
+          <g key={value}>
+            <line
+              x1={xAt(value)}
+              y1="242"
+              x2={xAt(value)}
+              y2="263"
+              stroke="var(--ink-primary)"
+              strokeWidth="2"
+            />
+            <text
+              x={xAt(value)}
+              y="286"
+              textAnchor="middle"
+              fontSize="18"
+              fontWeight="700"
+              fill="var(--ink-primary)"
+            >
+              {value}
+            </text>
+          </g>
+        ))}
+        <text
+          x="670"
+          y="323"
+          textAnchor="end"
+          fontSize="16"
+          fill="var(--ink-secondary)"
+        >
+          厘米
+        </text>
+        <path
+          d={`M ${xAt(from)} 320 v 15 H ${xAt(to)} v -15`}
+          fill="none"
+          stroke="var(--accent-teal)"
+          strokeWidth="3"
+        />
+        <text
+          x={(xAt(from) + xAt(to)) / 2}
+          y="365"
+          textAnchor="middle"
+          fontSize="22"
+          fontWeight="800"
+          fill="var(--accent-teal)"
+        >
+          {label}
+        </text>
+      </StageFrame>
+    );
+  }
   if (scene.layout === "circle") {
     const cx = 380;
     const cy = 228;
@@ -66,7 +201,8 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
             fontWeight="600"
             fill="var(--accent-coral)"
           >
-            {scene.intervals} 段间隔 = {scene.trees?.filter((t) => t.status !== "ghost").length ?? 0} 棵树
+            {scene.intervals} 段间隔 ={" "}
+            {scene.trees?.filter((t) => t.status !== "ghost").length ?? 0} 棵树
           </text>
         )}
 
@@ -82,7 +218,14 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
               animate={{ x: tx, y: ty }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
             >
-              <circle cx="0" cy="0" r="6" fill="var(--bg-surface)" stroke="var(--ink-primary)" strokeWidth="1.8" />
+              <circle
+                cx="0"
+                cy="0"
+                r="6"
+                fill="var(--bg-surface)"
+                stroke="var(--ink-primary)"
+                strokeWidth="1.8"
+              />
               <g transform="translate(0, -6)">
                 <TreeIcon status={tree.status} />
               </g>
@@ -262,7 +405,14 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
             animate={{ x: tx, y: trackY }}
             transition={{ type: "spring", stiffness: 220, damping: 22 }}
           >
-            <circle cx="0" cy="0" r="5" fill="var(--bg-surface)" stroke="var(--ink-primary)" strokeWidth="2" />
+            <circle
+              cx="0"
+              cy="0"
+              r="5"
+              fill="var(--bg-surface)"
+              stroke="var(--ink-primary)"
+              strokeWidth="2"
+            />
             <g transform="translate(0, -10)">
               <TreeIcon status={tree.status} />
             </g>
@@ -273,7 +423,11 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
                 textAnchor="middle"
                 fontSize="12"
                 fontWeight="700"
-                fill={tree.status === "ghost" ? "var(--ink-muted)" : "var(--ink-primary)"}
+                fill={
+                  tree.status === "ghost"
+                    ? "var(--ink-muted)"
+                    : "var(--ink-primary)"
+                }
               >
                 {tree.label}
               </text>
@@ -344,7 +498,8 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
           : isTarget
             ? "var(--accent-teal)"
             : "var(--ink-primary)";
-        const textColor = isOverlap || isTarget ? "#ffffff" : "var(--ink-primary)";
+        const textColor =
+          isOverlap || isTarget ? "#ffffff" : "var(--ink-primary)";
 
         return (
           <motion.g
@@ -360,7 +515,9 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
               fill={circleFill}
               stroke={strokeColor}
               strokeWidth={isOverlap || isTarget ? 2.5 : 1.8}
-              filter={isOverlap || isTarget ? "url(#fig-soft-shadow)" : undefined}
+              filter={
+                isOverlap || isTarget ? "url(#fig-soft-shadow)" : undefined
+              }
             />
             <text
               x="0"
@@ -379,7 +536,10 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
       {/* Moving Actors (for meeting / chasing) */}
       {scene.actors?.map((actor) => {
         const ax = x0 + actor.posRatio * trackW;
-        const fill = actor.color === "coral" ? "var(--accent-coral)" : "var(--accent-teal)";
+        const fill =
+          actor.color === "coral"
+            ? "var(--accent-coral)"
+            : "var(--accent-teal)";
         const dirSign = actor.direction === "right" ? 1 : -1;
         return (
           <motion.g
@@ -447,7 +607,14 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
         const mx = x0 + m.posRatio * trackW;
         return (
           <g key={m.id} transform={`translate(${mx}, ${trackY})`}>
-            <line x1="0" y1="-10" x2="0" y2="10" stroke="var(--ink-primary)" strokeWidth="2" />
+            <line
+              x1="0"
+              y1="-10"
+              x2="0"
+              y2="10"
+              stroke="var(--ink-primary)"
+              strokeWidth="2"
+            />
             <text
               x="0"
               y="62"
@@ -464,10 +631,38 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
 
       {/* Total Length Brace */}
       <g transform={`translate(${x0}, ${trackY + 78})`}>
-        <line x1="0" y1="0" x2={trackW} y2="0" stroke="var(--ink-secondary)" strokeWidth="1.8" />
-        <line x1="0" y1="-6" x2="0" y2="6" stroke="var(--ink-secondary)" strokeWidth="1.8" />
-        <line x1={trackW} y1="-6" x2={trackW} y2="6" stroke="var(--ink-secondary)" strokeWidth="1.8" />
-        <rect x={trackW / 2 - 58} y="-12" width="116" height="24" rx="6" fill="var(--bg-stage)" />
+        <line
+          x1="0"
+          y1="0"
+          x2={trackW}
+          y2="0"
+          stroke="var(--ink-secondary)"
+          strokeWidth="1.8"
+        />
+        <line
+          x1="0"
+          y1="-6"
+          x2="0"
+          y2="6"
+          stroke="var(--ink-secondary)"
+          strokeWidth="1.8"
+        />
+        <line
+          x1={trackW}
+          y1="-6"
+          x2={trackW}
+          y2="6"
+          stroke="var(--ink-secondary)"
+          strokeWidth="1.8"
+        />
+        <rect
+          x={trackW / 2 - 58}
+          y="-12"
+          width="116"
+          height="24"
+          rx="6"
+          fill="var(--bg-stage)"
+        />
         <text
           x={trackW / 2}
           y="5"
@@ -476,7 +671,9 @@ export function NumberLineEngine({ scene }: { scene: NumberLineSceneState }) {
           fontWeight="700"
           fill="var(--ink-primary)"
         >
-          {scene.hideLengthLabel ? "观察位置与间隔" : `总长 ${scene.totalLength} ${scene.unitLabel}`}
+          {scene.hideLengthLabel
+            ? "观察位置与间隔"
+            : `总长 ${scene.totalLength} ${scene.unitLabel}`}
         </text>
       </g>
     </StageFrame>

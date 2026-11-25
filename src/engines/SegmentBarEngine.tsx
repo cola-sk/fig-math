@@ -2,7 +2,10 @@ import { motion } from "motion/react";
 import type { SegmentBarRow, SegmentBarSceneState } from "../types/lesson";
 import { StageFrame } from "./StageFrame";
 
-const COLOR_MAP: Record<SegmentBarRow["color"], { fill: string; stroke: string; soft: string }> = {
+const COLOR_MAP: Record<
+  SegmentBarRow["color"],
+  { fill: string; stroke: string; soft: string }
+> = {
   coral: {
     fill: "var(--accent-coral)",
     stroke: "var(--accent-coral)",
@@ -38,7 +41,14 @@ function FlatPersonIcon({
 }) {
   return (
     <g transform={`translate(${x}, ${y})`} opacity={faded ? 0.36 : 1}>
-      <circle cx="0" cy="-9" r="5" fill={fill} stroke="var(--ink-primary)" strokeWidth="1.2" />
+      <circle
+        cx="0"
+        cy="-9"
+        r="5"
+        fill={fill}
+        stroke="var(--ink-primary)"
+        strokeWidth="1.2"
+      />
       <path
         d="M -6.5 3 C -6.5 -4, 6.5 -4, 6.5 3 Z"
         fill={fill}
@@ -65,25 +75,78 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
     const onY = 362;
     const extraBoxX = rowStartX + getOff * dotStep - 10;
     const extraBoxW = Math.max(24, netChange * dotStep - 4);
-    const extraLabelX = Math.min(640, Math.max(extraBoxX + extraBoxW / 2, rowStartX + getOff * dotStep + 22));
+    const extraLabelX = Math.min(
+      640,
+      Math.max(extraBoxX + extraBoxW / 2, rowStartX + getOff * dotStep + 22),
+    );
 
     return (
       <StageFrame ariaLabel="平面公交车上下车场景舞台">
         {scene.annotation && (
-          <motion.g initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}>
-            <rect x="90" y="18" width="580" height="36" rx="12" fill="var(--bg-surface)" stroke="var(--border-strong)" />
-            <text x="380" y="41" textAnchor="middle" fontSize="14" fontWeight="700" fill="var(--ink-primary)">
+          <motion.g
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <rect
+              x="90"
+              y="18"
+              width="580"
+              height="36"
+              rx="12"
+              fill="var(--bg-surface)"
+              stroke="var(--border-strong)"
+            />
+            <text
+              x="380"
+              y="41"
+              textAnchor="middle"
+              fontSize="14"
+              fontWeight="700"
+              fill="var(--ink-primary)"
+            >
               {scene.annotation}
             </text>
           </motion.g>
         )}
 
         {/* Road & Bus Stop Sign (Clean Flat 2D) */}
-        <line x1="56" y1="226" x2="704" y2="226" stroke="var(--border-strong)" strokeWidth="2.5" strokeLinecap="round" />
+        <line
+          x1="56"
+          y1="226"
+          x2="704"
+          y2="226"
+          stroke="var(--border-strong)"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
         <g transform="translate(626, 132)">
-          <line x1="16" y1="24" x2="16" y2="94" stroke="var(--ink-secondary)" strokeWidth="3" strokeLinecap="round" />
-          <rect x="-12" y="0" width="56" height="28" rx="8" fill="var(--accent-teal-soft)" stroke="var(--accent-teal)" strokeWidth="2" />
-          <text x="16" y="18" textAnchor="middle" fontSize="11.5" fontWeight="800" fill="var(--accent-teal)">
+          <line
+            x1="16"
+            y1="24"
+            x2="16"
+            y2="94"
+            stroke="var(--ink-secondary)"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <rect
+            x="-12"
+            y="0"
+            width="56"
+            height="28"
+            rx="8"
+            fill="var(--accent-teal-soft)"
+            stroke="var(--accent-teal)"
+            strokeWidth="2"
+          />
+          <text
+            x="16"
+            y="18"
+            textAnchor="middle"
+            fontSize="11.5"
+            fontWeight="800"
+            fill="var(--accent-teal)"
+          >
             少年宫站
           </text>
         </g>
@@ -95,11 +158,34 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
             animate={{ opacity: isTotal ? 0.35 : 1, x: isTotal ? -8 : 0 }}
             transition={{ type: "spring", stiffness: 220, damping: 22 }}
           >
-            <rect x="0" y="0" width="104" height="58" rx="14" fill="rgba(199, 125, 25, 0.14)" stroke="var(--accent-amber)" strokeWidth="2" />
-            <text x="52" y="23" textAnchor="middle" fontSize="12" fontWeight="700" fill="var(--accent-amber)">
+            <rect
+              x="0"
+              y="0"
+              width="104"
+              height="58"
+              rx="14"
+              fill="rgba(199, 125, 25, 0.14)"
+              stroke="var(--accent-amber)"
+              strokeWidth="2"
+            />
+            <text
+              x="52"
+              y="23"
+              textAnchor="middle"
+              fontSize="12"
+              fontWeight="700"
+              fill="var(--accent-amber)"
+            >
               ← 下车
             </text>
-            <text x="52" y="45" textAnchor="middle" fontSize="16" fontWeight="900" fill="var(--ink-primary)">
+            <text
+              x="52"
+              y="45"
+              textAnchor="middle"
+              fontSize="16"
+              fontWeight="900"
+              fill="var(--ink-primary)"
+            >
               {getOff} 人
             </text>
           </motion.g>
@@ -117,7 +203,14 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
             stroke="var(--ink-primary)"
             strokeWidth="2.5"
           />
-          <rect x="2" y="74" width="280" height="12" fill="#f5a623" fillOpacity="0.45" />
+          <rect
+            x="2"
+            y="74"
+            width="280"
+            height="12"
+            fill="#f5a623"
+            fillOpacity="0.45"
+          />
           {[18, 66, 114, 162].map((wx, i) => (
             <rect
               key={i}
@@ -137,10 +230,31 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
             stroke="var(--ink-primary)"
             strokeWidth="1.8"
           />
-          <circle cx="274" cy="86" r="5" fill="#fff5cc" stroke="var(--ink-primary)" strokeWidth="1.5" />
-          <circle cx="64" cy="112" r="17" fill="#32302e" stroke="var(--bg-surface)" strokeWidth="3" />
+          <circle
+            cx="274"
+            cy="86"
+            r="5"
+            fill="#fff5cc"
+            stroke="var(--ink-primary)"
+            strokeWidth="1.5"
+          />
+          <circle
+            cx="64"
+            cy="112"
+            r="17"
+            fill="#32302e"
+            stroke="var(--bg-surface)"
+            strokeWidth="3"
+          />
           <circle cx="64" cy="112" r="6" fill="#d9d4cb" />
-          <circle cx="222" cy="112" r="17" fill="#32302e" stroke="var(--bg-surface)" strokeWidth="3" />
+          <circle
+            cx="222"
+            cy="112"
+            r="17"
+            fill="#32302e"
+            stroke="var(--bg-surface)"
+            strokeWidth="3"
+          />
           <circle cx="222" cy="112" r="6" fill="#d9d4cb" />
 
           {/* Passenger Counter inside Bus */}
@@ -168,7 +282,9 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
               fontWeight="800"
               fill={isTotal ? "#ffffff" : "var(--ink-primary)"}
             >
-              {isTotal ? `现在车上：${finalCount} 人` : `车上原有：${initial} 人`}
+              {isTotal
+                ? `现在车上：${finalCount} 人`
+                : `车上原有：${initial} 人`}
             </text>
           </motion.g>
         </g>
@@ -190,7 +306,9 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
               width="98"
               height="58"
               rx="14"
-              fill={isTotal ? "var(--accent-teal-soft)" : "var(--accent-coral-soft)"}
+              fill={
+                isTotal ? "var(--accent-teal-soft)" : "var(--accent-coral-soft)"
+              }
               stroke={isTotal ? "var(--accent-teal)" : "var(--accent-coral)"}
               strokeWidth="2"
             />
@@ -204,7 +322,14 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
             >
               {isTotal ? "净多出" : "← 上车"}
             </text>
-            <text x="49" y="45" textAnchor="middle" fontSize="16" fontWeight="900" fill="var(--ink-primary)">
+            <text
+              x="49"
+              y="45"
+              textAnchor="middle"
+              fontSize="16"
+              fontWeight="900"
+              fill="var(--ink-primary)"
+            >
               +{isTotal ? netChange : getOn} 人
             </text>
           </motion.g>
@@ -223,10 +348,24 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
               stroke="var(--border-subtle)"
               strokeWidth="1.5"
             />
-            <text x="192" y={offY} textAnchor="end" fontSize="13.5" fontWeight="800" fill="var(--ink-primary)">
+            <text
+              x="192"
+              y={offY}
+              textAnchor="end"
+              fontSize="13.5"
+              fontWeight="800"
+              fill="var(--ink-primary)"
+            >
               下车 ({getOff}人)
             </text>
-            <text x="192" y={onY} textAnchor="end" fontSize="13.5" fontWeight="800" fill="var(--ink-primary)">
+            <text
+              x="192"
+              y={onY}
+              textAnchor="end"
+              fontSize="13.5"
+              fontWeight="800"
+              fill="var(--ink-primary)"
+            >
               上车 ({getOn}人)
             </text>
 
@@ -247,7 +386,11 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
                   key={`on-p-${i}`}
                   x={rowStartX + i * dotStep}
                   y={onY - 2}
-                  fill={isOffset && !isMatched ? "var(--accent-coral)" : "var(--accent-teal)"}
+                  fill={
+                    isOffset && !isMatched
+                      ? "var(--accent-coral)"
+                      : "var(--accent-teal)"
+                  }
                   faded={isOffset && isMatched}
                 />
               );
@@ -302,13 +445,23 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
             )}
 
             {!isOffset && (
-              <text x="656" y="336" textAnchor="end" fontSize="13" fontWeight="700" fill="var(--accent-coral)">
+              <text
+                x="656"
+                y="336"
+                textAnchor="end"
+                fontSize="13"
+                fontWeight="700"
+                fill="var(--accent-coral)"
+              >
                 比一比：哪一排更长？
               </text>
             )}
           </g>
         ) : (
-          <motion.g initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
+          <motion.g
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
             <rect
               x="96"
               y="268"
@@ -319,16 +472,56 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
               stroke="var(--accent-teal)"
               strokeWidth="2"
             />
-            <rect x="128" y="294" width="350" height="40" rx="10" fill="var(--accent-teal-soft)" stroke="var(--accent-teal)" strokeWidth="2" />
-            <text x="303" y="319" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--ink-primary)">
+            <rect
+              x="128"
+              y="294"
+              width="350"
+              height="40"
+              rx="10"
+              fill="var(--accent-teal-soft)"
+              stroke="var(--accent-teal)"
+              strokeWidth="2"
+            />
+            <text
+              x="303"
+              y="319"
+              textAnchor="middle"
+              fontSize="14.5"
+              fontWeight="800"
+              fill="var(--ink-primary)"
+            >
               原来车上：{initial} 人
             </text>
-            <rect x="486" y="294" width="146" height="40" rx="10" fill="var(--accent-coral-soft)" stroke="var(--accent-coral)" strokeWidth="2" />
-            <text x="559" y="319" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--accent-coral)">
+            <rect
+              x="486"
+              y="294"
+              width="146"
+              height="40"
+              rx="10"
+              fill="var(--accent-coral-soft)"
+              stroke="var(--accent-coral)"
+              strokeWidth="2"
+            />
+            <text
+              x="559"
+              y="319"
+              textAnchor="middle"
+              fontSize="14.5"
+              fontWeight="800"
+              fill="var(--accent-coral)"
+            >
               多出 +{scene.busVisual?.hideNetChange ? "?" : netChange} 人
             </text>
-            <text x="380" y="364" textAnchor="middle" fontSize="14.5" fontWeight="800" fill="var(--ink-primary)">
-              合起来：{initial} + {netChange} = {finalCount} 人（顺序验算：{initial} - {getOff} + {getOn} = {finalCount} 人 ✓）
+            <text
+              x="380"
+              y="364"
+              textAnchor="middle"
+              fontSize="14.5"
+              fontWeight="800"
+              fill="var(--ink-primary)"
+            >
+              合起来：{initial} + {netChange} = {finalCount} 人（顺序验算：
+              {initial} - {getOff} + {getOn} = {finalCount} 人 ✓）
             </text>
           </motion.g>
         )}
@@ -362,7 +555,10 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
     return (
       <StageFrame ariaLabel="实物移多补少动态舞台">
         {scene.annotation && (
-          <motion.g initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}>
+          <motion.g
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
             <rect
               x="90"
               y="22"
@@ -483,7 +679,13 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
                 stroke="var(--bg-surface)"
                 strokeWidth="2"
               />
-              <circle cx="-3" cy="-3" r={radius * 0.25} fill="#ffffff" fillOpacity="0.55" />
+              <circle
+                cx="-3"
+                cy="-3"
+                r={radius * 0.25}
+                fill="#ffffff"
+                fillOpacity="0.55"
+              />
             </motion.g>
           );
         })}
@@ -521,7 +723,13 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
                 strokeWidth="2"
                 filter={isMoving ? "url(#fig-soft-shadow)" : undefined}
               />
-              <circle cx="-3" cy="-3" r={radius * 0.25} fill="#ffffff" fillOpacity="0.55" />
+              <circle
+                cx="-3"
+                cy="-3"
+                r={radius * 0.25}
+                fill="#ffffff"
+                fillOpacity="0.55"
+              />
             </motion.g>
           );
         })}
@@ -593,11 +801,18 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
         const y = startY + rowIdx * rowGap;
         const palette = COLOR_MAP[row.color];
         const totalRowW = Math.max(90, row.visualTotalRatio * maxBarW);
-        const hasExtra = typeof row.extraValue === "number" && row.extraValue !== 0;
-        const extraVisualRatio = hasExtra ? Math.min(0.32, Math.max(0.16, Math.abs(row.extraValue!) / 60)) : 0;
-        const baseW = hasExtra && row.extraValue! > 0
-          ? totalRowW * (1 - extraVisualRatio)
-          : totalRowW;
+        const hasExtra =
+          typeof row.extraValue === "number" && row.extraValue !== 0;
+        const extraVisualRatio = hasExtra
+          ? row.baseValue !== undefined
+            ? Math.abs(row.extraValue!) /
+              (row.baseValue * row.parts + Math.abs(row.extraValue!))
+            : Math.min(0.32, Math.max(0.16, Math.abs(row.extraValue!) / 60))
+          : 0;
+        const baseW =
+          hasExtra && row.extraValue! > 0
+            ? totalRowW * (1 - extraVisualRatio)
+            : totalRowW;
         const extraW = hasExtra ? totalRowW * extraVisualRatio : 0;
         const singlePartW = baseW / Math.max(1, row.parts);
         const extraOffset = row.extraState === "detached" ? 28 : 0;
@@ -666,17 +881,23 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
                   height={barH}
                   rx="8"
                   fill={
-                    row.extraState === "highlighted" || row.extraState === "detached"
+                    row.extraState === "highlighted" ||
+                    row.extraState === "detached"
                       ? "url(#fig-hatch-coral)"
                       : palette.soft
                   }
                   stroke={
-                    row.extraState === "highlighted" || row.extraState === "detached"
+                    row.extraState === "highlighted" ||
+                    row.extraState === "detached"
                       ? "var(--accent-coral)"
                       : palette.stroke
                   }
                   strokeWidth="2"
-                  strokeDasharray={row.extraState === "faded" || row.extraState === "detached" ? "5 3" : undefined}
+                  strokeDasharray={
+                    row.extraState === "faded" || row.extraState === "detached"
+                      ? "5 3"
+                      : undefined
+                  }
                 />
                 {row.extraLabel && (
                   <text
@@ -686,7 +907,8 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
                     fontSize="13"
                     fontWeight="700"
                     fill={
-                      row.extraState === "detached" || row.extraState === "highlighted"
+                      row.extraState === "detached" ||
+                      row.extraState === "highlighted"
                         ? "var(--accent-coral)"
                         : "var(--ink-primary)"
                     }
@@ -777,33 +999,34 @@ export function SegmentBarEngine({ scene }: { scene: SegmentBarSceneState }) {
             initial={{ opacity: 0, x: 8 }}
             animate={{ opacity: 1, x: 0 }}
           >
-          <path
-            d={`M 0 0 Q 16 0 16 20 L 16 ${(scene.rows.length - 1) * rowGap / 2 + 12} Q 16 ${(scene.rows.length - 1) * rowGap / 2 + 22} 28 ${(scene.rows.length - 1) * rowGap / 2 + 22} Q 16 ${(scene.rows.length - 1) * rowGap / 2 + 22} 16 ${(scene.rows.length - 1) * rowGap / 2 + 32} L 16 ${(scene.rows.length - 1) * rowGap + barH - 20} Q 16 ${(scene.rows.length - 1) * rowGap + barH} 0 ${(scene.rows.length - 1) * rowGap + barH}`}
-            fill="none"
-            stroke={
-              scene.totalBrace.state === "adjusted"
-                ? "var(--accent-coral)"
-                : scene.totalBrace.state === "solved"
-                  ? "var(--accent-teal)"
-                  : "var(--ink-primary)"
-            }
-            strokeWidth="2.2"
-          />
-          <text
-            x="36"
-            y={(scene.rows.length - 1) * rowGap / 2 + 26}
-            fontSize="15"
-            fontWeight="700"
-            fill={
-              scene.totalBrace.state === "adjusted"
-                ? "var(--accent-coral)"
-                : scene.totalBrace.state === "solved"
-                  ? "var(--accent-teal)"
-                  : "var(--ink-primary)"
-            }
-          >
-            {scene.totalBrace.label}
-          </text>
+            <path
+              d={`M 0 0 Q 16 0 16 20 L 16 ${((scene.rows.length - 1) * rowGap) / 2 + 12} Q 16 ${((scene.rows.length - 1) * rowGap) / 2 + 22} 28 ${((scene.rows.length - 1) * rowGap) / 2 + 22} Q 16 ${((scene.rows.length - 1) * rowGap) / 2 + 22} 16 ${((scene.rows.length - 1) * rowGap) / 2 + 32} L 16 ${(scene.rows.length - 1) * rowGap + barH - 20} Q 16 ${(scene.rows.length - 1) * rowGap + barH} 0 ${(scene.rows.length - 1) * rowGap + barH}`}
+              fill="none"
+              stroke={
+                scene.totalBrace.state === "adjusted"
+                  ? "var(--accent-coral)"
+                  : scene.totalBrace.state === "solved"
+                    ? "var(--accent-teal)"
+                    : "var(--ink-primary)"
+              }
+              strokeWidth="2.2"
+            />
+            <text
+              x="0"
+              y={(scene.rows.length - 1) * rowGap + barH + 28}
+              textAnchor="end"
+              fontSize="15"
+              fontWeight="700"
+              fill={
+                scene.totalBrace.state === "adjusted"
+                  ? "var(--accent-coral)"
+                  : scene.totalBrace.state === "solved"
+                    ? "var(--accent-teal)"
+                    : "var(--ink-primary)"
+              }
+            >
+              {scene.totalBrace.label}
+            </text>
           </motion.g>
         </g>
       )}

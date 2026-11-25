@@ -23,7 +23,10 @@ export function FormulaCard({ formulas, activeIndices }: FormulaCardProps) {
     <section className="fig-card overflow-hidden">
       <div className="flex items-center justify-between border-b border-dashed border-[var(--border-subtle)] bg-[var(--bg-stage)] px-4 py-3">
         <div className="flex items-center gap-2 text-xs font-extrabold text-[var(--ink-primary)]">
-          <NotebookPen className="h-4 w-4 text-[var(--accent-coral)]" aria-hidden="true" />
+          <NotebookPen
+            className="h-4 w-4 text-[var(--accent-coral)]"
+            aria-hidden="true"
+          />
           <span>算式草稿本</span>
         </div>
         <span className="rounded-full bg-[var(--bg-surface-muted)] px-2 py-0.5 text-[11px] font-semibold text-[var(--ink-secondary)]">
@@ -33,7 +36,9 @@ export function FormulaCard({ formulas, activeIndices }: FormulaCardProps) {
 
       <div className="space-y-1.5 p-3">
         {activeIndices.length === 0 && (
-          <p className="px-3 py-2 text-sm text-[var(--ink-secondary)]">先看图想一想，算式会在讲解后揭晓。</p>
+          <p className="px-3 py-2 text-sm text-[var(--ink-secondary)]">
+            先看图想一想，算式会在讲解后揭晓。
+          </p>
         )}
         {formulas.map((line, idx) => {
           if (!activeIndices.includes(idx)) return null;

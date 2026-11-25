@@ -156,10 +156,11 @@ export function TopBar({
 
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--border-subtle)] bg-[var(--bg-page)]/94 backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1360px] items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
+      <div className="mx-auto flex max-w-[1360px] flex-wrap items-center justify-between sm:flex-nowrap gap-3 px-4 py-2.5 sm:px-6">
         {/* Left: Brand Logo (flush-left aligned with main content) + Drawer + Grade Select + Lesson Select */}
-        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-          <button
+        <div className="flex w-full min-w-0 items-center gap-2 sm:w-auto sm:gap-2.5">
+          <Button
+            aria-label="图数实验室"
             type="button"
             onClick={() => {
               onSelectEdition("doubanjiang");
@@ -176,7 +177,7 @@ export function TopBar({
                 <path d="M26 10.5L16 16V27L26 21.5Z" fill="#c9bfae" />
               </svg>
             </span>
-            <span className="flex flex-col leading-tight">
+            <span className="hidden flex-col leading-tight sm:flex">
               <span className="text-base font-extrabold tracking-tight text-[var(--ink-primary)]">
                 图数实验室
               </span>
@@ -184,7 +185,7 @@ export function TopBar({
                 {editionMeta.shortName}
               </span>
             </span>
-          </button>
+          </Button>
 
           <Drawer side="left" open={drawerOpen} onOpenChange={setDrawerOpen}>
             <DrawerTrigger
@@ -217,7 +218,10 @@ export function TopBar({
               <div className="space-y-3 border-b border-[var(--border-subtle)] py-3">
                 <div>
                   <div className="mb-1.5 flex items-center gap-1 text-[11px] font-bold text-[var(--ink-muted)]">
-                    <BookMarked className="h-3.5 w-3.5 text-[var(--accent-teal)]" aria-hidden="true" />
+                    <BookMarked
+                      className="h-3.5 w-3.5 text-[var(--accent-teal)]"
+                      aria-hidden="true"
+                    />
                     <span>奥数教材版本</span>
                   </div>
                   <ToggleGroup
@@ -325,7 +329,10 @@ export function TopBar({
                   <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-stage)] p-4 text-center text-xs text-[var(--ink-secondary)] space-y-2">
                     <p className="font-semibold text-[var(--ink-primary)]">
                       {editionMeta.shortName} ·{" "}
-                      {GRADE_CATALOG.find((g) => g.value === selectedGrade)?.label}
+                      {
+                        GRADE_CATALOG.find((g) => g.value === selectedGrade)
+                          ?.label
+                      }
                       正在制作中
                     </p>
                     <p>可先切换到「二年级 / 三年级 / 四年级」体验动图。</p>
@@ -339,13 +346,20 @@ export function TopBar({
                       <ul className="space-y-1">
                         {chapterLessons.map((lesson) => {
                           const isActive = lesson.id === activeLessonId;
-                          const meta = getLessonMetaForEdition(lesson, selectedEdition);
+                          const meta = getLessonMetaForEdition(
+                            lesson,
+                            selectedEdition,
+                          );
                           const visibleVariants =
                             selectedTier === "all"
                               ? lesson.variants
-                              : lesson.variants.filter((v) => v.tier === selectedTier);
+                              : lesson.variants.filter(
+                                  (v) => v.tier === selectedTier,
+                                );
                           const doneInLesson = visibleVariants.filter((v) =>
-                            progress.completedVariants.includes(`${lesson.id}:${v.id}`),
+                            progress.completedVariants.includes(
+                              `${lesson.id}:${v.id}`,
+                            ),
                           ).length;
 
                           return (
@@ -412,14 +426,23 @@ export function TopBar({
           >
             <SelectTrigger aria-label="选择年级" className="h-9 min-w-[106px]">
               <span className="inline-flex items-center gap-1.5">
-                <GraduationCap className="h-4 w-4 text-[var(--accent-coral)]" aria-hidden="true" />
+                <GraduationCap
+                  className="h-4 w-4 text-[var(--accent-coral)]"
+                  aria-hidden="true"
+                />
                 <SelectValue />
               </span>
-              <ChevronDown className="h-3.5 w-3.5 text-[var(--ink-muted)]" aria-hidden="true" />
+              <ChevronDown
+                className="h-3.5 w-3.5 text-[var(--ink-muted)]"
+                aria-hidden="true"
+              />
             </SelectTrigger>
             <SelectContent sideOffset={6} align="start">
               {GRADE_CATALOG.map((grade, index) => {
-                const count = getLessonsByGrade(grade.value, selectedEdition).length;
+                const count = getLessonsByGrade(
+                  grade.value,
+                  selectedEdition,
+                ).length;
                 return (
                   <div key={grade.value}>
                     {index === 1 && <SelectSeparator />}
@@ -456,14 +479,23 @@ export function TopBar({
                 if (next) onSelectLesson(next);
               }}
             >
-              <SelectTrigger aria-label="切换本年级专题" className="h-9 max-w-[180px] sm:max-w-[210px]">
+              <SelectTrigger
+                aria-label="切换本年级专题"
+                className="h-9 min-w-0 max-w-[150px] sm:max-w-[210px]"
+              >
                 <span className="inline-flex items-center gap-1.5 truncate">
-                  <BookOpen className="h-3.5 w-3.5 shrink-0 text-[var(--accent-teal)]" aria-hidden="true" />
+                  <BookOpen
+                    className="h-3.5 w-3.5 shrink-0 text-[var(--accent-teal)]"
+                    aria-hidden="true"
+                  />
                   <span className="truncate">
                     <SelectValue />
                   </span>
                 </span>
-                <ChevronDown className="h-3.5 w-3.5 shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
+                <ChevronDown
+                  className="h-3.5 w-3.5 shrink-0 text-[var(--ink-muted)]"
+                  aria-hidden="true"
+                />
               </SelectTrigger>
               <SelectContent sideOffset={6} align="start">
                 {drawerLessons.map((lesson) => {
@@ -495,7 +527,7 @@ export function TopBar({
         </div>
 
         {/* Right: Teaching Mode + Audio Toggle + Star Counter + Search & Theme */}
-        <div className="flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           <Button
             onClick={onEnterTeachingMode}
             aria-label="进入授课模式"
@@ -526,7 +558,10 @@ export function TopBar({
           )}
 
           <div className="hidden md:flex h-10 items-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 text-xs font-bold text-[var(--ink-primary)]">
-            <Star className="h-4 w-4 fill-[var(--accent-amber)] text-[var(--accent-amber)]" aria-hidden="true" />
+            <Star
+              className="h-4 w-4 fill-[var(--accent-amber)] text-[var(--accent-amber)]"
+              aria-hidden="true"
+            />
             <span>
               {completedCount} / {totalVariants}
             </span>
@@ -545,7 +580,10 @@ export function TopBar({
               <div className="flex items-center justify-between border-b border-[var(--border-subtle)] px-4 py-2">
                 <DialogTitle className="sr-only">搜索奥数课程</DialogTitle>
                 <div className="flex flex-1 items-center gap-2">
-                  <Search className="h-4 w-4 text-[var(--ink-muted)]" aria-hidden="true" />
+                  <Search
+                    className="h-4 w-4 text-[var(--ink-muted)]"
+                    aria-hidden="true"
+                  />
                   <span className="text-xs font-semibold text-[var(--ink-muted)]">
                     {editionMeta.name} · 查找想学的专题
                   </span>

@@ -26,7 +26,8 @@ export type EngineKind =
 
 export interface ArraySwapUnit {
   id: string;
-  baseType: "chicken" | "rabbit" | "bike" | "tricycle" | "small-boat" | "big-boat";
+  baseType:
+    "chicken" | "rabbit" | "bike" | "tricycle" | "small-boat" | "big-boat";
   label: string;
   baseLegs: number;
   currentLegs: number;
@@ -62,6 +63,7 @@ export interface SegmentBarRow {
   extraState?: "normal" | "faded" | "detached" | "highlighted";
   /** Relative scale factor for visual width */
   visualTotalRatio: number;
+  baseValue?: number;
   /** Transfer preview (e.g. giving 4 candies to sibling) */
   transferNote?: string;
 }
@@ -107,6 +109,13 @@ export interface NumberLineSceneState {
   totalLength: number;
   hideLengthLabel?: boolean;
   hideCountSummary?: boolean;
+  measurement?: {
+    marks: number[];
+    from: number;
+    to: number;
+    label: string;
+    pencil?: { start: number; end: number };
+  };
   unitLabel: string;
   /** For tree planting */
   intervals?: number;
@@ -231,7 +240,8 @@ export interface MirrorClockSceneState {
 
 export interface ComboVisualSceneState {
   kind: "combo-visual";
-  mode: "pairing" | "permutation" | "handshake" | "money" | "make-ten" | "pattern";
+  mode:
+    "pairing" | "permutation" | "handshake" | "money" | "make-ten" | "pattern";
   patternCorners?: Array<number | null>;
   leftItems?: string[];
   rightItems?: string[];
@@ -239,7 +249,11 @@ export interface ComboVisualSceneState {
   /** Number of connections/rows to reveal */
   revealedCount?: number;
   /** For permutation / money / make-ten */
-  cards?: Array<{ id: string; text: string; tone?: "coral" | "teal" | "blue" | "muted" }>;
+  cards?: Array<{
+    id: string;
+    text: string;
+    tone?: "coral" | "teal" | "blue" | "muted";
+  }>;
   rows?: Array<{ label: string; badge: string; active?: boolean }>;
   annotation?: string;
 }

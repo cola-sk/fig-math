@@ -10,8 +10,9 @@ export function VennSetEngine({ scene }: { scene: VennSetSceneState }) {
 
   const onlyLeft = Math.max(0, scene.leftTotal - scene.overlapCount);
   const onlyRight = Math.max(0, scene.rightTotal - scene.overlapCount);
-  const visible = (key: NonNullable<VennSetSceneState["visibleValues"]>[number]) =>
-    !scene.visibleValues || scene.visibleValues.includes(key);
+  const visible = (
+    key: NonNullable<VennSetSceneState["visibleValues"]>[number],
+  ) => !scene.visibleValues || scene.visibleValues.includes(key);
   const unionCount = onlyLeft + scene.overlapCount + onlyRight;
 
   return (

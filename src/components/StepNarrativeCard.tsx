@@ -43,7 +43,7 @@ export function StepNarrativeCard({
 
   useEffect(() => {
     setSelectedOpt(null);
-  }, [step.step, step.title]);
+  }, [step.step, step.title, step.checkpoint]);
 
   const checkpoint = step.checkpoint;
   const chosenIdx = selectedOpt !== null ? Number(selectedOpt) : null;
@@ -84,7 +84,9 @@ export function StepNarrativeCard({
         </h2>
         <p
           className={`mt-2 text-[var(--ink-secondary)] ${
-            isYoungLearner ? "text-[15.5px] leading-7" : "text-sm leading-relaxed"
+            isYoungLearner
+              ? "text-[15.5px] leading-7"
+              : "text-sm leading-relaxed"
           }`}
         >
           {step.narration}
@@ -99,7 +101,13 @@ export function StepNarrativeCard({
               className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent-coral)]"
               aria-hidden="true"
             />
-            <div className={isYoungLearner ? "text-[13.5px] leading-6" : "text-xs leading-relaxed"}>
+            <div
+              className={
+                isYoungLearner
+                  ? "text-[13.5px] leading-6"
+                  : "text-xs leading-relaxed"
+              }
+            >
               <div className="font-bold text-[var(--accent-coral)]">
                 {step.tipTitle ?? "举一反三小口诀"}
               </div>
@@ -116,7 +124,10 @@ export function StepNarrativeCard({
         <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-stage)] p-3.5 space-y-2.5">
           <Field>
             <div className="flex items-center gap-1.5">
-              <HelpCircle className="h-4 w-4 text-[var(--accent-blue)]" aria-hidden="true" />
+              <HelpCircle
+                className="h-4 w-4 text-[var(--accent-blue)]"
+                aria-hidden="true"
+              />
               <FieldLabel
                 className={`font-bold text-[var(--ink-primary)] ${
                   isYoungLearner ? "text-sm" : "text-xs"
@@ -159,8 +170,11 @@ export function StepNarrativeCard({
             >
               {isAnsweredCorrect && (
                 <span className="mb-1 inline-flex items-center gap-1 rounded-full bg-[var(--bg-surface)] px-2 py-0.5 text-[11px] font-extrabold text-[var(--accent-amber)] shadow-xs">
-                  <Star className="h-3 w-3 fill-[var(--accent-amber)]" aria-hidden="true" />
-                  +1 颗智慧星！
+                  <Star
+                    className="h-3 w-3 fill-[var(--accent-amber)]"
+                    aria-hidden="true"
+                  />
+                  这一步想对了！
                 </span>
               )}
               <div>
@@ -174,43 +188,45 @@ export function StepNarrativeCard({
       )}
 
       {/* Chunky Touch-Friendly Step Navigation */}
-      {showNavigation && <div className="flex items-center gap-2.5 pt-1">
-        <Button
-          onClick={onPrev}
-          disabled={step.step <= 1}
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-3 text-sm font-bold text-[var(--ink-secondary)] transition hover:border-[var(--border-strong)] disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          上一步
-        </Button>
+      {showNavigation && (
+        <div className="flex items-center gap-2.5 pt-1">
+          <Button
+            onClick={onPrev}
+            disabled={step.step <= 1}
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-3 text-sm font-bold text-[var(--ink-secondary)] transition hover:border-[var(--border-strong)] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            上一步
+          </Button>
 
-        {!isLastStep ? (
-          <Button
-            onClick={onNext}
-            className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-coral)] px-5 py-3 text-[15px] font-extrabold text-white shadow-sm transition hover:brightness-105"
-          >
-            <span>下一步</span>
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Button>
-        ) : (
-          <Button
-            onClick={onNextLesson}
-            className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-teal)] px-5 py-3 text-[15px] font-extrabold text-white shadow-sm transition hover:brightness-105"
-          >
-            {nextLessonTitle ? (
-              <>
-                <Sparkles className="h-4 w-4" aria-hidden="true" />
-                <span>下一讲：{nextLessonTitle}</span>
-              </>
-            ) : (
-              <>
-                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                <span>太棒了，本讲完成！</span>
-              </>
-            )}
-          </Button>
-        )}
-      </div>}
+          {!isLastStep ? (
+            <Button
+              onClick={onNext}
+              className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-coral)] px-5 py-3 text-[15px] font-extrabold text-white shadow-sm transition hover:brightness-105"
+            >
+              <span>下一步</span>
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Button>
+          ) : (
+            <Button
+              onClick={onNextLesson}
+              className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-teal)] px-5 py-3 text-[15px] font-extrabold text-white shadow-sm transition hover:brightness-105"
+            >
+              {nextLessonTitle ? (
+                <>
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+                  <span>下一讲：{nextLessonTitle}</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                  <span>太棒了，本讲完成！</span>
+                </>
+              )}
+            </Button>
+          )}
+        </div>
+      )}
     </section>
   );
 }

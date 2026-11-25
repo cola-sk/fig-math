@@ -1,6 +1,5 @@
 import { teachingSteps, numberCheckpoint } from "../teachingSteps";
 import type { MathLesson } from "../../types/lesson";
-
 export const g2SeesawLesson: MathLesson = {
   id: "g2-seesaw",
   chapterId: "g2-substitution-thinking",
@@ -9,7 +8,8 @@ export const g2SeesawLesson: MathLesson = {
   gradeLabel: "二年级",
   weekLabel: "p.69",
   title: "跷跷板的奥秘（比轻重与等量天平）",
-  summary: "跷跷板哪边沉下去，哪边就更重！如果两边平平的，说明两边一样重，可以把同样重的拿走再比。",
+  summary:
+    "跷跷板哪边沉下去，哪边就更重！如果两边平平的，说明两边一样重，可以把同样重的拿走再比。",
   engine: "balance-puzzle",
   keywords: ["二年级", "跷跷板", "比轻重", "天平", "代换思维"],
   editionMappings: [
@@ -34,25 +34,93 @@ export const g2SeesawLesson: MathLesson = {
       build: () => ({
         problemStatement: `在动物乐园里，1 只小狗的重量等于 2 只小猫，1 只小猫的重量等于 3 只小鸭。请问 1 只小狗等于几只小鸭？谁最重？`,
         formulas: [
-          { id: "ss-1", latex: `1\\text{ 只小猫} = 3\\text{ 只小鸭}`, comment: "先看最小单位" },
-          { id: "ss-2", latex: `1\\text{ 只小狗} = 2 \\times 3 = 6\\text{ (只小鸭)}`, comment: "把 2 只小猫换成小鸭" },
+          {
+            id: "ss-1",
+            latex: `1\\text{ 只小猫} = 3\\text{ 只小鸭}`,
+            comment: "先看最小单位",
+          },
+          {
+            id: "ss-2",
+            latex: `1\\text{ 只小狗} = 2 \\times 3 = 6\\text{ (只小鸭)}`,
+            comment: "把 2 只小猫换成小鸭",
+          },
         ],
         steps: teachingSteps([
-{ title: `一只小狗和一只小猫，谁更重？`, narration: `1 只小狗能和 2 只小猫保持平衡。想一想，单独 1 只小猫能和小狗一样重吗？`, sceneState: { kind: "balance-puzzle", mode: "seesaw", tiltDeg: 0, leftItems: [`1只小狗`], rightItems: [`2只小猫`], annotation: `两只小猫合起来，才和小狗一样重` }, activeFormulaIndices: [] },
-{ title: `找小猫当桥梁，两只小猫能换几只小鸭？`, narration: `小狗比一只小猫重。再看第二架：1 只小猫和 3 只小鸭一样重。原来那 2 只小猫，分别换一换，一共有几只小鸭？`, sceneState: { kind: "balance-puzzle", mode: "seesaw", tiltDeg: 0, leftItems: [`1只小猫`], rightItems: [`3只小鸭`], annotation: `每只小猫换 3 只小鸭，两只共 ? 只` }, activeFormulaIndices: [0], checkpoint: numberCheckpoint(`两只小猫共能换几只小鸭？`, 6, ` 只`, `每只小猫都要换一组小鸭。`) },
-{ title: `换成同一种小鸭，谁最重？`, narration: `2 只小猫换成 3 + 3 = 6 只小鸭，所以 1 只小狗等于 6 只小鸭。现在比较一只小狗、一只小猫、一只小鸭，谁最重？`, sceneState: { kind: "balance-puzzle", mode: "seesaw", tiltDeg: 0, leftItems: [`1只小狗`], rightItems: [`6只小鸭`], annotation: `已换成小鸭，再给三种动物排轻重` }, activeFormulaIndices: [0, 1], checkpoint: { question: `三种动物中，哪一种最重？`, options: ["小猫", "小狗", "小鸭"], correctIndex: 1, feedbackCorrect: `对！一只小狗相当于的小鸭最多。`, feedbackWrong: `把三种动物都换成小鸭，再比较。` } },
-{ tag: `验证与回顾`, title: "把 2 只小猫全换成小鸭：1 只小狗 = 6 只小鸭！", narration: `小狗最重，小猫第二，小鸭最轻。检验：两组 3 只小鸭，正好是 6 只，能换回 2 只小猫，再换回 1 只小狗。`, tipTitle: "比轻重小秘诀", tipBody: "遇到多个跷跷板比轻重，找最小的那个做“标准”，借助中间桥梁全部换成它！", activeFormulaIndices: [0, 1], liveStats: [
+          {
+            title: `一只小狗和一只小猫，谁更重？`,
+            narration: `1 只小狗能和 2 只小猫保持平衡。想一想，单独 1 只小猫能和小狗一样重吗？`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "seesaw",
+              tiltDeg: 0,
+              leftItems: [`1只小狗`],
+              rightItems: [`2只小猫`],
+              annotation: `两只小猫合起来，才和小狗一样重`,
+            },
+            activeFormulaIndices: [],
+          },
+          {
+            title: `找小猫当桥梁，两只小猫能换几只小鸭？`,
+            narration: `小狗比一只小猫重。再看第二架：1 只小猫和 3 只小鸭一样重。原来那 2 只小猫，分别换一换，一共有几只小鸭？`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "seesaw",
+              tiltDeg: 0,
+              leftItems: [`1只小猫`],
+              rightItems: [`3只小鸭`],
+              annotation: `每只小猫换 3 只小鸭，两只共 ? 只`,
+            },
+            activeFormulaIndices: [0],
+            checkpoint: numberCheckpoint(
+              `两只小猫共能换几只小鸭？`,
+              6,
+              ` 只`,
+              `每只小猫都要换一组小鸭。`,
+            ),
+          },
+          {
+            title: `换成同一种小鸭，谁最重？`,
+            narration: `2 只小猫换成 3 + 3 = 6 只小鸭，所以 1 只小狗等于 6 只小鸭。现在比较一只小狗、一只小猫、一只小鸭，谁最重？`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "seesaw",
+              tiltDeg: 0,
+              leftItems: [`1只小狗`],
+              rightItems: [`6只小鸭`],
+              annotation: `已换成小鸭，再给三种动物排轻重`,
+            },
+            activeFormulaIndices: [0, 1],
+            checkpoint: {
+              question: `三种动物中，哪一种最重？`,
+              options: ["小猫", "小狗", "小鸭"],
+              correctIndex: 1,
+              feedbackCorrect: `对！一只小狗相当于的小鸭最多。`,
+              feedbackWrong: `把三种动物都换成小鸭，再比较。`,
+            },
+          },
+          {
+            tag: `验证与回顾`,
+            title: "把 2 只小猫全换成小鸭：1 只小狗 = 6 只小鸭！",
+            narration: `小狗最重，小猫第二，小鸭最轻。检验：两组 3 只小鸭，正好是 6 只，能换回 2 只小猫，再换回 1 只小狗。`,
+            tipTitle: "比轻重小秘诀",
+            tipBody:
+              "遇到多个跷跷板比轻重，找最小的那个做“标准”，借助中间桥梁全部换成它！",
+            activeFormulaIndices: [0, 1],
+            liveStats: [
               { label: "1 只小狗", value: "6 只小鸭", tone: "coral" },
               { label: "最重的是", value: "小狗", tone: "teal" },
-            ], sceneState: {
+            ],
+            sceneState: {
               kind: "balance-puzzle",
               mode: "seesaw",
               tiltDeg: 0,
               leftItems: ["1只小狗"],
               rightItems: ["6只小鸭"],
-              annotation: "代换成功：1 只小狗 = 2 只小猫 = 6 只小鸭！（小狗 > 小猫 > 小鸭）",
-            } }
-]),
+              annotation:
+                "代换成功：1 只小狗 = 2 只小猫 = 6 只小鸭！（小狗 > 小猫 > 小鸭）",
+            },
+          },
+        ]),
       }),
     },
     {
@@ -67,31 +135,80 @@ export const g2SeesawLesson: MathLesson = {
       build: () => ({
         problemStatement: `天平左边放着 1 个西瓜，右边放着 3 个菠萝，结果左边沉下去了！接着左边还是 1 个西瓜，右边放 4 个菠萝，天平刚好平衡。请问 1 个西瓜等于几个菠萝？`,
         formulas: [
-          { id: "ss-3", latex: `1\\text{ 个西瓜} > 3\\text{ 个菠萝}`, comment: "左边沉下去，说明西瓜更重" },
-          { id: "ss-4", latex: `1\\text{ 个西瓜} = 4\\text{ 个菠萝}`, comment: "两边平衡，说明一样重" },
+          {
+            id: "ss-3",
+            latex: `1\\text{ 个西瓜} > 3\\text{ 个菠萝}`,
+            comment: "左边沉下去，说明西瓜更重",
+          },
+          {
+            id: "ss-4",
+            latex: `1\\text{ 个西瓜} = 4\\text{ 个菠萝}`,
+            comment: "两边平衡，说明一样重",
+          },
         ],
         steps: teachingSteps([
-{ title: `看第一架，哪一边更重？`, narration: `1 个西瓜和 3 个菠萝放在两边，西瓜一边沉下去。低的一边和高的一边，哪边更重？`, sceneState: { ...({
+          {
+            title: `看第一架，哪一边更重？`,
+            narration: `1 个西瓜和 3 个菠萝放在两边，西瓜一边沉下去。低的一边和高的一边，哪边更重？`,
+            sceneState: {
               kind: "balance-puzzle",
               mode: "seesaw",
               tiltDeg: -10,
               leftItems: ["1个西瓜"],
               rightItems: ["3个菠萝"],
-              annotation: "左边沉下去：1 个西瓜比 3 个菠萝还要重，右边不够！",
-            }), annotation: `观察哪一边沉下去` }, activeFormulaIndices: [] },
-{ title: `再加一个菠萝，会出现什么变化？`, narration: `西瓜比 3 个菠萝合起来重。再看另一架：西瓜没换，右边多放 1 个菠萝后平衡了。平衡说明什么？`, sceneState: { kind: "balance-puzzle", mode: "seesaw", tiltDeg: 0, leftItems: [`1个西瓜`], rightItems: [`4个菠萝`], annotation: `天平平了，两边重量是什么关系？` }, activeFormulaIndices: [0] },
-{ title: `用平衡的那一架，能读出怎样的关系？`, narration: `天平平了，说明两边一样重。请数右边的菠萝：1 个西瓜和几个菠萝一样重？`, sceneState: { kind: "balance-puzzle", mode: "seesaw", tiltDeg: 0, leftItems: [`1个西瓜`], rightItems: [`4个菠萝`], annotation: `1 个西瓜 = ? 个菠萝` }, activeFormulaIndices: [0], checkpoint: numberCheckpoint(`1 个西瓜和几个菠萝一样重？`, 4, ` 个`, `平衡时才可以说两边一样重。`) },
-{ tag: `验证与回顾`, title: "右边变成 4 个菠萝，天平刚好平了！", narration: `1 个西瓜和 4 个菠萝一样重。拿走 1 个菠萝只剩 3 个，菠萝一边就变轻，与第一架的现象一致。`, activeFormulaIndices: [0, 1], liveStats: [
-              { label: "1 个西瓜", value: "4 个菠萝", tone: "teal" },
-            ], sceneState: {
+              annotation: `观察哪一边沉下去`,
+            },
+            activeFormulaIndices: [],
+          },
+          {
+            title: `再加一个菠萝，会出现什么变化？`,
+            narration: `西瓜比 3 个菠萝合起来重。再看另一架：西瓜没换，右边多放 1 个菠萝后平衡了。平衡说明什么？`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "seesaw",
+              tiltDeg: 0,
+              leftItems: [`1个西瓜`],
+              rightItems: [`4个菠萝`],
+              annotation: `天平平了，两边重量是什么关系？`,
+            },
+            activeFormulaIndices: [0],
+          },
+          {
+            title: `用平衡的那一架，能读出怎样的关系？`,
+            narration: `天平平了，说明两边一样重。请数右边的菠萝：1 个西瓜和几个菠萝一样重？`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "seesaw",
+              tiltDeg: 0,
+              leftItems: [`1个西瓜`],
+              rightItems: [`4个菠萝`],
+              annotation: `1 个西瓜 = ? 个菠萝`,
+            },
+            activeFormulaIndices: [0],
+            checkpoint: numberCheckpoint(
+              `1 个西瓜和几个菠萝一样重？`,
+              4,
+              ` 个`,
+              `平衡时才可以说两边一样重。`,
+            ),
+          },
+          {
+            tag: `验证与回顾`,
+            title: "右边变成 4 个菠萝，天平刚好平了！",
+            narration: `1 个西瓜和 4 个菠萝一样重。拿走 1 个菠萝只剩 3 个，菠萝一边就变轻，与第一架的现象一致。`,
+            activeFormulaIndices: [0, 1],
+            liveStats: [{ label: "1 个西瓜", value: "4 个菠萝", tone: "teal" }],
+            sceneState: {
               kind: "balance-puzzle",
               mode: "seesaw",
               tiltDeg: 0,
               leftItems: ["1个西瓜"],
               rightItems: ["4个菠萝"],
               annotation: "天平平衡啦：1 个西瓜 = 4 个菠萝！",
-            }, tipBody: `低的一边比较重，天平平了才相等。` }
-]),
+            },
+            tipBody: `低的一边比较重，天平平了才相等。`,
+          },
+        ]),
       }),
     },
   ],

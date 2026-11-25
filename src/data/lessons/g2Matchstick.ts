@@ -1,6 +1,5 @@
 import { teachingSteps } from "../teachingSteps";
 import type { MathLesson } from "../../types/lesson";
-
 export const g2MatchstickLesson: MathLesson = {
   id: "g2-matchstick",
   chapterId: "g2-divergent-thinking",
@@ -9,7 +8,8 @@ export const g2MatchstickLesson: MathLesson = {
   gradeLabel: "二年级",
   weekLabel: "p.111",
   title: "火柴谜（移动 1 根让等式成立）",
-  summary: "算式错了别急着擦！看看能不能把一个数字身上的火柴“借走 1 根”，或者把“+”和“-”变个身，让两边相等！",
+  summary:
+    "算式错了别急着擦！看看能不能把一个数字身上的火柴“借走 1 根”，或者把“+”和“-”变个身，让两边相等！",
   engine: "balance-puzzle",
   keywords: ["二年级", "火柴谜", "火柴棒", "等式成立", "发散思维"],
   editionMappings: [
@@ -34,15 +34,91 @@ export const g2MatchstickLesson: MathLesson = {
       build: () => ({
         problemStatement: `用火柴棒摆出了一个错误的算式：6 + 4 = 4。请你只移动 1 根火柴棒，让这个等式成立！`,
         formulas: [
-          { id: "ms-1", latex: `6 + 4 = 10 \\neq 4`, comment: "左边太大了（多了 6），需要变小" },
-          { id: "ms-2", latex: `8 - 4 = 4`, comment: "把 + 的竖棒移到 6 上变成 8！" },
+          {
+            id: "ms-1",
+            latex: `6 + 4 = 10 \\neq 4`,
+            comment: "左边太大了（多了 6），需要变小",
+          },
+          {
+            id: "ms-2",
+            latex: `8 - 4 = 4`,
+            comment: "把 + 的竖棒移到 6 上变成 8！",
+          },
         ],
         steps: teachingSteps([
-{ title: `两边相等吗？先看看哪里能改变`, narration: `火柴摆成 6 + 4 = 4。先比较等号两边，想想数字和运算符号上的哪一根可以移动。`, sceneState: { kind: "balance-puzzle", mode: "matchstick", matchBefore: `6 + 4 = 4`, matchAfter: undefined, matchMoveNote: `先观察火柴摆成的数字和符号`, annotation: `只移动一根，不能增添或丢掉` }, activeFormulaIndices: [] },
-{ title: `加号拿走竖棒后，会变成什么？`, narration: `左边原来是 10，右边是 4。加号中有一根竖棒，拿走后剩下什么符号？这根棒还必须放回别处。`, sceneState: { kind: "balance-puzzle", mode: "matchstick", matchBefore: `6 + 4 = 4`, matchAfter: undefined, matchMoveNote: `先看加号的那根竖棒`, annotation: `只移动一根，不能增添或丢掉` }, activeFormulaIndices: [0], checkpoint: { question: `加号拿走竖棒后变成什么？`, options: ["减号", "等号", "仍是加号"], correctIndex: 0, feedbackCorrect: `对，加号只留下横棒，就变成减号。`, feedbackWrong: `加号由一横一竖组成，拿走竖的看看。` } },
-{ title: `把拿出的竖棒放在 6 的缺口，会怎样？`, narration: `加号变减号后，把那根竖棒放进 6 的右上缺口。请观察七段数字的样子，变出的数字能让减法成立吗？`, sceneState: { kind: "balance-puzzle", mode: "matchstick", matchBefore: `6 + 4 = 4`, matchAfter: undefined, matchMoveNote: `把加号的竖棒移到 6 的右上缺口`, annotation: `只移动一根，不能增添或丢掉` }, activeFormulaIndices: [0], checkpoint: { question: `移动后是哪一道正确算式？`, options: ["8 - 4 = 4", "6 - 4 = 4"], correctIndex: 0, feedbackCorrect: `对，6 加上右上竖棒变 8，8 减 4 等于 4。`, feedbackWrong: `拿走和放入是同一根，数字和符号会同时改变。` } },
-{ title: `八减四等于四，再查是否只动一根`, narration: `移动后是 8 - 4 = 4。原来加号的竖棒变成 8 的右上竖棒，其余火柴都没动；左右两边都等于 4。`, sceneState: { kind: "balance-puzzle", mode: "matchstick", matchBefore: `6 + 4 = 4`, matchAfter: `8 - 4 = 4`, matchMoveNote: `+ 的竖棒 → 6 的右上缺口`, annotation: `只移动一根，不能增添或丢掉` }, activeFormulaIndices: [0, 1], tipTitle: `记住这个小办法`, tipBody: `先比两边，再试移动；算式要对，根数不变。`, liveStats: [{ label: `移动`, value: `1 根` },{ label: `左右两边`, value: `都是 4` }] }
-]),
+          {
+            title: `两边相等吗？先看看哪里能改变`,
+            narration: `火柴摆成 6 + 4 = 4。先比较等号两边，想想数字和运算符号上的哪一根可以移动。`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "matchstick",
+              matchBefore: `6 + 4 = 4`,
+              matchAfter: undefined,
+              matchMoveNote: `先观察火柴摆成的数字和符号`,
+              annotation: `只移动一根，不能增添或丢掉`,
+            },
+            activeFormulaIndices: [],
+          },
+          {
+            title: `加号拿走竖棒后，会变成什么？`,
+            narration: `左边原来是 10，右边是 4。加号中有一根竖棒，拿走后剩下什么符号？这根棒还必须放回别处。`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "matchstick",
+              matchBefore: `6 + 4 = 4`,
+              matchAfter: undefined,
+              matchMoveNote: `先看加号的那根竖棒`,
+              annotation: `只移动一根，不能增添或丢掉`,
+            },
+            activeFormulaIndices: [0],
+            checkpoint: {
+              question: `加号拿走竖棒后变成什么？`,
+              options: ["减号", "等号", "仍是加号"],
+              correctIndex: 0,
+              feedbackCorrect: `对，加号只留下横棒，就变成减号。`,
+              feedbackWrong: `加号由一横一竖组成，拿走竖的看看。`,
+            },
+          },
+          {
+            title: `把拿出的竖棒放在 6 的缺口，会怎样？`,
+            narration: `加号变减号后，把那根竖棒放进 6 的右上缺口。请观察七段数字的样子，变出的数字能让减法成立吗？`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "matchstick",
+              matchBefore: `6 + 4 = 4`,
+              matchAfter: undefined,
+              matchMoveNote: `把加号的竖棒移到 6 的右上缺口`,
+              annotation: `只移动一根，不能增添或丢掉`,
+            },
+            activeFormulaIndices: [0],
+            checkpoint: {
+              question: `移动后是哪一道正确算式？`,
+              options: ["8 - 4 = 4", "6 - 4 = 4"],
+              correctIndex: 0,
+              feedbackCorrect: `对，6 加上右上竖棒变 8，8 减 4 等于 4。`,
+              feedbackWrong: `拿走和放入是同一根，数字和符号会同时改变。`,
+            },
+          },
+          {
+            title: `八减四等于四，再查是否只动一根`,
+            narration: `移动后是 8 - 4 = 4。原来加号的竖棒变成 8 的右上竖棒，其余火柴都没动；左右两边都等于 4。`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "matchstick",
+              matchBefore: `6 + 4 = 4`,
+              matchAfter: `8 - 4 = 4`,
+              matchMoveNote: `+ 的竖棒 → 6 的右上缺口`,
+              annotation: `只移动一根，不能增添或丢掉`,
+            },
+            activeFormulaIndices: [0, 1],
+            tipTitle: `记住这个小办法`,
+            tipBody: `先比两边，再试移动；算式要对，根数不变。`,
+            liveStats: [
+              { label: `移动`, value: `1 根` },
+              { label: `左右两边`, value: `都是 4` },
+            ],
+          },
+        ]),
       }),
     },
     {
@@ -57,15 +133,84 @@ export const g2MatchstickLesson: MathLesson = {
       build: () => ({
         problemStatement: `请移动 1 根火柴棒，让错误算式“2 + 3 = 6”变成正确的算式！（数字按图中七段字形摆放）`,
         formulas: [
-          { id: "ms-3", latex: `2 \\xrightarrow{\\text{左下竖棒移到右下}} 3`, comment: "只在第一个数字内部移动一根" },
-          { id: "ms-4", latex: `3 + 3 = 6`, comment: "数字、符号以图中的七段火柴字形为准" },
+          {
+            id: "ms-3",
+            latex: `2 \\xrightarrow{\\text{左下竖棒移到右下}} 3`,
+            comment: "只在第一个数字内部移动一根",
+          },
+          {
+            id: "ms-4",
+            latex: `3 + 3 = 6`,
+            comment: "数字、符号以图中的七段火柴字形为准",
+          },
         ],
         steps: teachingSteps([
-{ title: `只在一个数字里面移动，能改对吗？`, narration: `火柴摆成 2 + 3 = 6。只能移动 1 根，不增不减。先看七段数字 2 和 3，它们哪里相同，哪里不同？`, sceneState: { kind: "balance-puzzle", mode: "matchstick", matchBefore: `2 + 3 = 6`, matchAfter: undefined, matchMoveNote: `先观察火柴摆成的数字和符号`, annotation: `只移动一根，不能增添或丢掉` }, activeFormulaIndices: [] },
-{ title: `数字 2 的哪一根可以挪到缺口？`, narration: `数字 2 的左下有竖棒，右下空着。试着把左下那根挪到右下，看看会形成哪个数字。`, sceneState: { kind: "balance-puzzle", mode: "matchstick", matchBefore: `2 + 3 = 6`, matchAfter: undefined, matchMoveNote: `只观察第一个数字，其他位置不动`, annotation: `只移动一根，不能增添或丢掉` }, activeFormulaIndices: [] },
-{ title: `数字变了以后，两边相等吗？`, narration: `把第一个数字的左下竖棒移到右下。先认出新的数字，再算左边，是否能和右边的 6 相等？`, sceneState: { kind: "balance-puzzle", mode: "matchstick", matchBefore: `2 + 3 = 6`, matchAfter: undefined, matchMoveNote: `第一个数字：左下竖棒 → 右下缺口`, annotation: `只移动一根，不能增添或丢掉` }, activeFormulaIndices: [], checkpoint: { question: `移动后得到哪一道正确算式？`, options: ["3 + 3 = 6", "2 + 2 = 6"], correctIndex: 0, feedbackCorrect: `对，2 的左下棒移到右下变成 3，3 加 3 等于 6。`, feedbackWrong: `只移动第一个数字的一根，另外的 3 和 6 都不变。` } },
-{ title: `三加三等于六，逐根检查完成`, narration: `移动后是 3 + 3 = 6。只把第一个数字 2 的左下竖棒移到右下，它就变成 3。其余火柴都保留，左边与右边都是 6。`, sceneState: { kind: "balance-puzzle", mode: "matchstick", matchBefore: `2 + 3 = 6`, matchAfter: `3 + 3 = 6`, matchMoveNote: `2 的左下竖棒 → 右下缺口`, annotation: `只移动一根，不能增添或丢掉` }, activeFormulaIndices: [0, 1], tipTitle: `记住这个小办法`, tipBody: `数字内部也能挪，根数不变再验算。`, liveStats: [{ label: `移动`, value: `1 根` },{ label: `新算式`, value: `3 + 3 = 6` }] }
-]),
+          {
+            title: `只在一个数字里面移动，能改对吗？`,
+            narration: `火柴摆成 2 + 3 = 6。只能移动 1 根，不增不减。先看七段数字 2 和 3，它们哪里相同，哪里不同？`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "matchstick",
+              matchBefore: `2 + 3 = 6`,
+              matchAfter: undefined,
+              matchMoveNote: `先观察火柴摆成的数字和符号`,
+              annotation: `只移动一根，不能增添或丢掉`,
+            },
+            activeFormulaIndices: [],
+          },
+          {
+            title: `数字 2 的哪一根可以挪到缺口？`,
+            narration: `数字 2 的左下有竖棒，右下空着。试着把左下那根挪到右下，看看会形成哪个数字。`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "matchstick",
+              matchBefore: `2 + 3 = 6`,
+              matchAfter: undefined,
+              matchMoveNote: `只观察第一个数字，其他位置不动`,
+              annotation: `只移动一根，不能增添或丢掉`,
+            },
+            activeFormulaIndices: [],
+          },
+          {
+            title: `数字变了以后，两边相等吗？`,
+            narration: `把第一个数字的左下竖棒移到右下。先认出新的数字，再算左边，是否能和右边的 6 相等？`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "matchstick",
+              matchBefore: `2 + 3 = 6`,
+              matchAfter: undefined,
+              matchMoveNote: `第一个数字：左下竖棒 → 右下缺口`,
+              annotation: `只移动一根，不能增添或丢掉`,
+            },
+            activeFormulaIndices: [],
+            checkpoint: {
+              question: `移动后得到哪一道正确算式？`,
+              options: ["3 + 3 = 6", "2 + 2 = 6"],
+              correctIndex: 0,
+              feedbackCorrect: `对，2 的左下棒移到右下变成 3，3 加 3 等于 6。`,
+              feedbackWrong: `只移动第一个数字的一根，另外的 3 和 6 都不变。`,
+            },
+          },
+          {
+            title: `三加三等于六，逐根检查完成`,
+            narration: `移动后是 3 + 3 = 6。只把第一个数字 2 的左下竖棒移到右下，它就变成 3。其余火柴都保留，左边与右边都是 6。`,
+            sceneState: {
+              kind: "balance-puzzle",
+              mode: "matchstick",
+              matchBefore: `2 + 3 = 6`,
+              matchAfter: `3 + 3 = 6`,
+              matchMoveNote: `2 的左下竖棒 → 右下缺口`,
+              annotation: `只移动一根，不能增添或丢掉`,
+            },
+            activeFormulaIndices: [0, 1],
+            tipTitle: `记住这个小办法`,
+            tipBody: `数字内部也能挪，根数不变再验算。`,
+            liveStats: [
+              { label: `移动`, value: `1 根` },
+              { label: `新算式`, value: `3 + 3 = 6` },
+            ],
+          },
+        ]),
       }),
     },
   ],

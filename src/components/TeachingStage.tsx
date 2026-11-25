@@ -11,7 +11,12 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { SceneRenderer } from "../engines/SceneRenderer";
-import type { FormulaLine, LessonStep, LessonVariant, MathLesson } from "../types/lesson";
+import type {
+  FormulaLine,
+  LessonStep,
+  LessonVariant,
+  MathLesson,
+} from "../types/lesson";
 import { isSpeechSupported, speakChinese } from "../utils/speech";
 import { StepNarrativeCard } from "./StepNarrativeCard";
 import { FormulaCard } from "./FormulaCard";
@@ -150,7 +155,9 @@ export function TeachingStage({
           isLastStep={isLastStep}
           nextLessonTitle={nextLessonTitle}
           onPrev={() => onSelectStep(Math.max(0, clampedIdx - 1))}
-          onNext={() => onSelectStep(Math.min(steps.length - 1, clampedIdx + 1))}
+          onNext={() =>
+            onSelectStep(Math.min(steps.length - 1, clampedIdx + 1))
+          }
           onNextLesson={onNextLesson ?? onExit}
           showNavigation={false}
         />

@@ -7,7 +7,16 @@ export function teachingSteps(stages: TeachingStep[]): LessonStep[] {
   return stages.map((stage, index) => ({
     activeFormulaIndices: [],
     liveStats: [],
-    tag: index === stages.length - 1 ? "验证与回顾" : index === 0 ? "观察与思考" : index === 1 ? "寻找突破口" : index === 2 ? "转化与追问" : "继续推理",
+    tag:
+      index === stages.length - 1
+        ? "验证与回顾"
+        : index === 0
+          ? "观察与思考"
+          : index === 1
+            ? "寻找突破口"
+            : index === 2
+              ? "转化与追问"
+              : "继续推理",
     ...stage,
     step: index + 1,
   }));
