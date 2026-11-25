@@ -202,51 +202,61 @@ export function LessonHeader({
           className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-3 shadow-xs space-y-2.5"
           aria-label={`${activeSection.title} 例题与我要练一练导航`}
         >
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1 text-xs font-extrabold text-[var(--ink-primary)]">
-                <Sparkles
-                  className="h-3.5 w-3.5 text-[var(--accent-coral)]"
-                  aria-hidden="true"
-                />
-                <span>{activeSection.title}</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1 text-xs font-extrabold text-[var(--ink-primary)]">
+              <Sparkles
+                className="h-3.5 w-3.5 text-[var(--accent-coral)]"
+                aria-hidden="true"
+              />
+              <span>{activeSection.title}</span>
+            </span>
+            {activeSection.subtitle && (
+              <span className="text-xs text-[var(--ink-secondary)]">
+                {activeSection.subtitle}
               </span>
-              {activeSection.subtitle && (
-                <span className="text-xs text-[var(--ink-secondary)]">
-                  {activeSection.subtitle}
-                </span>
-              )}
-            </div>
-
-            {exampleVariants.map((variant) => {
-              const isSelected = variant.id === activeVariant.id;
-              const done = completedVariants.includes(
-                `${lesson.id}:${variant.id}`,
-              );
-              const label = `${activeSection.title} · 例题`;
-              return (
-                <Button
-                  key={variant.id}
-                  aria-label={label}
-                  aria-pressed={isSelected}
-                  onClick={() => onSelectVariant(variant.id)}
-                  className={`inline-flex cursor-pointer items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
-                    isSelected
-                      ? "border-[var(--accent-teal)] bg-[var(--accent-teal)] text-white shadow-xs"
-                      : "border-[var(--border-subtle)] bg-[var(--bg-stage)] text-[var(--ink-primary)] hover:border-[var(--accent-teal)]/50"
-                  }`}
-                >
-                  {done && <Check className="h-3.5 w-3.5" aria-hidden="true" />}
-                  <span>例题讲解</span>
-                  {variant.isPlaceholder && (
-                    <span className="rounded bg-black/10 px-1.5 py-0.5 text-[10px]">
-                      框架占位
-                    </span>
-                  )}
-                </Button>
-              );
-            })}
+            )}
           </div>
+
+          {exampleVariants.length > 0 && (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[var(--border-subtle)] pt-2.5">
+              <span className="rounded-md border border-[var(--accent-teal)]/35 bg-[var(--accent-teal-soft)] px-2 py-0.5 text-[11px] font-bold text-[var(--accent-teal)]">
+                例题
+              </span>
+              {exampleVariants.map((variant) => {
+                const isSelected = variant.id === activeVariant.id;
+                const done = completedVariants.includes(
+                  `${lesson.id}:${variant.id}`,
+                );
+                const part = variant.questionPart ? `（${variant.questionPart}）` : "";
+                const label = `${activeSection.title} · 例题${part}`;
+                return (
+                  <Button
+                    key={variant.id}
+                    aria-label={label}
+                    aria-pressed={isSelected}
+                    onClick={() => onSelectVariant(variant.id)}
+                    className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 text-xs font-bold transition ${
+                      isSelected
+                        ? "border-[var(--accent-coral)] bg-[var(--accent-coral)] text-white shadow-sm ring-2 ring-[var(--accent-coral)]/25"
+                        : "border-[var(--border-strong)] bg-[var(--bg-stage)] text-[var(--ink-primary)] hover:border-[var(--accent-coral-border)]"
+                    }`}
+                  >
+                    {done ? (
+                      <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                    ) : (
+                      <BookOpen className="h-3.5 w-3.5 opacity-80" aria-hidden="true" />
+                    )}
+                    <span>例题讲解{part}</span>
+                    {variant.isPlaceholder && (
+                      <span className="rounded bg-black/10 px-1.5 py-0.5 text-[10px]">
+                        框架占位
+                      </span>
+                    )}
+                  </Button>
+                );
+              })}
+            </div>
+          )}
 
           {practiceGroups.length > 0 && (
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[var(--border-subtle)] pt-2.5">
@@ -271,7 +281,7 @@ export function LessonHeader({
                         `${lesson.id}:${variant.id}`,
                       );
                       const qText = variant.questionNo
-                        ? `第 ${variant.questionNo} 题`
+                        ? `第 ${variant.questionNo} 题${variant.questionPart ? `（${variant.questionPart}）` : ""}`
                         : variant.modeLabel;
                       const ariaLabel = `${activeSection.title} · ${meta.label} ${qText}`;
                       return (

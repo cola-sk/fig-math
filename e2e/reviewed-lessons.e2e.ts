@@ -8,24 +8,24 @@ for (const viewport of [
     page,
   }) => {
     await page.setViewportSize(viewport);
-    await page.goto("/#/g2-seesaw/example/2");
+    await page.goto("/#/g2-queue-overlap/example/2");
     await expect(
       page.getByRole("radiogroup", { name: /^小考一下/ }),
     ).toBeVisible();
-    await expect(page.locator(".katex")).toHaveCount(1);
+    await expect(page.locator(".katex")).toHaveCount(0);
     const quiz = page.getByRole("radiogroup", { name: /^小考一下/ });
-    const answer = quiz.getByRole("radio", { name: "6 只", exact: true });
+    const answer = quiz.getByRole("radio", { name: "9 人", exact: true });
     await answer.focus();
     await page.keyboard.press("Space");
-    await expect(page.getByText(/想对了，是 6 只/)).toBeVisible();
+    await expect(page.getByText(/想对了，是 9 人/)).toBeVisible();
     const next = page.getByRole("button", { name: "下一步", exact: true });
     await next.focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/example\/3$/);
     await expect(page.getByRole("heading", { level: 2 })).toHaveText(
-      "换成同一种小鸭，谁最重？",
+      "两队一共有多少人？",
     );
-    await expect(page.locator(".katex")).toHaveCount(2);
+    await expect(page.locator(".katex")).toHaveCount(1);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -49,13 +49,11 @@ test("small-screen diagram labels fit in light and dark themes", async ({
   for (const theme of ["light", "dark"]) {
     await page.emulateMedia({ colorScheme: theme as "light" | "dark" });
     for (const route of [
-      "g2-money-pay/example/5",
-      "g2-permutation/example/4",
-      "g2-count-figures/var-1/4",
-      "g2-shape-pattern/var-1/4",
-      "g2-matchstick/var-1/4",
-      "g2-measure-clever/example/3",
-      "g2-measure-clever/var-1/4",
+      "g2-queue-overlap/example/3",
+      "g2-bus-ride/q3/3",
+      "g2-intervals/q8/3",
+      "g2-well-climb/example/3",
+      "tree-planting/q5/3",
       "sum-diff/example/5",
     ]) {
       await page.goto(`/#/${route}`);

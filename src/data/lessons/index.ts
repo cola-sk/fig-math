@@ -78,6 +78,33 @@ export const LESSONS: MathLesson[] = [
   perimeterShiftLesson,
 ];
 
+const HIDDEN_ENTRY_LESSON_IDS = new Set([
+  // 和差问题之后
+  "g2-count-segments",
+  "g2-count-angles",
+  "g2-count-figures",
+  "g2-permutation",
+  "g2-pairing",
+  "g2-combination",
+  "g2-money-pay",
+  "g2-seesaw",
+  "g2-substitution",
+  "g2-half-problem",
+  "g2-wrong-calc",
+  "g2-move-balance",
+  "g2-math-puzzle",
+  "g2-logic-clue",
+  "g2-number-seq",
+  "g2-shape-pattern",
+  "g2-measure-clever",
+  "g2-matchstick",
+  "g2-bottle-exchange",
+]);
+
+export const VISIBLE_LESSONS: MathLesson[] = LESSONS.filter(
+  (lesson) => !HIDDEN_ENTRY_LESSON_IDS.has(lesson.id),
+);
+
 export interface EditionMeta {
   id: EditionId;
   name: string;
@@ -261,8 +288,10 @@ export function getLessonMetaForEdition(
 export function getLessonsByGrade(
   grade: GradeFilter,
   edition: EditionId = "doubanjiang",
+  includeHidden = false,
 ): MathLesson[] {
-  const inEdition = LESSONS.filter((lesson) =>
+  const source = includeHidden ? LESSONS : VISIBLE_LESSONS;
+  const inEdition = source.filter((lesson) =>
     lesson.editionMappings.some((m) => m.edition === edition),
   );
   if (grade === "all") return inEdition;
@@ -275,5 +304,5 @@ export function getLessonsByGrade(
 }
 
 export function getLessonById(id: string): MathLesson {
-  return LESSONS.find((l) => l.id === id) ?? LESSONS[0];
+  return LESSONS.find((l) => l.id === id) ?? VISIBLE_LESSONS[0] ?? LESSONS[0];
 }

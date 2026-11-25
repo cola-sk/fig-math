@@ -21,6 +21,7 @@ export interface EditionMapping {
 }
 
 export type EngineKind =
+  | "early-book"
   | "array-swap"
   | "segment-bar"
   | "number-line"
@@ -296,7 +297,35 @@ export interface OverlapStorySceneState {
   perSide?: number;
 }
 
+export interface BookVisualSceneState {
+  kind: "book-visual";
+  mode: "girl" | "pig" | "animals" | "digits" | "clock" | "blocks" | "cylinder" | "solid-example" | "solid-q1" | "solid-q2" | "solid-q3" | "solid-q4";
+  phase: number;
+  digits?: string;
+  hour?: number;
+  minute?: number;
+  mirrorGiven?: boolean;
+  grid?: number[][];
+  givenGrid?: number[][];
+  viewLabel?: string;
+  answerText?: string;
+}
+
+export interface EarlyBookSceneState {
+  kind: "early-book";
+  mode: "queue" | "bus" | "stairs" | "well" | "trees";
+  subject?: string;
+  comparison?: boolean;
+  phase: number;
+  facts: string[];
+  middleLabel: string;
+  middleValue: string;
+  finalValue: string;
+}
+
 export type SceneState =
+  | EarlyBookSceneState
+  | BookVisualSceneState
   | OverlapStorySceneState
   | ArraySwapSceneState
   | SegmentBarSceneState
@@ -365,6 +394,7 @@ export interface LessonVariant {
   sectionId?: string;
   sectionKind?: BookSectionKind;
   questionNo?: number;
+  questionPart?: number;
   isPlaceholder?: boolean;
   title: string;
   subtitle: string;

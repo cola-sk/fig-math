@@ -180,10 +180,6 @@ export function OverlapStoryEngine({ scene }: { scene: OverlapStorySceneState })
               stroke="var(--accent-coral)" strokeWidth="1.5" strokeOpacity=".45"
             />
 
-            {/* Barrel ribs (characteristic oil drum rings) */}
-            <line x1="2" y1="184" x2="128" y2="184" stroke={bucketStroke} strokeWidth="2" strokeOpacity=".45" />
-            <line x1="2" y1="248" x2="128" y2="248" stroke={bucketStroke} strokeWidth="2" strokeOpacity=".45" />
-
             {/* Half-way divider on full bucket & highlight for extra half-bucket of oil */}
             {isFull && scene.phase >= 1 && (
               <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -227,19 +223,158 @@ export function OverlapStoryEngine({ scene }: { scene: OverlapStorySceneState })
         </text>
       )}
     </g>}
-    {scene.visual === "polygon" && <g>
-      <polygon points={points.map(p => `${p.x},${p.y}`).join(" ")} fill="var(--accent-teal)" fillOpacity=".12" stroke={scene.phase === 1 ? "var(--accent-coral)" : "var(--accent-teal)"} strokeWidth={scene.phase === 1 ? "5" : "4"} />
-      {points.map((p,i) => { const next=points[(i+1)%points.length]; const count=scene.perSide ?? 2; return <g key={i}>
-        {Array.from({length: Math.max(0,count-2)},(_,j) => {const t=(j+1)/(count-1); return <motion.circle key={j} cx={p.x+(next.x-p.x)*t} cy={p.y+(next.y-p.y)*t} r="7" fill="var(--accent-teal)" initial={{scale:0}} animate={{scale:1}} />;})}
-        {count > 0 && (
-          <g>
-            {scene.phase === 2 && <motion.circle cx={p.x} cy={p.y} r="17" fill="none" stroke="var(--accent-coral)" strokeWidth="2.5" strokeDasharray="4 3" initial={{ scale: 0.8 }} animate={{ scale: 1.15 }} />}
-            <motion.circle cx={p.x} cy={p.y} r="10" fill="var(--accent-coral)" initial={false} animate={{scale:scene.phase === 2 ? 1.25 : 1}} />
-          </g>
-        )}
-      </g>; })}
-      {scene.perSide === 0 && <text x="380" y="232" textAnchor="middle" fontSize="17" fontWeight="700" fill="var(--accent-coral)">每边有几棵？先算一算！</text>}
-      <text x="380" y="395" textAnchor="middle" fontSize="17" fill="var(--ink-primary)">{scene.labels[1]}</text>
-    </g>}
+    {scene.visual === "polygon" && (() => {
+      const cx = 380;
+      const cy = 225;
+      const count = scene.perSide ?? 2;
+      const isReverse = count === 0 && scene.phase < 3;
+      const totalDots = count > 0 ? (count - 1) * sides : 12;
+
+      return <g>
+        <polygon
+          points={points.map(p => `${p.x},${p.y}`).join(" ")}
+          fill="var(--accent-teal)"
+          fillOpacity={scene.phase === 3 ? ".16" : ".1"}
+          stroke={scene.phase === 1 ? "var(--accent-coral)" : "var(--accent-teal)"}
+          strokeWidth={scene.phase === 1 ? "4.5" : "3.5"}
+        />
+
+        {/* Edge-by-edge counting brackets & badges */}
+        {points.map((p, i) => {
+          const next = points[(i + 1) % points.length];
+          const mx = (p.x + next.x) / 2;
+          const my = (p.y + next.y) / 2;
+          const dx = mx - cx;
+          const dy = my - cy;
+          const len = Math.hypot(dx, dy) || 1;
+          const nx = dx / len;
+          const ny = dy / len;
+
+          const showEdgeBracket =
+            (scene.phase === 0 && i === 0) ||
+            scene.phase === 1;
+
+          const offsetDist = sides === 4 ? 32 : 36;
+          const bx1 = p.x + nx * 16;
+          const by1 = p.y + ny * 16;
+          const bx2 = next.x + nx * 16;
+          const by2 = next.y + ny * 16;
+          const lx = mx + nx * offsetDist;
+          const ly = my + ny * offsetDist;
+
+          return (
+            <g key={`edge-${i}`}>
+              {showEdgeBracket && (
+                <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <line
+                    x1={bx1} y1={by1} x2={bx2} y2={by2}
+                    stroke="var(--accent-coral)" strokeWidth="2.5" strokeDasharray="5 3"
+                  />
+                  <rect
+                    x={lx - 24} y={ly - 12} width="48" height="24" rx="12"
+                    fill="var(--bg-surface)" stroke="var(--accent-coral)" strokeWidth="1.5"
+                  />
+                  <text
+                    x={lx} y={ly + 5} textAnchor="middle" fontSize="13" fontWeight="800" fill="var(--accent-coral)"
+                  >
+                    {isReverse ? (scene.phase === 1 ? "+1角?" : "?") : `${count}`}
+                  </text>
+                </motion.g>
+              )}
+
+              {/* Middle dots along the edge */}
+              {Array.from({ length: Math.max(0, count - 2) }, (_, j) => {
+                const t = (j + 1) / (count - 1);
+                return (
+                  <motion.circle
+                    key={j}
+                    cx={p.x + (next.x - p.x) * t}
+                    cy={p.y + (next.y - p.y) * t}
+                    r="6.5"
+                    fill="var(--accent-teal)"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                  />
+                );
+              })}
+            </g>
+          );
+        })}
+
+        {/* Corner vertices with step-specific duplicate highlights */}
+        {points.map((p, i) => {
+          const dx = p.x - cx;
+          const dy = p.y - cy;
+          const len = Math.hypot(dx, dy) || 1;
+          const nx = dx / len;
+          const ny = dy / len;
+          const badgeX = p.x + nx * 28;
+          const badgeY = p.y + ny * 26;
+
+          return (
+            <g key={`corner-${i}`}>
+              {count > 0 && (
+                <g>
+                  {scene.phase === 2 && (
+                    <motion.circle
+                      cx={p.x} cy={p.y} r="17"
+                      fill="none" stroke="var(--accent-coral)" strokeWidth="2.5" strokeDasharray="4 3"
+                      initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1.15, opacity: 1 }}
+                    />
+                  )}
+                  <motion.circle
+                    cx={p.x} cy={p.y} r="10"
+                    fill="var(--accent-coral)"
+                    initial={false}
+                    animate={{ scale: scene.phase === 2 ? 1.2 : 1 }}
+                  />
+                </g>
+              )}
+
+              {scene.phase === 2 && (
+                <motion.g initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}>
+                  <rect
+                    x={badgeX - 18} y={badgeY - 11} width="36" height="22" rx="11"
+                    fill="var(--accent-coral)"
+                  />
+                  <text
+                    x={badgeX} y={badgeY + 4} textAnchor="middle" fontSize="11" fontWeight="800" fill="#ffffff"
+                  >
+                    {isReverse ? "算2次" : "−1"}
+                  </text>
+                </motion.g>
+              )}
+            </g>
+          );
+        })}
+
+        {/* Center summary inside the polygon */}
+        <g>
+          {isReverse ? (
+            <text x={cx} y={cy + 6} textAnchor="middle" fontSize="15" fontWeight="800" fill="var(--accent-coral)">
+              {scene.phase === 0
+                ? "共 12 棵，每边一样多"
+                : scene.phase === 1
+                  ? "3 个角各多算 1 次 → 12 + 3"
+                  : "15 棵次 ÷ 3 条边 = ?"}
+            </text>
+          ) : (
+            <text x={cx} y={cy + 6} textAnchor="middle" fontSize="15" fontWeight="800" fill={scene.phase === 3 ? "var(--accent-teal)" : "var(--ink-secondary)"}>
+              {scene.phase === 0
+                ? `${sides} 条边 · ${sides} 个角`
+                : scene.phase === 1
+                  ? `按边各数一遍：${count} × ${sides}`
+                  : scene.phase === 2
+                    ? `${sides} 个角各多算 1 次（−${sides}）`
+                    : `每个角只算 1 次 · 共 ${totalDots} 个`}
+            </text>
+          )}
+        </g>
+
+        <text x="380" y="395" textAnchor="middle" fontSize="17" fontWeight="600" fill="var(--ink-primary)">
+          {scene.labels[1]}
+        </text>
+      </g>;
+    })()}
   </StageFrame>;
 }

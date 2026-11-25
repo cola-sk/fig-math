@@ -1,332 +1,56 @@
-import { teachingSteps, numberCheckpoint } from "../teachingSteps";
-import type { MathLesson } from "../../types/lesson";
-export const g2MirrorClockLesson: MathLesson = {
-  id: "g2-mirror-clock",
-  chapterId: "g2-visual-thinking",
-  chapterTitle: "04. 形象思维训练",
-  grade: 2,
-  gradeLabel: "二年级",
-  weekLabel: "p.32",
-  title: "镜面问题（左右对称与镜中时钟）",
-  summary:
-    "照镜子时“上下不变，左右相反”！从镜子里看时钟，用 12 时减去镜面时间就能秒出真实时间。",
-  engine: "mirror-clock",
-  keywords: ["二年级", "镜面问题", "形象思维", "轴对称", "镜子时钟"],
-  editionMappings: [
-    {
-      edition: "doubanjiang",
-      grade: 2,
-      gradeLabel: "二年级",
-      chapterTitle: "04. 形象思维训练",
-      weekLabel: "p.32",
-    },
-  ],
-  variants: [
-    {
-      id: "example",
-      modeLabel: "基础例题 · 镜子里的时钟",
-      bookPart: "A版",
-      tier: "base",
-      title: "镜子里看到 3:00，实际是几点钟？",
-      subtitle: "先观察条件，动手想一想，再逐步验证。",
-      defaultParams: { hour: 3 },
-      paramDefs: [
-        {
-          key: "hour",
-          label: "镜子里的整点时刻",
-          min: 1,
-          max: 11,
-          step: 1,
-          unit: "点",
-        },
-      ],
-      build: (params) => {
-        const h = params.hour ?? 3;
-        const realH = 12 - h;
-        return {
-          problemStatement: `小明从镜子里看到墙上挂钟的指针指向 ${h}:00（整点）。请问现在实际的时间是几点钟？`,
-          formulas: [
-            {
-              id: "mc-1",
-              latex: `12 - ${h} = ${realH}\\text{ (点)}`,
-              comment: "整点对称规律：镜中 + 实际 = 12",
-            },
-          ],
-          steps: teachingSteps([
-            {
-              title: `镜子把钟面沿哪个方向翻过去？`,
-              narration: `镜子里看到 ${h}:00。先找 12 和 6 连成的竖线，两边的指针会怎样对应？`,
-              sceneState: {
-                kind: "mirror-clock",
-                mode: "clock",
-                hour: h,
-                minute: 0,
-                showMirrored: false,
-                annotation: `镜子里的钟已知，实际时间暂时留空`,
-              },
-              activeFormulaIndices: [],
-            },
-            {
-              title: `先找不动的轴，再想两边怎样对应`,
-              narration: `12 和 6 在竖线上，翻折后位置不变。其他位置左右互换。你能先用手指出时针应该落到哪一侧吗？`,
-              sceneState: {
-                kind: "mirror-clock",
-                mode: "clock",
-                hour: h,
-                minute: 0,
-                showMirrored: false,
-                annotation: `镜子里的钟已知，实际时间暂时留空`,
-                focus: "axis",
-              },
-              activeFormulaIndices: [],
-            },
-            {
-              title: `用对称关系，实际是几点？`,
-              narration: `镜中整点数和实际整点数合起来是 12。镜子里是 ${h} 点，实际整点是多少？`,
-              sceneState: {
-                kind: "mirror-clock",
-                mode: "clock",
-                hour: h,
-                minute: 0,
-                showMirrored: false,
-                annotation: `镜子里的钟已知，实际时间暂时留空`,
-                focus: "hands",
-              },
-              activeFormulaIndices: [],
-              checkpoint: numberCheckpoint(
-                `实际是几点整？`,
-                realH,
-                ` 点`,
-                `用 12 减去镜中的整点数。`,
-              ),
-            },
-            {
-              tag: `验证与回顾`,
-              title: `翻回真实世界：12 - ${h} = ${realH} 点！`,
-              narration: `实际是 ${realH}:00。把时针沿竖线翻回去，正好回到镜中的 ${h}:00。`,
-              tipTitle: "镜面时钟口诀",
-              tipBody: `先找镜面轴，再看指针对称；整点用十二减，有分钟先借位。`,
-              activeFormulaIndices: [0],
-              liveStats: [
-                { label: "镜中时间", value: `${h}:00`, tone: "coral" },
-                { label: "实际时间", value: `${realH}:00`, tone: "teal" },
-                { label: "相加验证", value: `${h} + ${realH} = 12` },
-              ],
-              sceneState: {
-                kind: "mirror-clock",
-                mode: "clock",
-                hour: h,
-                minute: 0,
-                showMirrored: true,
-                annotation: `镜中与实际时刻沿竖线对称`,
-              },
-            },
-          ]),
-        };
-      },
-    },
-    {
-      id: "var-1",
-      modeLabel: "举一反三 · 图形镜面对称",
-      bookPart: "A版",
-      tier: "standard",
-      title: "格子图照镜子：离镜子近的，镜像也近！",
-      subtitle: "先观察条件，动手想一想，再逐步验证。",
-      defaultParams: {},
-      paramDefs: [],
-      build: () => ({
-        problemStatement: `左边方格图里有一个红色图形，如果右边放一面竖直的镜子，镜子里的图案应该是什么样子？`,
-        formulas: [
-          {
-            id: "ms-1",
-            latex: `\\text{规律：上下不变，左右相反}`,
-            comment: "离镜面越近的格子，对称后依然离镜面最近",
-          },
-        ],
-        steps: teachingSteps([
-          {
-            title: `红色格子翻过去，会跑到另一行吗？`,
-            narration: `先挑一个红格子，看它在第几行，离蓝色镜面有几格。镜子像合上一本书，试着想它会落在哪里。`,
-            sceneState: {
-              kind: "mirror-clock",
-              mode: "shape",
-              showMirrored: false,
-              annotation: `竖直镜面：先看格子与镜面的距离`,
-            },
-            activeFormulaIndices: [],
-          },
-          {
-            title: `贴近镜面的格子，镜像也贴近吗？`,
-            narration: `沿镜面翻过去，同一行里的格子一一对上。离镜面近的格子，会跑到很远的地方吗？`,
-            sceneState: {
-              kind: "mirror-clock",
-              mode: "shape",
-              showMirrored: false,
-              annotation: `竖直镜面：先看格子与镜面的距离`,
-              focus: "axis",
-            },
-            activeFormulaIndices: [],
-            checkpoint: {
-              question: `翻过去的格子应该怎样找？`,
-              options: ["同一行、距镜面一样远", "随便换一行", "全部贴在镜面上"],
-              correctIndex: 0,
-              feedbackCorrect: `对，沿镜面翻折后，同一行且距离相同。`,
-              feedbackWrong: `想象把画着格子的纸沿镜面合起来。`,
-            },
-          },
-          {
-            title: `逐行找对应格子，准备好对答案了吗？`,
-            narration: `从上往下一行行看，给每个红格子在镜面另一边找一个同样远的伙伴。先在心里画好，再翻到下一步检查。`,
-            sceneState: {
-              kind: "mirror-clock",
-              mode: "shape",
-              showMirrored: false,
-              annotation: `竖直镜面：先看格子与镜面的距离`,
-              focus: "row",
-            },
-            activeFormulaIndices: [],
-          },
-          {
-            tag: `验证与回顾`,
-            title: "像蝴蝶合拢翅膀一样左右完全对称！",
-            narration: `青色方格就是镜子里的图案：每一行的高度不变，左右位置正好和红色方格相反！`,
-            activeFormulaIndices: [0],
-            liveStats: [
-              { label: "上下位置", value: "不变" },
-              { label: "左右方向", value: "已对称翻折", tone: "teal" },
-            ],
-            sceneState: {
-              kind: "mirror-clock",
-              mode: "shape",
-              showMirrored: true,
-              annotation: `竖直镜面：先看格子与镜面的距离`,
-            },
-            tipBody: `竖镜两边一对一，同一行里等距离。`,
-          },
-        ]),
-      }),
-    },
-    {
-      id: "var-2",
-      modeLabel: "拓展拔高 · 带分钟镜面时钟",
-      bookPart: "B版",
-      tier: "challenge",
-      title: "拓展拔高：镜子里看到 2:20，实际是几点几分？",
-      subtitle: "先观察条件，动手想一想，再逐步验证。",
-      defaultParams: { hour: 2, minute: 20 },
-      paramDefs: [
-        {
-          key: "hour",
-          label: "镜中小时",
-          min: 1,
-          max: 10,
-          step: 1,
-          unit: "时",
-        },
-        {
-          key: "minute",
-          label: "镜中分钟",
-          min: 10,
-          max: 50,
-          step: 5,
-          unit: "分",
-        },
-      ],
-      build: (params) => {
-        const h = params.hour ?? 2;
-        const m = params.minute ?? 20;
-        const realH = 11 - h;
-        const realM = 60 - m;
-        return {
-          problemStatement: `从镜子里看到指针挂钟的时间是 ${h}:${String(m).padStart(2, "0")}，请问实际现在是几时几分？`,
-          formulas: [
-            {
-              id: "mcb-1",
-              latex: `11\\text{时}60\\text{分} - ${h}\\text{时}${m}\\text{分} = ${realH}\\text{时}${realM}\\text{分}`,
-              comment: "12时借1小时变11时60分",
-            },
-          ],
-          steps: teachingSteps([
-            {
-              title: `镜子把钟面沿哪个方向翻过去？`,
-              narration: `镜子里看到 ${h}:${String(m).padStart(2, "0")}。这是一面指针钟，沿 12 和 6 的竖线翻回去，指针会到哪里？`,
-              sceneState: {
-                kind: "mirror-clock",
-                mode: "clock",
-                hour: h,
-                minute: m,
-                showMirrored: false,
-                annotation: `镜子里的钟已知，实际时间暂时留空`,
-              },
-              activeFormulaIndices: [],
-            },
-            {
-              title: `先找不动的轴，再想两边怎样对应`,
-              narration: `沿竖线翻回去，12 的位置不变。要算时刻差，可以把 12 时整借出 1 时，换成几时多少分？`,
-              sceneState: {
-                kind: "mirror-clock",
-                mode: "clock",
-                hour: h,
-                minute: m,
-                showMirrored: false,
-                annotation: `镜子里的钟已知，实际时间暂时留空`,
-                focus: "axis",
-              },
-              activeFormulaIndices: [],
-              checkpoint: {
-                question: `12 时整可以换写成什么？`,
-                options: ["11 时 60 分", "11 时 10 分", "12 时 60 分"],
-                correctIndex: 0,
-                feedbackCorrect: `对！1 时是 60 分，借出 1 时后总时间没变。`,
-                feedbackWrong: `1 小时等于 60 分。`,
-              },
-            },
-            {
-              title: `用对称关系，实际是几点？`,
-              narration: `12 时整等于 11 时 60 分。先用 60 分减 ${m} 分，再用 11 时减 ${h} 时，实际会是几时几分？`,
-              sceneState: {
-                kind: "mirror-clock",
-                mode: "clock",
-                hour: h,
-                minute: m,
-                showMirrored: false,
-                annotation: `镜子里的钟已知，实际时间暂时留空`,
-                focus: "hands",
-              },
-              activeFormulaIndices: [],
-              checkpoint: {
-                question: `实际是几时几分？`,
-                options: [
-                  '${realH}:${String(realM).padStart(2,"0")}',
-                  '${h}:${String(m).padStart(2,"0")}',
-                ],
-                correctIndex: 0,
-                feedbackCorrect: `对！小时和分钟分别相减，时刻合起来正好是 12 时。`,
-                feedbackWrong: `先用 60 减分钟，再用 11 减小时。`,
-              },
-            },
-            {
-              tag: `验证与回顾`,
-              title: `11 时 60 分 - ${h} 时 ${m} 分 = ${realH} 时 ${realM} 分`,
-              narration: `实际是 ${realH}:${String(realM).padStart(2, "0")}。验算：${h} 时 ${m} 分加上 ${realH} 时 ${realM} 分，正好是 12 时整。`,
-              activeFormulaIndices: [0],
-              liveStats: [
-                { label: "镜中时间", value: `${h}:${m}`, tone: "coral" },
-                { label: "真实时间", value: `${realH}:${realM}`, tone: "teal" },
-              ],
-              sceneState: {
-                kind: "mirror-clock",
-                mode: "clock",
-                hour: h,
-                minute: m,
-                showMirrored: true,
-                annotation: `镜中与实际时刻沿竖线对称`,
-              },
-              tipBody: `先找镜面轴，再看指针对称；整点用十二减，有分钟先借位。`,
-            },
-          ]),
-        };
-      },
-    },
-  ],
+import { teachingSteps } from "../teachingSteps";
+import type { BookSectionKind, BookVisualSceneState, DifficultyTier, LessonVariant, MathLesson } from "../../types/lesson";
+
+type MirrorQuestion = {
+  id: string; number?: number; part?: number; kind: BookSectionKind; tier: DifficultyTier;
+  statement: string; mode: BookVisualSceneState["mode"]; digits?: string; hour?: number; minute?: number; mirrorGiven?: boolean;
+  focus: string; step2Tip: string; question: string; options: string[]; correct: number; result: string; hint: string;
 };
+const questions: MirrorQuestion[] = [
+  { id:"example",kind:"example",tier:"base",statement:"下面是在镜子里看到的一个两位数，这个两位数原来是多少？",mode:"digits",digits:"54",focus:"镜子里有两个反过来的数字，先别急着读，仔细看看它们各自的形状。",step2Tip:"第一步先把每个数字左右翻回来（是 4 和 5），第二步再把十位和个位的左右位置翻回来！",question:"原来的两位数是多少？",options:["54","45","44"],correct:0,result:"原来的两位数是54。",hint:"每个数字要翻回来，数字的左右顺序也要翻回来。" },
+  { id:"q1-1",number:1,part:1,kind:"warmup",tier:"base",statement:"小女孩在照镜子，哪个镜子里的图像是正确的？在正确的图像下的口里画“√”。",mode:"girl",focus:"看看小女孩伸出的腿在画面的哪一边，镜子里的她会和她面对面照镜子。",step2Tip:"小女孩向右伸出腿，镜子里对称过去，那条腿应该在画面的哪一边？",question:"小女孩正确的镜像在左边还是右边？",options:["左边","右边"],correct:0,result:"小女孩正确的镜像在左边。",hint:"观察伸出的腿在画面的哪一侧，左右对称过去在左边。" },
+  { id:"q1-2",number:1,part:2,kind:"warmup",tier:"base",statement:"小猪在照镜子，哪个镜子里的图像是正确的？在正确的图像下的口里画“√”。",mode:"pig",focus:"小猪在镜子前趴着，注意看小猪的头和尾巴分别朝向哪一边。",step2Tip:"小猪的头朝左、尾巴朝右，在镜子里的图像方向会正好左右反过来。",question:"小猪正确的镜像在左边还是右边？",options:["左边","右边"],correct:1,result:"小猪正确的镜像在右边。",hint:"观察猪头与尾巴的方向是否左右互换。" },
+  { id:"q2",number:2,kind:"warmup",tier:"base",statement:"在镜子里看到下图所示的图像，那么镜子前小兔在小鸭的______边。",mode:"animals",focus:"镜子里显示“小兔在左边、小鸭在右边”，记住这幅图是从镜子里看到的哦。",step2Tip:"整幅画面左右位置也要一起翻转！镜子里小兔在左，回到镜子前小兔就在……",question:"镜子前小兔在小鸭的哪一边？",options:["左边","右边"],correct:1,result:"镜子前小兔在小鸭的右边。",hint:"整幅画面左右位置会交换，所以镜子前小兔在小鸭的右边。" },
+  { id:"q3",number:3,kind:"warmup",tier:"base",statement:"下图是在镜子里看到的图像，那么原来的数是______。",mode:"digits",digits:"367",focus:"镜中有三个倒过来的数字，先逐个认出它们原来是几，再调整顺序。",step2Tip:"先看单个数字翻回来分别是 7、6、3，再把整个三位数左右翻回来！",question:"原来的数是多少？",options:["763","367","376"],correct:1,result:"原来的数是367。",hint:"把整个镜像左右翻回来，从左往右读是 367。" },
+  { id:"q4",number:4,kind:"practice",tier:"standard",statement:"下图是在镜子里看到的钟表，现实中这个钟表的时间是______。",mode:"clock",hour:10,minute:30,mirrorGiven:true,focus:"这是镜子里的钟表！分针指在正下方（6 的位置），时针指向镜中右上方的两格之间。",step2Tip:"分针指在 6（30 分）上下不变；把表盘左右翻回来，时针正好在 10 和 11 之间！",question:"现实中的钟表是几时几分？",options:["10:30","1:30","11:30"],correct:0,result:"现实中的钟表显示10时30分。",hint:"镜面里数字和指针都左右反过来，翻回来时针在 10 和 11 之间，是 10:30。" },
+  { id:"q5",number:5,kind:"practice",tier:"standard",statement:"下面左图是现实中的钟表上的时间，在镜子里看到的钟表上的时间应该是怎样的？请画到下面右图的钟表上。",mode:"clock",hour:9,minute:0,mirrorGiven:false,focus:"现实中的钟表是 9:00：长针（分针）朝正上方指 12，短针（时针）朝正左方指 9。",step2Tip:"沿竖直镜面翻过去：正上方的长针还在正上方，朝左的短针会朝向哪边？",question:"镜像中短针和长针分别朝哪里？",options:["短针向右，长针向上","短针向左，长针向下","短针向左，长针向上"],correct:0,result:"镜中短针向右，长针向上；钟面数字也左右翻转。",hint:"长针在竖直线上不动，短针从向左翻成向右。" },
+];
+function createQuestion(q: MirrorQuestion): LessonVariant {
+  const label=q.kind === "example" ? "小例题大发现" : `第 ${q.number} 题${q.part ? `（${q.part}）` : ""}`;
+  const scene=(phase:number):BookVisualSceneState=>({kind:"book-visual",mode:q.mode,phase,digits:q.digits,hour:q.hour,minute:q.minute,mirrorGiven:q.mirrorGiven,answerText:phase===3?q.result:undefined});
+  return {id:q.id,modeLabel:label,bookPart:"A版",tier:q.tier,sectionId:"discovery",sectionKind:q.kind,questionNo:q.number,questionPart:q.part,title:label,subtitle:"仔细看图，先猜一猜，再翻转验证。",defaultParams:{},paramDefs:[],build:()=>({
+    problemStatement:q.statement,
+    formulas:[{id:`${q.id}-rule`,latex:"\\text{镜像左右翻转，上下位置不变}",comment:"把整幅画面沿竖直方向翻转"}],
+    steps:teachingSteps([
+      {
+        title:"先看一看，图中有哪些线索？",
+        narration:q.focus,
+        sceneState:scene(0),
+        liveStats:[{label:"关键任务",value:"沿竖直镜面翻转",tone:"coral"},{label:"结果",value:"?"}],
+      },
+      {
+        title:"照镜子时，左右和上下会怎样变化？",
+        narration:"想象把图画沿竖直的镜面翻过去，左右位置和上下位置会怎样变化？",
+        sceneState:scene(1),
+        liveStats:[{label:"镜面规律",value:"左右相反，上下不变"}],
+        checkpoint:{question:"竖直镜面里的图像有什么变化？",options:["左右相反，上下不变","上下相反，左右不变","左右上下都不变"],correctIndex:0,feedbackCorrect:"对，镜像与原图左右对应，上下位置不变。",feedbackWrong:"试着把画纸沿竖直线对折。"},
+      },
+      {
+        title:q.question,
+        narration:`${q.step2Tip} ${q.question}`,
+        sceneState:scene(2),
+        liveStats:[{label:"镜面规律",value:"左右相反，上下不变"},{label:"待求答案",value:"?",tone:"coral"}],
+        checkpoint:{question:q.question,options:q.options,correctIndex:q.correct,feedbackCorrect:`答对了！${q.hint}`,feedbackWrong:`再想想。${q.hint}`},
+      },
+      {
+        title:"揭晓答案，翻回去检查",
+        narration:`${q.result}${q.hint}`,
+        sceneState:scene(3),
+        activeFormulaIndices:[0],
+        liveStats:[{label:"镜面规律",value:"左右相反，上下不变"},{label:"答案",value:q.options[q.correct],tone:"teal"}],
+        tipBody:"先看单个物体的朝向，再看整体的左右顺序。",
+      },
+    ])
+  })};
+}
+export const g2MirrorClockLesson:MathLesson={id:"g2-mirror-clock",chapterId:"g2-visual-thinking",chapterTitle:"04. 形象思维训练",grade:2,gradeLabel:"二年级",weekLabel:"p.32",title:"镜面问题",summary:"按书中例题与练习，观察镜像中的数字、位置和钟表。",engine:"mirror-clock",keywords:["二年级","镜面问题","形象思维","镜子时钟"],editionMappings:[{edition:"doubanjiang",grade:2,gradeLabel:"二年级",chapterTitle:"04. 形象思维训练",weekLabel:"p.32"}],sections:[{id:"discovery",title:"小例题大发现",subtitle:"例题及五道练习",pageRange:"p.32–34"}],variants:questions.map(createQuestion)};

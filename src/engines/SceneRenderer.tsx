@@ -9,10 +9,16 @@ import { NumberLineEngine } from "./NumberLineEngine";
 import { SegmentBarEngine } from "./SegmentBarEngine";
 import { VennSetEngine } from "./VennSetEngine";
 import { WellClimbEngine } from "./WellClimbEngine";
+import { EarlyBookEngine } from "./EarlyBookEngine";
+import { BookVisualEngine } from "./BookVisualEngine";
 import { OverlapStoryEngine } from "./OverlapStoryEngine";
 
 export function SceneRenderer({ scene }: { scene: SceneState }) {
   switch (scene.kind) {
+    case "early-book":
+      return <EarlyBookEngine scene={scene} />;
+    case "book-visual":
+      return <BookVisualEngine scene={scene} />;
     case "overlap-story":
       return <OverlapStoryEngine scene={scene} />;
     case "array-swap":

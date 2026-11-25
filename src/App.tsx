@@ -10,7 +10,7 @@ import { TeachingStage } from "./components/TeachingStage";
 import { TopBar } from "./components/TopBar";
 import {
   GRADE_CATALOG,
-  LESSONS,
+  VISIBLE_LESSONS,
   getLessonById,
   getLessonMetaForEdition,
   getLessonsByGrade,
@@ -38,7 +38,7 @@ interface RouteState {
 
 function parseHash(): RouteState {
   if (typeof window === "undefined") {
-    const first = LESSONS[0];
+    const first = VISIBLE_LESSONS[0];
     return {
       lessonId: first.id,
       variantId: first.variants[0].id,
@@ -47,7 +47,7 @@ function parseHash(): RouteState {
   }
   const clean = window.location.hash.replace(/^#\/?/, "");
   const parts = clean.split("/").filter(Boolean);
-  const lesson = getLessonById(parts[0] ?? LESSONS[0].id);
+  const lesson = getLessonById(parts[0] ?? VISIBLE_LESSONS[0].id);
   const variant =
     lesson.variants.find((v) => v.id === parts[1]) ?? lesson.variants[0];
   const rawStep = Number(parts[2] ?? "1");
@@ -296,7 +296,7 @@ export function App() {
   return (
     <div className="min-h-dvh flex flex-col">
       <TopBar
-        lessons={LESSONS}
+        lessons={VISIBLE_LESSONS}
         selectedEdition={selectedEdition}
         selectedGrade={selectedGrade}
         selectedTier={selectedTier}

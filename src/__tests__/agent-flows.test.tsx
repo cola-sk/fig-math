@@ -4,14 +4,14 @@ import { beforeEach, describe, expect, it } from "vitest";
 import App from "../App";
 import { StepNarrativeCard } from "../components/StepNarrativeCard";
 import { SceneRenderer } from "../engines/SceneRenderer";
-import { getLessonsByGrade } from "../data/lessons";
+import { LESSONS, getLessonsByGrade } from "../data/lessons";
 
 const agent = createAgent();
 
 describe("FigMath agent-ready flows (jsdom)", () => {
   beforeEach(() => {
     localStorage.clear();
-    window.history.replaceState(null, "", "#/g2-queue-overlap/example/1");
+    window.history.replaceState(null, "", "#/tree-planting/example/1");
   });
 
   it("exposes named ui-sdk controls in snapshot()", () => {
@@ -33,7 +33,7 @@ describe("FigMath agent-ready flows (jsdom)", () => {
     for (const expected of [
       "选择年级",
       "切换本年级专题",
-      "切换例题与举一反三变式",
+      "切换小例题大发现板块",
       "进入授课模式",
       "下一步",
       "上一步",
@@ -48,7 +48,7 @@ describe("FigMath agent-ready flows (jsdom)", () => {
     render(<App />);
 
     expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
-      "排队问题",
+      "植树问题",
     );
 
     const resNext = await act(() =>
@@ -57,7 +57,7 @@ describe("FigMath agent-ready flows (jsdom)", () => {
       }),
     );
     expect(resNext.ok, resNext.error?.message).toBe(true);
-    expect(window.location.hash).toBe("#/g2-queue-overlap/example/2");
+    expect(window.location.hash).toBe("#/tree-planting/example/2");
     expect(screen.getByText(/第 2 步 \/ 共/)).toBeTruthy();
 
     const resPrev = await act(() =>
@@ -66,51 +66,31 @@ describe("FigMath agent-ready flows (jsdom)", () => {
       }),
     );
     expect(resPrev.ok, resPrev.error?.message).toBe(true);
-    expect(window.location.hash).toBe("#/g2-queue-overlap/example/1");
+    expect(window.location.hash).toBe("#/tree-planting/example/1");
 
-    const variantSelector = agent
-      .snapshot()
-      .find(
-        (entry) => !entry.offPage && entry.label === "切换例题与举一反三变式",
-      );
-    const targetVariant = variantSelector?.items?.find((item) =>
-      item.label.includes("中间有几人"),
-    );
-    expect(targetVariant).toBeDefined();
-
-    const resVariant = await act(() =>
-      agent.act({
-        steps: [
-          {
-            ref: variantSelector!.ref,
-            action: "setValue",
-            args: [targetVariant!.value],
-          },
-        ],
-      }),
-    );
+    const resVariant = await act(() => agent.act({
+      steps: [{ ref: "小例题大发现 · 挑战自我 第 6 题", action: "press" }],
+    }));
     expect(resVariant.ok, resVariant.error?.message).toBe(true);
-    expect(window.location.hash).toBe(
-      `#/g2-queue-overlap/${targetVariant!.value}/1`,
-    );
-    expect(screen.getByText(/小红排第 3 个，小刚排第 8 个/)).toBeTruthy();
+    expect(window.location.hash).toBe("#/tree-planting/q6/1");
+    expect(screen.getByText(/在一条45米长的马路/)).toBeTruthy();
 
     const resLesson = await act(() =>
       agent.act({
         steps: [
-          { ref: "切换本年级专题", action: "setValue", args: ["g2-seesaw"] },
+          { ref: "切换本年级专题", action: "setValue", args: ["g2-fast-calc"] },
         ],
       }),
     );
     expect(resLesson.ok, resLesson.error?.message).toBe(true);
-    expect(window.location.hash).toBe("#/g2-seesaw/example/1");
+    expect(window.location.hash).toBe("#/g2-fast-calc/example/1");
     expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
-      "跷跷板的奥秘",
+      "简便计算",
     );
   });
 
   it("enters teaching mode, steps to formula reveal, and exits via agent.act()", async () => {
-    window.history.replaceState(null, "", "#/g2-matchstick/example/1");
+    window.history.replaceState(null, "", "#/g2-fast-calc/example/1");
     render(<App />);
 
     const enter = await act(() =>
@@ -135,7 +115,7 @@ describe("FigMath agent-ready flows (jsdom)", () => {
       }),
     );
     expect(next.ok, next.error?.message).toBe(true);
-    expect(window.location.hash).toBe("#/g2-matchstick/example/2");
+    expect(window.location.hash).toBe("#/g2-fast-calc/example/2");
 
     const exit = await act(() =>
       agent.act({
@@ -162,6 +142,8 @@ describe("FigMath agent-ready flows (jsdom)", () => {
   });
 
   it("expands parameter collapsible panel and resets via agent.act()", async () => {
+    localStorage.setItem("figmath-selected-grade", "3");
+    window.history.replaceState(null, "", "#/sum-multiple/example/1");
     render(<App />);
 
     const openPanel = await act(() =>
@@ -264,7 +246,7 @@ describe("reviewed Grade 2 lesson journeys", () => {
   }
 
   it("keeps quizzes available in teaching mode and future formulas hidden", async () => {
-    window.history.replaceState(null, "", "#/g2-seesaw/example/2");
+    window.history.replaceState(null, "", "#/g2-venn-overlap/example/3");
     const view = render(<App />);
     const enter = visibleControls().find(
       (entry) => entry.label === "进入授课模式",
@@ -281,13 +263,13 @@ describe("reviewed Grade 2 lesson journeys", () => {
     );
     expect(view.container.querySelectorAll(".katex")).toHaveLength(1);
     expect(view.container.querySelector(".katex")?.textContent).not.toContain(
-      "6",
+      "40",
     );
     const next = visibleControls().find((entry) => entry.label === "下一步");
     await act(() =>
       agent.act({ steps: [{ ref: next!.ref, action: "press" }] }),
     );
-    expect(window.location.hash).toBe("#/g2-seesaw/example/3");
+    expect(window.location.hash).toBe("#/g2-venn-overlap/example/4");
     expect(view.container.querySelectorAll(".katex")).toHaveLength(2);
   });
 });
@@ -431,7 +413,7 @@ describe("diagram quantities and reveal boundaries", () => {
 });
 
 it("clears a quiz answer when new parameters rebuild the same step", async () => {
-  const variant = getLessonsByGrade("2").find(
+  const variant = LESSONS.find(
     (lesson) => lesson.id === "g2-money-pay",
   )!.variants[1];
   const original = variant.build({ price: 27 }).steps[2];
@@ -462,4 +444,50 @@ it("clears a quiz answer when new parameters rebuild the same step", async () =>
   expect(
     view.container.querySelector('[role="radio"][aria-checked="true"]'),
   ).toBeNull();
+});
+
+it("selects distinct book subquestions in 简便计算 via agent.act()", async () => {
+  window.history.replaceState(null, "", "#/g2-fast-calc/example/1");
+  render(<App />);
+  const snapshot = agent.snapshot().filter((entry) => !entry.offPage && entry.component !== "more");
+  const labels = snapshot.map((entry) => entry.label);
+  expect(labels.every(Boolean)).toBe(true);
+  expect(new Set(labels).size).toBe(labels.length);
+  const example = await act(() => agent.act({steps:[{ref:"小例题大发现 · 例题（2）",action:"press"}]}));
+  expect(example.ok, example.error?.message).toBe(true);
+  expect(window.location.hash).toBe("#/g2-fast-calc/var-1/1");
+  expect(screen.getByText(/166 − 103 = ？/)).toBeTruthy();
+  const exercise = await act(() => agent.act({steps:[{ref:"小例题大发现 · 小试牛刀 第 2 题（3）",action:"press"}]}));
+  expect(exercise.ok, exercise.error?.message).toBe(true);
+  expect(window.location.hash).toBe("#/g2-fast-calc/q2-3/1");
+  expect(screen.getByText(/199 − 101 = ？/)).toBeTruthy();
+});
+
+it("通过 agent 切换立体观察小问和镜面题", async () => {
+  window.history.replaceState(null, "", "#/g2-observe-shapes/example/1");
+  render(<App />);
+  const entries=visibleControls();
+  expect(entries.every(entry=>!!entry.label)).toBe(true);
+  expect(new Set(entries.map(entry=>entry.label)).size).toBe(entries.length);
+  const result=await act(()=>agent.act({steps:[{ref:"小例题大发现 · 大显身手 第 4 题（3）",action:"press"}]}));
+  expect(result.ok,result.error?.message).toBe(true);
+  expect(window.location.hash).toBe("#/g2-observe-shapes/q4-3/1");
+  expect(screen.getByText(/从上面看到的图形是/)).toBeTruthy();
+});
+
+it("通过 agent 切换和差问题的例题组并打开年龄练习", async () => {
+  window.history.replaceState(null, "", "#/sum-diff/example/1");
+  render(<App />);
+  const entries=visibleControls();
+  expect(entries.every(entry=>!!entry.label)).toBe(true);
+  expect(new Set(entries.map(entry=>entry.label)).size).toBe(entries.length);
+  const group=entries.find(entry=>entry.label==="切换小例题大发现板块")!;
+  const switched=await act(()=>agent.act({steps:[{ref:group.ref,action:"setValue",args:["discovery-2"]}]}));
+  expect(switched.ok,switched.error?.message).toBe(true);
+  expect(window.location.hash).toBe("#/sum-diff/d2-example/1");
+  expect(screen.getByText(/小雅3岁的时候哥哥7岁/)).toBeTruthy();
+  const exercise=await act(()=>agent.act({steps:[{ref:"小例题大发现 2 · 大显身手 第 3 题",action:"press"}]}));
+  expect(exercise.ok,exercise.error?.message).toBe(true);
+  expect(window.location.hash).toBe("#/sum-diff/d2-q3/1");
+  expect(screen.getAllByText(/今年壮壮8岁/).length).toBeGreaterThan(0);
 });

@@ -1,298 +1,58 @@
-import { teachingSteps, numberCheckpoint } from "../teachingSteps";
-import type { MathLesson } from "../../types/lesson";
-export const g2ObserveShapesLesson: MathLesson = {
-  id: "g2-observe-shapes",
-  chapterId: "g2-visual-thinking",
-  chapterTitle: "04. 形象思维训练",
-  grade: 2,
-  gradeLabel: "二年级",
-  weekLabel: "p.28",
-  title: "观察与数图形方块",
-  summary:
-    "把堆积在一起的小正方体“一列一列”或者“一层一层”数出来，被压在底下的也不会漏掉！",
-  engine: "count-diagram",
-  keywords: ["二年级", "形象思维", "数方块", "立体图形", "观察图形"],
-  editionMappings: [
-    {
-      edition: "doubanjiang",
-      grade: 2,
-      gradeLabel: "二年级",
-      chapterTitle: "04. 形象思维训练",
-      weekLabel: "p.28",
-    },
-  ],
-  variants: [
-    {
-      id: "example",
-      modeLabel: "基础例题 · 数立体方块例题",
-      bookPart: "A版",
-      tier: "base",
-      title: "压在底下的方块看不见，怎么数才不漏？",
-      subtitle: "先观察条件，动手想一想，再逐步验证。",
-      defaultParams: { col1: 3, col2: 2, col3: 1 },
-      paramDefs: [
-        {
-          key: "col1",
-          label: "第1列高度",
-          min: 2,
-          max: 4,
-          step: 1,
-          unit: "块",
-        },
-        {
-          key: "col2",
-          label: "第2列高度",
-          min: 1,
-          max: 3,
-          step: 1,
-          unit: "块",
-        },
-        {
-          key: "col3",
-          label: "第3列高度",
-          min: 1,
-          max: 2,
-          step: 1,
-          unit: "块",
-        },
-      ],
-      build: (params) => {
-        const c1 = params.col1 ?? 3;
-        const c2 = params.col2 ?? 2;
-        const c3 = params.col3 ?? 1;
-        const total = c1 + c2 + c3;
-        return {
-          problemStatement: `用小正方体搭成下面的一排积木：第 1 摞有 ${c1} 块，第 2 摞有 ${c2} 块，第 3 摞有 ${c3} 块。一共有多少块小正方体？`,
-          formulas: [
-            {
-              id: "os-1",
-              latex: `${c1} + ${c2} + ${c3} = ${total}\\text{ (块)}`,
-              comment: "一列一列加起来，藏在下面的也不漏！",
-            },
-          ],
-          steps: teachingSteps([
-            {
-              title: `上面的方块，是靠什么托住的？`,
-              narration: `三摞积木的高度分别是 ${c1}、${c2}、${c3} 块。下面托住上面的小方块，也要算在内吗？`,
-              sceneState: {
-                kind: "count-diagram",
-                mode: "blocks",
-                baseCount: 3,
-                highlightSpan: 1,
-                blockHeights: [c1, c2, c3],
-                showHiddenNote: false,
-                targetBlockHeight: 0,
-                showCountSummary: false,
-                annotation: `一摞一摞数，从底下数到上面`,
-              },
-              activeFormulaIndices: [],
-            },
-            {
-              title: `前两摞合起来，有多少块？`,
-              narration: `先从第一摞的底下往上数完，再数第二摞。两摞合起来共有多少块？第三摞先不要加。`,
-              sceneState: {
-                kind: "count-diagram",
-                mode: "blocks",
-                baseCount: 3,
-                highlightSpan: 1,
-                blockHeights: [c1, c2, c3],
-                showHiddenNote: true,
-                targetBlockHeight: 0,
-                showCountSummary: false,
-                annotation: `一摞一摞数，从底下数到上面`,
-              },
-              activeFormulaIndices: [],
-              checkpoint: numberCheckpoint(
-                `前两摞合起来有几块？`,
-                c1 + c2,
-                ` 块`,
-                `每块积木只属于一摞，不要数重复。`,
-              ),
-            },
-            {
-              title: `前两摞数好了，还差哪一摞？`,
-              narration: `前两摞共 ${c1 + c2} 块，还有第三摞 ${c3} 块。把它也合进来，一共有多少块？`,
-              sceneState: {
-                kind: "count-diagram",
-                mode: "blocks",
-                baseCount: 3,
-                highlightSpan: 1,
-                blockHeights: [c1, c2, c3],
-                showHiddenNote: true,
-                targetBlockHeight: 0,
-                showCountSummary: false,
-                annotation: `一摞一摞数，从底下数到上面`,
-              },
-              activeFormulaIndices: [],
-              checkpoint: numberCheckpoint(
-                `三摞总共有几块？`,
-                total,
-                ` 块`,
-                `已经数完的部分加上还没数的那一摞。`,
-              ),
-            },
-            {
-              tag: `验证与回顾`,
-              title: `把三摞加起来：${c1} + ${c2} + ${c3} = ${total} 块`,
-              narration: `共有 ${total} 块。再换成按层数：最下面每摞都有一块，往上逐层数，合计仍是 ${total} 块。`,
-              activeFormulaIndices: [0],
-              liveStats: [
-                { label: "第1摞", value: `${c1} 块`, tone: "coral" },
-                { label: "第2摞", value: `${c2} 块` },
-                { label: "第3摞", value: `${c3} 块` },
-                { label: "总块数", value: `${total} 块`, tone: "teal" },
-              ],
-              sceneState: {
-                kind: "count-diagram",
-                mode: "blocks",
-                baseCount: 3,
-                highlightSpan: 1,
-                blockHeights: [c1, c2, c3],
-                showHiddenNote: true,
-                targetBlockHeight: 0,
-                showCountSummary: true,
-                annotation: `一摞一摞数，从底下数到上面`,
-              },
-              tipBody: `按摞数或按层数，托在下面也要数。`,
-            },
-          ]),
-        };
-      },
-    },
-    {
-      id: "var-1",
-      modeLabel: "拓展拔高 · 缺几块补齐",
-      bookPart: "B版",
-      tier: "challenge",
-      title: "拓展拔高：补成三摞、每摞三块的积木墙，还需要几块？",
-      subtitle: "先观察条件，动手想一想，再逐步验证。",
-      defaultParams: { col1: 3, col2: 2, col3: 1 },
-      paramDefs: [
-        {
-          key: "col1",
-          label: "第1列高度",
-          min: 2,
-          max: 3,
-          step: 1,
-          unit: "块",
-        },
-        {
-          key: "col2",
-          label: "第2列高度",
-          min: 1,
-          max: 3,
-          step: 1,
-          unit: "块",
-        },
-      ],
-      build: (params) => {
-        const c1 = params.col1 ?? 3;
-        const c2 = params.col2 ?? 2;
-        const c3 = 1;
-        const current = c1 + c2 + c3;
-        const full = 9;
-        const need = full - current;
-        return {
-          problemStatement: `现在有 ${current} 块小正方体，想把这 3 摞全部补齐成“每摞都是 3 块”的大墙（共 9 块），还需要添上几块？`,
-          formulas: [
-            {
-              id: "osv-1",
-              latex: `3 \\times 3 = 9\\text{ (块)}`,
-              comment: "补齐后的总块数",
-            },
-            {
-              id: "osv-2",
-              latex: `9 - ${current} = ${need}\\text{ (块)}`,
-              comment: "还需要的块数",
-            },
-          ],
-          steps: teachingSteps([
-            {
-              title: `要把每摞补成一样高，哪些地方还空着？`,
-              narration: `已有 ${current} 块，目标是 3 摞，每摞 3 块。先看每摞的上面，哪些位置还可以添方块？`,
-              sceneState: {
-                kind: "count-diagram",
-                mode: "blocks",
-                baseCount: 3,
-                highlightSpan: 1,
-                blockHeights: [c1, c2, c3],
-                showHiddenNote: false,
-                targetBlockHeight: 3,
-                showCountSummary: false,
-                annotation: `一摞一摞数，从底下数到上面`,
-              },
-              activeFormulaIndices: [],
-            },
-            {
-              title: `如果全部补齐，一共应该有几块？`,
-              narration: `目标是 3 摞，每摞都是 3 块。先算补齐后的总数，已有的方块也包含在里面。`,
-              sceneState: {
-                kind: "count-diagram",
-                mode: "blocks",
-                baseCount: 3,
-                highlightSpan: 1,
-                blockHeights: [c1, c2, c3],
-                showHiddenNote: false,
-                targetBlockHeight: 3,
-                showCountSummary: false,
-                annotation: `一摞一摞数，从底下数到上面`,
-              },
-              activeFormulaIndices: [],
-              checkpoint: numberCheckpoint(
-                `补齐后总共有几块？`,
-                9,
-                ` 块`,
-                `把 3 摞同样高的积木合起来。`,
-              ),
-            },
-            {
-              title: `目标总数知道了，还需要添几块？`,
-              narration: `补齐后应有 9 块，已经有 ${current} 块。还空着的部分怎样求？`,
-              sceneState: {
-                kind: "count-diagram",
-                mode: "blocks",
-                baseCount: 3,
-                highlightSpan: 1,
-                blockHeights: [c1, c2, c3],
-                showHiddenNote: false,
-                targetBlockHeight: 3,
-                showCountSummary: false,
-                annotation: `一摞一摞数，从底下数到上面`,
-              },
-              activeFormulaIndices: [0],
-              checkpoint: numberCheckpoint(
-                `还需要添几块？`,
-                need,
-                ` 块`,
-                `目标总数去掉已经摆好的方块。`,
-              ),
-            },
-            {
-              tag: `验证与回顾`,
-              title: `一共需要 9 块，已有 ${current} 块，还缺 ${need} 块`,
-              narration: `还要添 ${need} 块。逐摞检查缺口：${3 - c1} + ${3 - c2} + ${3 - c3} = ${need}，和用 9 减已有块数一样。`,
-              activeFormulaIndices: [0, 1],
-              liveStats: [
-                { label: "补齐总数", value: "9 块" },
-                { label: "已有块数", value: `${current} 块` },
-                { label: "还缺块数", value: `${need} 块`, tone: "coral" },
-              ],
-              sceneState: {
-                kind: "count-diagram",
-                mode: "blocks",
-                baseCount: 3,
-                highlightSpan: 1,
-                blockHeights: [c1, c2, c3],
-                showHiddenNote: true,
-                targetBlockHeight: 3,
-                showCountSummary: true,
-                annotation: `一摞一摞数，从底下数到上面`,
-              },
-              tipBody: `先看全部要多少，再减已经有多少。`,
-            },
-          ]),
-        };
-      },
-    },
-  ],
+import { teachingSteps } from "../teachingSteps";
+import type { BookSectionKind, BookVisualSceneState, DifficultyTier, LessonVariant, MathLesson } from "../../types/lesson";
+
+type ObserveQuestion = {
+ id:string; number?:number; part?:number; kind:BookSectionKind; tier:DifficultyTier; statement:string;
+ mode:BookVisualSceneState["mode"]; viewLabel:string; grid?:number[][]; givenGrid?:number[][];
+ focus:string; step2Tip:string; question:string; options:string[]; correct:number; result:string; hint:string;
 };
+const questions:ObserveQuestion[]=[
+ {id:"example",kind:"example",tier:"base",statement:"观察下面的圆柱与正方体，从正面看，它们分别是什么图形？请你动手画一画吧！",mode:"solid-example",viewLabel:"从正面水平看",focus:"把视线放到物体正前方，保持水平观察圆柱和正方体。",step2Tip:"从正面水平看过去，竖着的圆柱顶部圆面看不到，只能看到直直的侧面轮廓。",question:"从正面看，圆柱和正方体分别是什么图形？",options:["长方形、正方形","圆形、正方形","圆形、长方形"],correct:0,result:"圆柱从正面看是长方形，正方体从正面看是正方形。",hint:"竖着的圆柱正面看到的是长方形，正方体每个面都是正方形。"},
+ {id:"q1",number:1,kind:"warmup",tier:"base",statement:"下列立体图形从侧面看分别是什么图形？连一连。",mode:"solid-q1",viewLabel:"从侧面看",focus:"注意这次是从物体的侧面观察：圆柱横着放，旁边是正方体和长方体。",step2Tip:"横放的圆柱从侧面看时，正好正对着它的圆形底面！",question:"从侧面看，圆柱、正方体、长方体依次是什么图形？",options:["圆形、正方形、长方形","长方形、正方形、圆形","圆形、长方形、正方形"],correct:0,result:"横放圆柱的侧面是圆形，正方体是正方形，长方体是长方形。",hint:"这根圆柱横着放，从侧面看正好看到圆形端面。"},
+ {id:"q2-1",number:2,part:1,kind:"warmup",tier:"base",statement:"观察下面的立体图形，按要求答题。（1）这是从______面看到的。（填“正”“侧”或“上”）",mode:"solid-q2",viewLabel:"判断观察方向",givenGrid:[[1],[1]],focus:"题目给出的是上下叠在一起的两个正方形，试着从正、侧、上三个方向比一比。",step2Tip:"从哪个方向看过去，左边一列有两层高，而右边的方块被遮住了？",question:"这个上下两格的图是从哪一面看到的？",options:["正面","侧面","上面"],correct:1,result:"这是从侧面看到的。",hint:"从侧面看时，左右排成一排的方块重合在一起，只看到上下两格。"},
+ {id:"q2-2",number:2,part:2,kind:"warmup",tier:"base",statement:"观察下面的立体图形，按要求答题。（2）这是从______面看到的。（填“正”“侧”或“上”）",mode:"solid-q2",viewLabel:"判断观察方向",givenGrid:[[1,0,0],[1,1,1]],focus:"题目给出的平面图下排有三格、左上方还有一格。",step2Tip:"哪一个方向能同时看到下面一排的 3 个方块和左上角的 1 个方块？",question:"这个图是从哪一面看到的？",options:["正面","侧面","上面"],correct:0,result:"这是从正面看到的。",hint:"正面能清楚看到下排三格和左上方一格。"},
+ {id:"q3",number:3,kind:"practice",tier:"standard",statement:"从侧面看下面的立体图形是什么图形？在右边的方框中画一画吧！",mode:"solid-q3",viewLabel:"从侧面看",grid:[[1,1]],focus:"认真观察立体图，从侧面看过去时，同一排前后对齐的方块会被挡住。",step2Tip:"从侧面看，前后两排中有一块被前面的方块遮住了，你能看到几格？",question:"从侧面看，看到几个并排的正方形？",options:["1个","2个","3个"],correct:1,result:"从侧面看到两个并排的正方形。",hint:"前后共有两排，同一视线上的方块会重合，所以看到 2 个并排的正方形。"},
+ {id:"q4-1",number:4,part:1,kind:"practice",tier:"standard",statement:"仔细观察下面的立体图形，按要求在横线上画出相应的图形。（1）从正面看到的图形是______。",mode:"solid-q4",viewLabel:"从正面看",grid:[[1,1,1]],focus:"先看清这 4 个小正方体的摆法，再把视线放到正前方。",step2Tip:"从正面看，左、中、右各有 1 列，前后重合的方块只算 1 格。",question:"从正面看到几个并排的正方形？",options:["2个","3个","4个"],correct:1,result:"正面看到三个并排的正方形。",hint:"前面中间的方块挡住了后面的中间方块，所以一共看到 3 个。"},
+ {id:"q4-2",number:4,part:2,kind:"practice",tier:"standard",statement:"仔细观察下面的立体图形，按要求在横线上画出相应的图形。（2）从侧面看到的图形是______。",mode:"solid-q4",viewLabel:"从侧面看",grid:[[1,1]],focus:"保持这组立体方块不动，把眼睛移到侧面来看。",step2Tip:"从侧面看时，后排三个方块排在同一条视线上，会合成 1 格，再加上前排的 1 格。",question:"从侧面看到几个并排的正方形？",options:["1个","2个","3个"],correct:1,result:"侧面看到两个并排的正方形。",hint:"前排 1 格、后排合起来 1 格，所以看到 2 个并排的正方形。"},
+ {id:"q4-3",number:4,part:3,kind:"practice",tier:"standard",statement:"仔细观察下面的立体图形，按要求在横线上画出相应的图形。（3）从上面看到的图形是______。",mode:"solid-q4",viewLabel:"从上面看",grid:[[1,1,1],[0,1,0]],focus:"把眼睛放到立体图形的正上方，垂直往下看。",step2Tip:"从上面看能完整看到所有 4 个方块的位置：后排几个？前排在哪个位置？",question:"从上面看到的图形怎样排列？",options:["一排三个，另一排中间一个","一排四个","上下各一排三个"],correct:0,result:"上面看到一排三个正方形，另一排中间一个。",hint:"后排有 3 个，前排中间有 1 个。"},
+ {id:"q5",number:5,kind:"challenge",tier:"challenge",statement:"从正面看下面的立体图形是什么图形？在右边的方框中画一画吧！",mode:"blocks",viewLabel:"从正面看",grid:[[1,1,1],[1,1,1]],focus:"仔细看前排左上角和中间空缺的两个位置，从正面看过去会是空的吗？",step2Tip:"从正面看过去，前排空缺的地方会露出后面的方块，正好把空位补满！",question:"正面看到的图形有几行几列？",options:["2行3列","2行2列","1行3列"],correct:0,result:"从正面看到两行三列、共六个正方形。",hint:"前面空缺的两个位置，正好被后面的方块补上了！"},
+ {id:"q6",number:6,kind:"challenge",tier:"challenge",statement:"观察下面的立体图形，从上面看是什么图形？在右边的方框中画一画吧！",mode:"cylinder",viewLabel:"从上面看",focus:"左边是一个正方体，右边是一个横着放的圆柱。现在从正上方往下看。",step2Tip:"注意！这个圆柱是横着放的，从上面往下看可不是一个圆哦！",question:"从上面看，正方体和横放圆柱分别是什么图形？",options:["正方形和长方形","正方形和圆形","两个圆形"],correct:0,result:"从上面看到正方形和长方形。",hint:"圆柱横放时，从上面往下看是一个长方形轮廓。"},
+];
+function createQuestion(q:ObserveQuestion):LessonVariant {
+ const label=q.kind==="example" ? "小例题大发现" : `第 ${q.number} 题${q.part ? `（${q.part}）` : ""}`;
+ const scene=(phase:number):BookVisualSceneState=>({kind:"book-visual",mode:q.mode,phase,viewLabel:q.viewLabel,grid:q.grid,givenGrid:q.givenGrid,answerText:phase===3?q.result:undefined});
+ return {id:q.id,modeLabel:label,bookPart:q.tier==="challenge"?"B版":"A版",tier:q.tier,sectionId:"discovery",sectionKind:q.kind,questionNo:q.number,questionPart:q.part,title:label,subtitle:"从指定方向观察，再画出看到的图形。",defaultParams:{},paramDefs:[],build:()=>({
+  problemStatement:q.statement,formulas:[{id:`${q.id}-rule`,latex:"\\text{沿指定方向看，重合部分只画一次}",comment:"先找准观察方向，再画平面轮廓"}],
+  steps:teachingSteps([
+   {
+    title:`先观察：这次要${q.viewLabel}？`,
+    narration:q.focus,
+    sceneState:scene(0),
+    liveStats:[{label:"观察方向",value:q.viewLabel,tone:"coral"},{label:"看到图形",value:"?"}],
+   },
+   {
+    title:"沿视线看过去，被挡住的部分怎样处理？",
+    narration:"想一想，同一条视线上一前一后的方块，会不会都画在平面图上？",
+    sceneState:scene(1),
+    liveStats:[{label:"观察方向",value:q.viewLabel},{label:"规律小考",value:"重合只画一次"}],
+    checkpoint:{question:"沿视线重合的部分应怎样画？",options:["只画看到的轮廓","把前后所有方块分开画","不看观察方向"],correctIndex:0,feedbackCorrect:"对，重合在一起时只画看到的轮廓。",feedbackWrong:"想象把眼睛放在题目指定的方向。"},
+   },
+   {
+    title:q.question,
+    narration:`${q.step2Tip} ${q.question}`,
+    sceneState:scene(2),
+    liveStats:[{label:"观察方向",value:q.viewLabel},{label:"待选图形",value:"?",tone:"coral"}],
+    checkpoint:{question:q.question,options:q.options,correctIndex:q.correct,feedbackCorrect:`答对了！${q.hint}`,feedbackWrong:`再看一看。${q.hint}`},
+   },
+   {
+    title:"揭晓答案，换个位置检查",
+    narration:`${q.result}${q.hint}`,
+    sceneState:scene(3),
+    activeFormulaIndices:[0],
+    liveStats:[{label:"观察方向",value:q.viewLabel},{label:"答案",value:q.options[q.correct],tone:"teal"}],
+    tipBody:"先找观察方向，挡住的部分不重复画。",
+   },
+  ])
+ })};
+}
+export const g2ObserveShapesLesson:MathLesson={id:"g2-observe-shapes",chapterId:"g2-visual-thinking",chapterTitle:"04. 形象思维训练",grade:2,gradeLabel:"二年级",weekLabel:"p.28",title:"观察立体图形",summary:"按书中例题与练习，从正面、侧面和上面观察立体图形。",engine:"count-diagram",keywords:["二年级","形象思维","立体图形","观察方向"],editionMappings:[{edition:"doubanjiang",grade:2,gradeLabel:"二年级",chapterTitle:"04. 形象思维训练",weekLabel:"p.28"}],sections:[{id:"discovery",title:"小例题大发现",subtitle:"例题及六道练习",pageRange:"p.28–31"}],variants:questions.map(createQuestion)};

@@ -13,19 +13,12 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("agent 选择变式并更新题目", async ({ page }) => {
-  const snapshot = await page.evaluate(() => window.__FIGMATH_AGENT__.snapshot());
-  const selector = snapshot.find((entry) => entry.label === "切换例题与举一反三变式");
-  expect(selector?.actions).toContain("setValue");
-  const variant = selector?.items?.find((item) => item.label.includes("中间有几人"));
-  expect(variant).toBeDefined();
-
-  const result = await page.evaluate(
-    ({ ref, value }) => window.__FIGMATH_AGENT__.act({ steps: [{ ref, action: "setValue", args: [value] }] }),
-    { ref: selector!.ref, value: variant!.value },
-  );
+  const result = await page.evaluate(() => window.__FIGMATH_AGENT__.act({
+    steps: [{ ref: "小例题大发现 · 小试牛刀 第 1 题", action: "press" }],
+  }));
   expect(result.ok, result.error?.message).toBe(true);
-  await expect(page).toHaveURL(/#\/g2-queue-overlap\/var-1\/1$/);
-  await expect(page.getByText(/小红排第 3 个，小刚排第 8 个/)).toBeVisible();
+  await expect(page).toHaveURL(/#\/g2-queue-overlap\/q1\/1$/);
+  await expect(page.getByText(/军军在其中一支队伍中/)).toBeVisible();
 });
 
 test("agent 切换年级并保持选择", async ({ page }) => {

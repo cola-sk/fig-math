@@ -357,7 +357,7 @@ export function ComboVisualEngine({ scene }: { scene: ComboVisualSceneState }) {
                     x={cardW / 2}
                     y="32"
                     textAnchor="middle"
-                    fontSize="16"
+                    fontSize={card.text.length > 11 ? "12.5" : card.text.length > 8 ? "14" : "16"}
                     fontWeight="800"
                     fill="var(--ink-primary)"
                   >
