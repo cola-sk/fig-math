@@ -320,7 +320,22 @@ export interface EarlyBookSceneState {
   facts: string[];
   middleLabel: string;
   middleValue: string;
+  secondMiddleLabel?: string;
+  secondMiddleValue?: string;
   finalValue: string;
+  queueGrid?: {
+    target: string;
+    front: number;
+    back: number;
+    left: number;
+    right: number;
+    firstAxis: "horizontal" | "vertical";
+    rightOrdinal?: boolean;
+    axis1Label: string;
+    axis2Label: string;
+    unit1: string;
+    unit2: string;
+  };
   queueSegments?: {
     before: number;
     target: string;

@@ -6,16 +6,36 @@ type WellSpec = EarlyBookSceneState["wellSpec"];
 type BusSpec = EarlyBookSceneState["busSpec"];
 type StairsSpec = EarlyBookSceneState["stairsSpec"];
 type TreesSpec = EarlyBookSceneState["treesSpec"];
+type SecondMiddleSpec = {
+  question: string;
+  value: number;
+  unit: string;
+  formula: string;
+  explanation: string;
+};
+type QueueGridSpec = EarlyBookSceneState["queueGrid"];
 type Entry = {
   number?:number; statement:string; facts:string[]; middleQuestion:string; middle:number; middleUnit:string; middleFormula:string;
   finalQuestion:string; answer:number; unit:string; finalFormula:string; result:string; explanation:string; tip:string;
   alternate?:string[]; queueSegments?:QueueSegments; wellSpec?:WellSpec; busSpec?:BusSpec; stairsSpec?:StairsSpec; treesSpec?:TreesSpec;
+  secondMiddle?:SecondMiddleSpec; queueGrid?:QueueGridSpec;
 };
 function makeVariant(entry:Entry,mode:EarlyBookSceneState["mode"],kind:BookSectionKind):LessonVariant {
   const tier:DifficultyTier=kind==="challenge"?"challenge":kind==="practice"?"standard":"base";
   const label=entry.number===undefined?"小例题大发现":`我要练一练 · 第 ${entry.number} 题`;
   const id=entry.number===undefined?"example":`q${entry.number}`;
-  const formulas=[{id:`${id}-1`,latex:entry.middleFormula,comment:entry.explanation},{id:`${id}-2`,latex:entry.finalFormula,comment:entry.result},...(entry.alternate??[]).map((latex,i)=>({id:`${id}-alt-${i}`,latex,comment:"另一种方法"}))];
+  const formulas=entry.secondMiddle
+    ? [
+        {id:`${id}-1`,latex:entry.middleFormula,comment:entry.explanation},
+        {id:`${id}-2`,latex:entry.secondMiddle.formula,comment:entry.secondMiddle.explanation},
+        {id:`${id}-3`,latex:entry.finalFormula,comment:entry.result},
+        ...(entry.alternate??[]).map((latex,i)=>({id:`${id}-alt-${i}`,latex,comment:"另一种方法"})),
+      ]
+    : [
+        {id:`${id}-1`,latex:entry.middleFormula,comment:entry.explanation},
+        {id:`${id}-2`,latex:entry.finalFormula,comment:entry.result},
+        ...(entry.alternate??[]).map((latex,i)=>({id:`${id}-alt-${i}`,latex,comment:"另一种方法"})),
+      ];
   const subject=mode==="bus"?(entry.statement.includes("电脑")?"电脑":entry.statement.includes("舞蹈")?"舞蹈队":entry.statement.includes("水果")?"水果":"公交车"):mode==="well"?(entry.statement.includes("毛毛虫")?"毛毛虫":entry.statement.includes("壮壮")?"台阶":entry.statement.includes("小雅")?"跳格子":entry.statement.includes("表演者")?"舞台":"蜗牛"):mode==="trees"?(entry.statement.includes("气球")?"气球":entry.statement.includes("盆花")?"花":entry.statement.includes("彩旗")?"彩旗":"树"):undefined;
   const finalDisplay=mode==="well"&&entry.number===4?"第一只先到":mode==="well"&&entry.number===5?"小艾先到":`${entry.answer} ${entry.unit}`;
   const isComparison=mode==="well"&&(entry.number===4||entry.number===5);
@@ -28,39 +48,64 @@ function makeVariant(entry:Entry,mode:EarlyBookSceneState["mode"],kind:BookSecti
   };
   const middleTag =
     entry.middleQuestion.replace(/[？?].*$/, "").slice(0, 12) || "第一步";
-  const scene=(phase:number,comparison=false):EarlyBookSceneState=>({kind:"early-book",mode,subject,comparison,phase,facts:entry.facts,middleLabel:middleTag,middleValue:`${entry.middle} ${entry.middleUnit}`,finalValue:finalDisplay,queueSegments:entry.queueSegments,wellSpec:entry.wellSpec,busSpec:entry.busSpec,stairsSpec:entry.stairsSpec,treesSpec:entry.treesSpec});
-  const stats=(phase:number):LiveStat[]=>[
-    {label:"已知条件",value:entry.facts[0] ?? "见题干"},
-    {label:"第一步",value:phase>=2?`${entry.middle} ${entry.middleUnit}`:"?",tone:phase===1?"coral":phase>=2?"teal":"default"},
-    {label:"最后结果",value:phase>=3?finalDisplay:"?",tone:phase===2?"coral":phase>=3?"teal":"default"},
-  ];
+  const secondMiddleTag = entry.secondMiddle
+    ? entry.secondMiddle.question.replace(/[？?].*$/, "").slice(0, 12) || "第二步"
+    : undefined;
+  const scene=(phase:number,comparison=false):EarlyBookSceneState=>({
+    kind:"early-book",mode,subject,comparison,phase,facts:entry.facts,
+    middleLabel:middleTag,middleValue:`${entry.middle} ${entry.middleUnit}`,
+    secondMiddleLabel:secondMiddleTag,
+    secondMiddleValue:entry.secondMiddle?`${entry.secondMiddle.value} ${entry.secondMiddle.unit}`:undefined,
+    finalValue:finalDisplay,queueSegments:entry.queueSegments,queueGrid:entry.queueGrid,
+    wellSpec:entry.wellSpec,busSpec:entry.busSpec,stairsSpec:entry.stairsSpec,treesSpec:entry.treesSpec,
+  });
+  const stats=(phase:number):LiveStat[]=>entry.secondMiddle
+    ? [
+        {label:"已知条件",value:entry.facts[0] ?? "见题干"},
+        {label:"第一步",value:phase>=2?`${entry.middle} ${entry.middleUnit}`:"?",tone:phase===1?"coral":phase>=2?"teal":"default"},
+        {label:"第二步",value:phase>=3?`${entry.secondMiddle.value} ${entry.secondMiddle.unit}`:"?",tone:phase===2?"coral":phase>=3?"teal":"default"},
+        {label:"最后结果",value:phase>=4?finalDisplay:"?",tone:phase===3?"coral":phase>=4?"teal":"default"},
+      ]
+    : [
+        {label:"已知条件",value:entry.facts[0] ?? "见题干"},
+        {label:"第一步",value:phase>=2?`${entry.middle} ${entry.middleUnit}`:"?",tone:phase===1?"coral":phase>=2?"teal":"default"},
+        {label:"最后结果",value:phase>=3?finalDisplay:"?",tone:phase===2?"coral":phase>=3?"teal":"default"},
+      ];
   return {id,modeLabel:label,bookPart:tier==="challenge"?"B版":"A版",tier,sectionId:"discovery",sectionKind:kind,questionNo:entry.number,title:label,subtitle:"读题后先想一想，再一步步验证。",defaultParams:{},paramDefs:[],build:()=>({
     problemStatement:entry.statement,formulas,
-    steps:teachingSteps([
-      {title:`先读题：抓住「${entry.facts[0] ?? "关键条件"}」想一想！`,narration:`${modeHint[mode]} 先找出已知条件，想一想第一步要先算什么？`,sceneState:scene(0),liveStats:stats(0)},
-      {title:entry.middleQuestion,narration:`结合右边的条件卡片，先自己算一算：${entry.middleQuestion}`,sceneState:scene(1),liveStats:stats(1),checkpoint:numberCheckpoint(entry.middleQuestion,entry.middle,` ${entry.middleUnit}`,"回到题目找对应的条件。")},
-      {title:entry.finalQuestion,narration:`${entry.explanation} 得到 ${entry.middle} ${entry.middleUnit}。${entry.finalQuestion}`,sceneState:scene(2),activeFormulaIndices:[0],liveStats:stats(2),checkpoint:numberCheckpoint(entry.finalQuestion,entry.answer,` ${entry.unit}`,"利用刚刚找到的结果。")},
-      ...(isComparison?[{title:entry.number===4?"哪只蜗牛先到井口？":"谁先到达目的地？",narration:`两次计算分别得到 ${entry.middle} ${entry.middleUnit}和 ${entry.answer} ${entry.unit}。比较一下，谁先到？`,sceneState:scene(2,true),activeFormulaIndices:[0,1],liveStats:[{label:"第一次数",value:`${entry.middle} ${entry.middleUnit}`},{label:"第二次数",value:`${entry.answer} ${entry.unit}`},{label:"谁先到",value:"?",tone:"coral" as const}],checkpoint:{question:entry.number===4?"哪只蜗牛先到井口？":"谁先到达目的地？",options:entry.number===4?["第一只蜗牛","第二只蜗牛"]:["小艾","小雅"],correctIndex:0,feedbackCorrect:"答对了！比较到达前需要的次数，就能判断先后。",feedbackWrong:"再比较一下两次计算得到的数字。"}}]:[]),
-      {title:"揭晓答案，回头检查",narration:entry.result,sceneState:scene(3),activeFormulaIndices:formulas.map((_,i)=>i),liveStats:stats(3),tipBody:entry.tip},
-    ])
+    steps:teachingSteps(entry.secondMiddle
+      ? [
+          {title:`先读题：在十字方位图上看清前后左右`,narration:`${modeHint[mode]} 先在十字图上分清前、后、左、右各有多少，想一想先从哪一条方向线数起？`,sceneState:scene(0),liveStats:stats(0)},
+          {title:entry.middleQuestion,narration:`先专注一个方向来数一数：${entry.middleQuestion}`,sceneState:scene(1),liveStats:stats(1),checkpoint:numberCheckpoint(entry.middleQuestion,entry.middle,` ${entry.middleUnit}`,"先看高亮的这一条线。")},
+          {title:entry.secondMiddle.question,narration:`${entry.explanation} 已经得到 ${entry.middle} ${entry.middleUnit}。接下来看另一个方向：${entry.secondMiddle.question}`,sceneState:scene(2),activeFormulaIndices:[0],liveStats:stats(2),checkpoint:numberCheckpoint(entry.secondMiddle.question,entry.secondMiddle.value,` ${entry.secondMiddle.unit}`,"换看另一条方向线，别忘了本人或最后一排。")},
+          {title:entry.finalQuestion,narration:`${entry.secondMiddle.explanation} 现在把十字补全成完整队列！${entry.finalQuestion}`,sceneState:scene(3),activeFormulaIndices:[0,1],liveStats:stats(3),checkpoint:numberCheckpoint(entry.finalQuestion,entry.answer,` ${entry.unit}`,"用两个方向的结果相乘。")},
+          {title:"揭晓答案，回头检查",narration:entry.result,sceneState:scene(4),activeFormulaIndices:formulas.map((_,i)=>i),liveStats:stats(4),tipBody:entry.tip},
+        ]
+      : [
+          {title:`先读题：抓住「${entry.facts[0] ?? "关键条件"}」想一想！`,narration:`${modeHint[mode]} 先找出已知条件，想一想第一步要先算什么？`,sceneState:scene(0),liveStats:stats(0)},
+          {title:entry.middleQuestion,narration:`结合右边的条件卡片，先自己算一算：${entry.middleQuestion}`,sceneState:scene(1),liveStats:stats(1),checkpoint:numberCheckpoint(entry.middleQuestion,entry.middle,` ${entry.middleUnit}`,"回到题目找对应的条件。")},
+          {title:entry.finalQuestion,narration:`${entry.explanation} 得到 ${entry.middle} ${entry.middleUnit}。${entry.finalQuestion}`,sceneState:scene(2),activeFormulaIndices:[0],liveStats:stats(2),checkpoint:numberCheckpoint(entry.finalQuestion,entry.answer,` ${entry.unit}`,"利用刚刚找到的结果。")},
+          ...(isComparison?[{title:entry.number===4?"哪只蜗牛先到井口？":"谁先到达目的地？",narration:`两次计算分别得到 ${entry.middle} ${entry.middleUnit}和 ${entry.answer} ${entry.unit}。比较一下，谁先到？`,sceneState:scene(2,true),activeFormulaIndices:[0,1],liveStats:[{label:"第一次数",value:`${entry.middle} ${entry.middleUnit}`},{label:"第二次数",value:`${entry.answer} ${entry.unit}`},{label:"谁先到",value:"?",tone:"coral" as const}],checkpoint:{question:entry.number===4?"哪只蜗牛先到井口？":"谁先到达目的地？",options:entry.number===4?["第一只蜗牛","第二只蜗牛"]:["小艾","小雅"],correctIndex:0,feedbackCorrect:"答对了！比较到达前需要的次数，就能判断先后。",feedbackWrong:"再比较一下两次计算得到的数字。"}}]:[]),
+          {title:"揭晓答案，回头检查",narration:entry.result,sceneState:scene(3),activeFormulaIndices:formulas.map((_,i)=>i),liveStats:stats(3),tipBody:entry.tip},
+        ])
   })};
 }
 function buildLesson(id:string,title:string,chapterId:string,chapterTitle:string,page:string,mode:EarlyBookSceneState["mode"],entries:Entry[],warmup:number,practice:number):MathLesson {
   const lastPage={queue:"5",bus:"8",stairs:"13",well:"16",trees:"19"}[mode];
   return {id,chapterId,chapterTitle,grade:2,gradeLabel:"二年级",weekLabel:`p.${page}`,title,summary:`按原书例题与练习，一步步理解${title}。`,engine:"early-book",keywords:["二年级",title],editionMappings:[{edition:"doubanjiang",grade:2,gradeLabel:"二年级",chapterTitle,weekLabel:`p.${page}`}],sections:[{id:"discovery",title:"小例题大发现",subtitle:`例题及${entries.length-1}道练习`,pageRange:`p.${page}–${lastPage}`}],variants:entries.map((q,i)=>makeVariant(q,mode,i===0?"example":i<=warmup?"warmup":i<=practice?"practice":"challenge"))};
 }
-const item=(statement:string,facts:string[],middleQuestion:string,middle:number,middleUnit:string,middleFormula:string,finalQuestion:string,answer:number,unit:string,finalFormula:string,result:string,explanation:string,tip:string,alternate?:string[],queueSegments?:QueueSegments,wellSpec?:WellSpec,busSpec?:BusSpec,stairsSpec?:StairsSpec,treesSpec?:TreesSpec):Entry=>({statement,facts,middleQuestion,middle,middleUnit,middleFormula,finalQuestion,answer,unit,finalFormula,result,explanation,tip,alternate,queueSegments,wellSpec,busSpec,stairsSpec,treesSpec});
+const item=(statement:string,facts:string[],middleQuestion:string,middle:number,middleUnit:string,middleFormula:string,finalQuestion:string,answer:number,unit:string,finalFormula:string,result:string,explanation:string,tip:string,alternate?:string[],queueSegments?:QueueSegments,wellSpec?:WellSpec,busSpec?:BusSpec,stairsSpec?:StairsSpec,treesSpec?:TreesSpec,secondMiddle?:SecondMiddleSpec,queueGrid?:QueueGridSpec):Entry=>({statement,facts,middleQuestion,middle,middleUnit,middleFormula,finalQuestion,answer,unit,finalFormula,result,explanation,tip,alternate,queueSegments,wellSpec,busSpec,stairsSpec,treesSpec,secondMiddle,queueGrid});
 const numbered=(items:Entry[])=>items.map((q,i)=>({...q,number:i===0?undefined:i}));
 const queue=numbered([
  item("童太奇在车站售票处买车票，售票处排了两支人数一样的队伍。在童太奇所在的这一队里，童太奇前面有4人，后面有4人。这两队一共有多少人？",["前面4人，后面4人","两队人数一样"],"童太奇这一队有多少人？",9,"人","4+1+4=9","两队一共有多少人？",18,"人","9\\times2=18","这一队9人，两队一共18人。","前面、本人、后面都要数。","前后加本人，每队再合并。",undefined,{before:4,target:"奇",after:4,teams:2}),
  item("二（2）班学生排队测试短跑，一共排了3队，每队人数都一样。军军在其中一支队伍中，他前面有6名同学，后面有8名同学。二（2）班一共有多少名学生？",["前面6人，后面8人","一共3队，每队一样"],"军军所在队伍有多少人？",15,"人","6+1+8=15","全班一共有多少人？",45,"人","15\\times3=45","每队15人，3队共有45人。","前后人数之外还要加上军军。","前后加本人，再乘队伍数。",undefined,{before:6,target:"军",after:8,teams:3}),
  item("豆豆和朋友们排成一队做游戏，一共有18人，从前往后数，豆豆排在第5位。从后往前数，豆豆排在第几位？",["一共18人","从前数第5位"],"豆豆后面有多少人？",13,"人","18-5=13","从后往前数豆豆排第几位？",14,"位","13+1=14","豆豆后面有13人，从后数豆豆排第14位。","从前数第5位包含豆豆本人。","后面的人数加本人，就是从后数的位次。",undefined,{before:4,target:"豆",after:13,hideAfter:true,reverseCount:true}),
- item("课间，二（1）班的学生排队做操，每队人数都一样。小浩在其中一支队伍中，他的前面和后面都有6名同学，小浩的左边和右边各有1名同学。二（1）班一共有多少名学生？",["前后各6人","左边右边各有1人"],"小浩所在的队伍有多少人？",13,"人","6+1+6=13","3支队伍共有多少人？",39,"人","13\\times3=39","小浩所在队有13人，左右各一队，共3队、39人。","前后加本人，得到一队的人数。","每队人数乘队伍数。",undefined,{before:6,target:"浩",after:6,teams:3}),
+ item("课间，二（1）班的学生排队做操，每队人数都一样。小浩在其中一支队伍中，他的前面和后面都有6名同学，小浩的左边和右边各有1名同学。二（1）班一共有多少名学生？",["前后各6人","左边右边各有1人"],"先看竖着这一队：小浩前面6人、后面6人，这一队有多少人？",13,"人","6+1+6=13","每队13人，一共3支队伍，全班一共有多少名学生？",39,"人","13\\times3=39","小浩所在队有13人，左右各一队，共3队、39人。","前面6人、后面6人加上小浩自己，一队共13人。","先算竖着一队有几人，再算横着有几队。",undefined,{before:6,target:"浩",after:6,teams:3},undefined,undefined,undefined,undefined,{question:"再看横着方向：小浩左边1人、右边1人，加上他自己一共有几支队伍？",value:3,unit:"队",formula:"1+1+1=3",explanation:"左边1人、右边1人再加上小浩自己，说明左右一共排了3支队伍。"},{target:"浩",front:6,back:6,left:1,right:1,firstAxis:"vertical",axis1Label:"竖着一队",axis2Label:"横着几队",unit1:"人",unit2:"队"}),
  item("二（2）班的学生在排队体检，壮壮和小艾所在的这队一共有25人，从前往后数壮壮排第8，从后往前数小艾排第8。壮壮和小艾中间隔了几人？",["一队25人","壮壮从前第8","小艾从后第8"],"从前往后数，小艾排第几位？",18,"位","25-8+1=18","壮壮和小艾中间隔了几人？",9,"人","18-8-1=9","小艾从前排第18位，两人中间隔9人。","从后数的位置包含小艾本人。","两人位次相减，再减去一。",undefined,{before:7,target:"壮",between:9,secondTarget:"艾",after:7,hideBetween:true}),
  item("周末，小浩和同学们去动物园游玩。有两队人在门口排队检票，小浩所在队伍的人数比旁边的队伍多1人，小浩后面有5人，前面有4人。一共有多少人在门口排队检票？",["前面4人，后面5人","这队比旁边多1人"],"小浩所在队有多少人？",10,"人","4+1+5=10","两队一共有多少人？",19,"人","10+(10-1)=19","小浩一队10人，旁边一队9人，两队共19人。","小浩本人也要算进队伍。","先数一队，再找另一队。",undefined,{before:4,target:"浩",after:5,teams:2,teamDiff:-1}),
  item("小朋友排成一队做游戏，从前面数，小兰排在第4位，从后面数，小雅排在第5位，两人之间有5人。这一队一共有多少人？",["小兰从前第4","小雅从后第5","两人之间5人"],"小兰前面的部分连同中间的人，一共有多少人？",9,"人","4+5=9","这一队一共有多少人？",14,"人","9+5=14","从前到小兰4人，中间5人，从小雅到队尾5人，共14人。","第4位包含小兰本人。","从前一段、中间一段、从后一段相加。",undefined,{before:3,target:"兰",between:5,secondTarget:"雅",after:4}),
- item("班里的学生排队做广播体操，小浩站在最后一排，他的前面还有4排，每排人数都一样。小浩左边有5人，从小浩最右边往左数，他排在第4位。你知道班里一共有多少人吗？",["前面4排","左边5人，从右数第4","每排人数一样"],"小浩这一排有多少人？",9,"人","5+4=9","全班共有多少人？",45,"人","9\\times(4+1)=45","每排9人，共5排，全班45人。","从右数第4位包含小浩本人。","每排人数乘总排数。",undefined,{before:5,target:"浩",after:3,teams:5,reverseCount:true}),
- item("同学们排成方阵做课间操，每排人数都一样，豆豆发现自己前、后、左、右各有3人。这个方阵一共有多少人？",["前后各3人","左右各3人"],"豆豆所在的一排有多少人？",7,"人","3+1+3=7","方阵一共有多少人？",49,"人","7\\times7=49","每排7人，共7排，方阵一共有49人。","左右两边加上豆豆本人。","一排几人、几排，分别数清。",undefined,{before:3,target:"豆",after:3,teams:7,gridSquare:true}),
+ item("班里的学生排队做广播体操，小浩站在最后一排，他的前面还有4排，每排人数都一样。小浩左边有5人，从小浩最右边往左数，他排在第4位。你知道班里一共有多少人吗？",["前面4排","左边5人，从右数第4","每排人数一样"],"先看小浩这一横排：左边有5人，从右数排第4位，这一排有多少人？",9,"人","5+4=9","每排9人，一共有5排，全班共有多少人？",45,"人","9\\times5=45","每排9人，共5排，全班45人。","左边5人加上从右往左数包含小浩在内的4人，这一排共9人。","先看横排几人，再看竖着几排，最后乘起来。",undefined,{before:5,target:"浩",after:3,teams:5,reverseCount:true},undefined,undefined,undefined,undefined,{question:"再看前后方向：小浩站在最后一排，前面还有4排，全班一共有几排？",value:5,unit:"排",formula:"4+1=5",explanation:"前面有4排，再加上小浩所在的最后一排，一共有5排。"},{target:"浩",front:4,back:0,left:5,right:3,firstAxis:"horizontal",rightOrdinal:true,axis1Label:"横着一排",axis2Label:"竖着几排",unit1:"人",unit2:"排"}),
+ item("同学们排成方阵做课间操，每排人数都一样，豆豆发现自己前、后、左、右各有3人。这个方阵一共有多少人？",["前后各3人","左右各3人"],"先看横着这一排：豆豆左边3人、右边3人，这一排有多少人？",7,"人","3+1+3=7","横着每排7人，竖着共7排，补全方阵一共有多少人？",49,"人","7\\times7=49","每排7人，共7排，方阵一共有49人。","左边3人、右边3人加上豆豆自己，一排共7人。","先看横排、再看竖排，补全十字就是方阵。",undefined,{before:3,target:"豆",after:3,teams:7,gridSquare:true},undefined,undefined,undefined,undefined,{question:"再看竖着这一列：豆豆前面3人、后面3人，这个方阵一共有几排？",value:7,unit:"排",formula:"3+1+3=7",explanation:"前面3人、后面3人再加上豆豆这一排，一共有7排。"},{target:"豆",front:3,back:3,left:3,right:3,firstAxis:"horizontal",axis1Label:"横着一排",axis2Label:"竖着几排",unit1:"人",unit2:"排"}),
  item("将班里的45人平均分成5队做游戏。如果小艾前面有6人，那么小艾后面有多少人？",["45人平均分成5队","小艾前面6人"],"每队有多少人？",9,"人","45\\div5=9","小艾后面有多少人？",2,"人","9-6-1=2","每队9人，减去前面6人和小艾本人，后面还有2人。","总人数平均分成5队。","全队减前面，再减本人。",undefined,{before:6,target:"艾",after:2,hideAfter:true,teams:5}),
 ]);
 const bus=numbered([

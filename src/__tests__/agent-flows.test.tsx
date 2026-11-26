@@ -572,4 +572,43 @@ it("驱动爬井、乘车与排队 2D 过程动画且不剧透答案", async () 
   });
   expect(screen.getByText(/公路一侧插彩旗/)).toBeTruthy();
   expect(screen.getByText(/总长 48 米/)).toBeTruthy();
+
+  await act(async () => {
+    window.history.replaceState(null, "", "#/g2-queue-overlap/q8/1");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
+  expect(screen.getByText(/前 3 人/)).toBeTruthy();
+  expect(screen.getByText(/后 3 人/)).toBeTruthy();
+  expect(screen.getByText(/左 3 人/)).toBeTruthy();
+  expect(screen.getByText(/右 3 人/)).toBeTruthy();
+
+  await act(async () => {
+    window.history.replaceState(null, "", "#/g2-queue-overlap/q8/2");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
+  entries = visibleControls();
+  expect(entries.every((e) => !!e.label)).toBe(true);
+  expect(new Set(entries.map((e) => e.label)).size).toBe(entries.length);
+  const gridAxis1 = await act(() => agent.act({ steps: [{ ref: "演示排队逐段点数", action: "press" }] }));
+  expect(gridAxis1.ok, gridAxis1.error?.message).toBe(true);
+
+  await act(async () => {
+    window.history.replaceState(null, "", "#/g2-queue-overlap/q8/3");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
+  entries = visibleControls();
+  expect(entries.every((e) => !!e.label)).toBe(true);
+  expect(new Set(entries.map((e) => e.label)).size).toBe(entries.length);
+  const gridAxis2 = await act(() => agent.act({ steps: [{ ref: "演示排队第二维点数", action: "press" }] }));
+  expect(gridAxis2.ok, gridAxis2.error?.message).toBe(true);
+
+  await act(async () => {
+    window.history.replaceState(null, "", "#/g2-queue-overlap/q8/4");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
+  entries = visibleControls();
+  expect(entries.every((e) => !!e.label)).toBe(true);
+  expect(new Set(entries.map((e) => e.label)).size).toBe(entries.length);
+  const gridFull = await act(() => agent.act({ steps: [{ ref: "演示十字补全方阵动画", action: "press" }] }));
+  expect(gridFull.ok, gridFull.error?.message).toBe(true);
 });

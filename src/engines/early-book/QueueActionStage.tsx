@@ -3,8 +3,9 @@ import { Button } from "@ui-sdk/react/button";
 import { motion } from "motion/react";
 import type { EarlyBookSceneState } from "../../types/lesson";
 import { StageFrame } from "../StageFrame";
+import { QueueGridStage } from "./QueueGridStage";
 
-function PersonAvatar({
+export function PersonAvatar({
   x,
   y,
   scale = 1,
@@ -80,6 +81,9 @@ function PersonAvatar({
 }
 
 export function QueueActionStage({ scene }: { scene: EarlyBookSceneState }) {
+  if (scene.queueGrid) {
+    return <QueueGridStage scene={scene} grid={scene.queueGrid} />;
+  }
   const seg = scene.queueSegments ?? {
     before: 4,
     target: "主角",
