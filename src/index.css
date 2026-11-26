@@ -510,3 +510,32 @@ dialog::backdrop {
 .fig-formula-card .katex {
   font-size: 0.96em;
 }
+
+@keyframes fig-dash-flow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+@keyframes fig-dash-flow-reverse {
+  to {
+    stroke-dashoffset: 24;
+  }
+}
+
+.fig-flow-dash {
+  stroke-dasharray: 7 5;
+}
+
+.fig-flow-dash-reverse {
+  stroke-dasharray: 7 5;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fig-flow-dash {
+    animation: fig-dash-flow 0.9s linear infinite;
+  }
+  .fig-flow-dash-reverse {
+    animation: fig-dash-flow-reverse 0.9s linear infinite;
+  }
+}

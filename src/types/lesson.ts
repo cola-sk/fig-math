@@ -321,6 +321,68 @@ export interface EarlyBookSceneState {
   middleLabel: string;
   middleValue: string;
   finalValue: string;
+  queueSegments?: {
+    before: number;
+    target: string;
+    between?: number;
+    secondTarget?: string;
+    after: number;
+    hideAfter?: boolean;
+    hideBetween?: boolean;
+    teams?: number;
+    teamDiff?: number;
+    reverseCount?: boolean;
+    gridSquare?: boolean;
+  };
+  wellSpec?: {
+    total: number;
+    up: number;
+    down: number;
+    unit: string;
+    vertical?: boolean;
+    hideTotal?: boolean;
+    secondRunner?: {
+      name: string;
+      total: number;
+      up: number;
+      down: number;
+    };
+  };
+  busSpec?: {
+    initial: string;
+    step1Label: string;
+    step1Dir: "out" | "in";
+    step2Label: string;
+    step2Dir: "out" | "in";
+    initialNum?: number;
+    step1Delta?: number;
+    step2Delta?: number;
+    unit?: string;
+    reverse?: boolean;
+    twoStops?: {
+      s1Off: number;
+      s1On: number;
+      s2Off: number;
+      s2On: number;
+    };
+  };
+  stairsSpec?: {
+    from: number;
+    to: number;
+    targetFrom: number;
+    targetTo: number;
+    unit: string;
+  };
+  treesSpec?: {
+    count: number;
+    intervals?: number;
+    totalLength?: number;
+    gapLength?: number;
+    ask?: "count" | "gap" | "total";
+    bothEnds: boolean;
+    noEnds?: boolean;
+    unit: string;
+  };
 }
 
 export type SceneState =

@@ -491,3 +491,85 @@ it("通过 agent 切换和差问题的例题组并打开年龄练习", async () 
   expect(window.location.hash).toBe("#/sum-diff/d2-q3/1");
   expect(screen.getAllByText(/今年壮壮8岁/).length).toBeGreaterThan(0);
 });
+
+it("驱动爬井、乘车与排队 2D 过程动画且不剧透答案", async () => {
+  window.history.replaceState(null, "", "#/g2-well-climb/example/2");
+  render(<App />);
+  let entries = visibleControls();
+  expect(entries.every((e) => !!e.label)).toBe(true);
+  expect(new Set(entries.map((e) => e.label)).size).toBe(entries.length);
+
+  expect(screen.getByText(/白天\/前进动作|夜晚\/回退动作/)).toBeTruthy();
+  const up = await act(() => agent.act({ steps: [{ ref: "演示白天上爬动作", action: "press" }] }));
+  expect(up.ok, up.error?.message).toBe(true);
+  expect(screen.getByText(/白天\/前进动作/)).toBeTruthy();
+
+  const down = await act(() => agent.act({ steps: [{ ref: "演示晚上下滑动作", action: "press" }] }));
+  expect(down.ok, down.error?.message).toBe(true);
+  expect(screen.getByText(/夜晚\/回退动作/)).toBeTruthy();
+
+  const combo = await act(() => agent.act({ steps: [{ ref: "连续演示一昼夜上爬和下滑", action: "press" }] }));
+  expect(combo.ok, combo.error?.message).toBe(true);
+
+  window.history.replaceState(null, "", "#/g2-well-climb/example/4");
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
+  const replay = await act(() => agent.act({ steps: [{ ref: "重播爬井完整过程", action: "press" }] }));
+  expect(replay.ok, replay.error?.message).toBe(true);
+
+  window.history.replaceState(null, "", "#/g2-bus-ride/example/2");
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
+  entries = visibleControls();
+  expect(entries.every((e) => !!e.label)).toBe(true);
+  expect(new Set(entries.map((e) => e.label)).size).toBe(entries.length);
+  const busStep1 = await act(() => agent.act({ steps: [{ ref: "演示乘车第一步变化", action: "press" }] }));
+  expect(busStep1.ok, busStep1.error?.message).toBe(true);
+  expect(screen.getByText(/第一步动作：/)).toBeTruthy();
+
+  window.history.replaceState(null, "", "#/g2-queue-overlap/example/2");
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
+  entries = visibleControls();
+  expect(entries.every((e) => !!e.label)).toBe(true);
+  expect(new Set(entries.map((e) => e.label)).size).toBe(entries.length);
+  const queueDemo = await act(() => agent.act({ steps: [{ ref: "演示排队逐段点数", action: "press" }] }));
+  expect(queueDemo.ok, queueDemo.error?.message).toBe(true);
+  expect(screen.getByText(/逐个点数对齐/)).toBeTruthy();
+
+  window.history.replaceState(null, "", "#/g2-intervals/example/2");
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
+  entries = visibleControls();
+  expect(entries.every((e) => !!e.label)).toBe(true);
+  expect(new Set(entries.map((e) => e.label)).size).toBe(entries.length);
+  const stairsDemo = await act(() => agent.act({ steps: [{ ref: "演示爬楼梯间隔动画", action: "press" }] }));
+  expect(stairsDemo.ok, stairsDemo.error?.message).toBe(true);
+  expect(screen.getByText(/每向上爬 1 层/)).toBeTruthy();
+
+  window.history.replaceState(null, "", "#/tree-planting/example/2");
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
+  entries = visibleControls();
+  expect(entries.every((e) => !!e.label)).toBe(true);
+  expect(new Set(entries.map((e) => e.label)).size).toBe(entries.length);
+  const treesDemo = await act(() => agent.act({ steps: [{ ref: "演示植树点与间隔动画", action: "press" }] }));
+  expect(treesDemo.ok, treesDemo.error?.message).toBe(true);
+  expect(screen.getByText(/红虚线表示的「间隔」/)).toBeTruthy();
+
+  await act(async () => {
+    window.history.replaceState(null, "", "#/tree-planting/q2/4");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
+  expect(screen.getByText(/彩带挂气球/)).toBeTruthy();
+  expect(screen.getByText(/总长 20 米/)).toBeTruthy();
+
+  await act(async () => {
+    window.history.replaceState(null, "", "#/tree-planting/q4/1");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
+  expect(screen.getByText(/操场一侧放花/)).toBeTruthy();
+  expect(screen.getByText(/总长 \? 米/)).toBeTruthy();
+
+  await act(async () => {
+    window.history.replaceState(null, "", "#/tree-planting/q5/4");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
+  expect(screen.getByText(/公路一侧插彩旗/)).toBeTruthy();
+  expect(screen.getByText(/总长 48 米/)).toBeTruthy();
+});
