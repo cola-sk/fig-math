@@ -47,4 +47,30 @@ describe("二年级第2至19页书题", () => {
     expect(question.steps.at(-1)?.narration).toContain("题干本身没有明确说明");
     expect(question.steps[1].title).toContain("两端空隙也看成相等");
   });
+  it("enumerates round-by-round steps for <= 5 round well and dance problems", () => {
+    const ex = wellBookLesson.variants.find((v) => v.id === "example")!.build({});
+    expect(ex.steps.map((s) => s.tag)).toEqual([
+      "观察与思考",
+      "第 1 天",
+      "第 2 天",
+      "第 3 天",
+      "第 4 天",
+      "第 5 天冲顶",
+    ]);
+    const q1 = wellBookLesson.variants.find((v) => v.id === "q1")!.build({});
+    expect(q1.steps).toHaveLength(7);
+    const q3 = wellBookLesson.variants.find((v) => v.id === "q3")!.build({});
+    expect(q3.steps).toHaveLength(6);
+    const q6 = wellBookLesson.variants.find((v) => v.id === "q6")!.build({});
+    expect(q6.steps.map((s) => s.tag)).toEqual([
+      "观察与思考",
+      "第 1 次跳",
+      "第 2 次跳",
+      "第 3 次跳",
+      "第 4 次到达",
+      "验证与回顾",
+    ]);
+    const q4 = wellBookLesson.variants.find((v) => v.id === "q4")!.build({});
+    expect(q4.steps).toHaveLength(5);
+  });
 });

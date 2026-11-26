@@ -14,6 +14,20 @@ type SecondMiddleSpec = {
   explanation: string;
 };
 type QueueGridSpec = EarlyBookSceneState["queueGrid"];
+type WellTrail = { step: number; from: number; peak: number; end: number };
+function computeWellTrails(total: number, up: number, down: number): WellTrail[] {
+  const trails: WellTrail[] = [];
+  let h = 0;
+  for (let step = 1; step <= 12; step++) {
+    const peak = Math.min(total, h + up);
+    const reached = peak >= total;
+    const end = reached ? total : peak - down;
+    trails.push({ step, from: h, peak, end });
+    h = end;
+    if (reached) break;
+  }
+  return trails;
+}
 type Entry = {
   number?:number; statement:string; facts:string[]; middleQuestion:string; middle:number; middleUnit:string; middleFormula:string;
   finalQuestion:string; answer:number; unit:string; finalFormula:string; result:string; explanation:string; tip:string;
@@ -51,8 +65,14 @@ function makeVariant(entry:Entry,mode:EarlyBookSceneState["mode"],kind:BookSecti
   const secondMiddleTag = entry.secondMiddle
     ? entry.secondMiddle.question.replace(/[？?].*$/, "").slice(0, 12) || "第二步"
     : undefined;
-  const scene=(phase:number,comparison=false):EarlyBookSceneState=>({
-    kind:"early-book",mode,subject,comparison,phase,facts:entry.facts,
+  const scene=(
+    phase:number,
+    comparison=false,
+    extra?:{focusRound?:number;hideCurrentEnd?:boolean},
+  ):EarlyBookSceneState=>({
+    kind:"early-book",mode,subject,comparison,phase,
+    focusRound:extra?.focusRound,hideCurrentEnd:extra?.hideCurrentEnd,
+    facts:entry.facts,
     middleLabel:middleTag,middleValue:`${entry.middle} ${entry.middleUnit}`,
     secondMiddleLabel:secondMiddleTag,
     secondMiddleValue:entry.secondMiddle?`${entry.secondMiddle.value} ${entry.secondMiddle.unit}`:undefined,
@@ -71,9 +91,173 @@ function makeVariant(entry:Entry,mode:EarlyBookSceneState["mode"],kind:BookSecti
         {label:"第一步",value:phase>=2?`${entry.middle} ${entry.middleUnit}`:"?",tone:phase===1?"coral":phase>=2?"teal":"default"},
         {label:"最后结果",value:phase>=3?finalDisplay:"?",tone:phase===2?"coral":phase>=3?"teal":"default"},
       ];
+  const buildEnumerableWellSteps = () => {
+    if (mode !== "well" || !entry.wellSpec || entry.wellSpec.secondRunner) {
+      return null;
+    }
+    const spec = entry.wellSpec;
+    const trails = computeWellTrails(spec.total, spec.up, spec.down);
+    if (trails.length < 2 || trails.length > 5) {
+      return null;
+    }
+    const roundUnit = spec.vertical ? "天" : "次";
+    const allFormulaIndices = formulas.map((_, i) => i);
+
+    if (spec.hideTotal) {
+      return [
+        {
+          title: `先读题：抓住「${entry.facts[0] ?? "关键条件"}」想一想！`,
+          narration: `${modeHint[mode]} 先一轮轮看清楚每次上升与下滑的变化，第 1 天能到达哪里？`,
+          sceneState: scene(0),
+          liveStats: stats(0),
+        },
+        ...trails.slice(0, trails.length - 2).map((t) => ({
+          tag: `第 ${t.step} 天`,
+          title: `第 ${t.step} 天：先上爬 ${spec.up}${spec.unit}，再下滑 ${spec.down}${spec.unit}`,
+          narration: `第 ${t.step} 天从 ${t.from}${spec.unit} 出发，白天爬到 ${t.peak}${spec.unit}，夜晚下滑到 ${t.end}${spec.unit}。`,
+          sceneState: scene(1, false, { focusRound: t.step }),
+          liveStats: stats(1),
+        })),
+        {
+          tag: `第 ${trails.length - 1} 天`,
+          title: entry.middleQuestion,
+          narration: `前 ${trails.length - 2} 天结束在 ${trails[trails.length - 3]?.end ?? 0}${spec.unit}，第 ${trails.length - 1} 天同样先上 ${spec.up} 再退 ${spec.down}：${entry.middleQuestion}`,
+          sceneState: scene(1, false, { focusRound: trails.length - 1, hideCurrentEnd: true }),
+          liveStats: stats(1),
+          checkpoint: numberCheckpoint(entry.middleQuestion, entry.middle, ` ${entry.middleUnit}`, "前四个昼夜各上升同样的高度。"),
+        },
+        {
+          tag: `第 ${trails.length} 天冲顶`,
+          title: entry.finalQuestion,
+          narration: `${entry.explanation} 得到 ${entry.middle} ${entry.middleUnit}。第 ${trails.length} 天白天直接爬出井口不再下滑，${entry.finalQuestion}`,
+          sceneState: scene(2, false, { focusRound: trails.length - 1 }),
+          activeFormulaIndices: [0],
+          liveStats: stats(2),
+          checkpoint: numberCheckpoint(entry.finalQuestion, entry.answer, ` ${entry.unit}`, "加上最后一天白天向上爬的米数。"),
+        },
+        {
+          tag: "验证与回顾",
+          title: "揭晓答案，回头检查",
+          narration: entry.result,
+          sceneState: scene(3, false, { focusRound: trails.length }),
+          activeFormulaIndices: allFormulaIndices,
+          liveStats: stats(3),
+          tipBody: entry.tip,
+        },
+      ];
+    }
+
+    if (!spec.vertical && entry.middle === trails.length && entry.answer !== trails.length) {
+      return [
+        {
+          title: `先读题：抓住「${entry.facts[0] ?? "关键条件"}」想一想！`,
+          narration: `${modeHint[mode]} 我们一跳一跳往目标 ${spec.total}${spec.unit} 走，看看第几跳后就能直接到达终点？`,
+          sceneState: scene(0),
+          liveStats: stats(0),
+        },
+        ...trails.slice(0, trails.length - 2).map((t) => ({
+          tag: `第 ${t.step} 次跳`,
+          title: `第 ${t.step} 次：前进 ${spec.up}${spec.unit} 再后退 ${spec.down}${spec.unit}`,
+          narration: `从 ${t.from}${spec.unit} 前进到 ${t.peak}${spec.unit}，因为还没到 ${spec.total}${spec.unit}，再退回 ${t.end}${spec.unit}。这次往返一共跳了 ${spec.up}+${spec.down}=${spec.up + spec.down} ${spec.unit}。`,
+          sceneState: scene(1, false, { focusRound: t.step }),
+          liveStats: stats(1),
+        })),
+        {
+          tag: `第 ${trails.length - 1} 次跳`,
+          title: entry.middleQuestion,
+          narration: `第 ${trails.length - 1} 次结束后停在 ${trails[trails.length - 2].end}${spec.unit}，离终点刚好只剩冲刺的 ${spec.up}${spec.unit}！想一想：${entry.middleQuestion}`,
+          sceneState: scene(1, false, { focusRound: trails.length - 1 }),
+          liveStats: stats(1),
+          checkpoint: numberCheckpoint(entry.middleQuestion, entry.middle, ` ${entry.middleUnit}`, "最后一次到达终点就停下，不再后退。"),
+        },
+        {
+          tag: `第 ${trails.length} 次到达`,
+          title: entry.finalQuestion,
+          narration: `${entry.explanation} 一共向前跳 ${entry.middle} 次、后退 ${entry.middle - 1} 次。${entry.finalQuestion}`,
+          sceneState: scene(2, false, { focusRound: trails.length }),
+          activeFormulaIndices: [0],
+          liveStats: stats(2),
+          checkpoint: numberCheckpoint(entry.finalQuestion, entry.answer, ` ${entry.unit}`, "把每次前进和每次后退的路程全部相加。"),
+        },
+        {
+          tag: "验证与回顾",
+          title: "揭晓答案，回头检查",
+          narration: entry.result,
+          sceneState: scene(3, false, { focusRound: trails.length }),
+          activeFormulaIndices: allFormulaIndices,
+          liveStats: stats(3),
+          tipBody: entry.tip,
+        },
+      ];
+    }
+
+    return [
+      {
+        title: `先读题：抓住「${entry.facts[0] ?? "关键条件"}」想一想！`,
+        narration: `${modeHint[mode]} 先找出已知条件，想一想第 1 ${roundUnit}结束后停在哪里？`,
+        sceneState: scene(0),
+        liveStats: stats(0),
+      },
+      {
+        tag: `第 1 ${roundUnit}`,
+        title: entry.middleQuestion,
+        narration: `看第 1 ${roundUnit}演示：先上升 ${spec.up}${spec.unit}，再下滑 ${spec.down}${spec.unit}。先算一算：${entry.middleQuestion}`,
+        sceneState: scene(1, false, { focusRound: 1, hideCurrentEnd: true }),
+        liveStats: stats(1),
+        checkpoint: numberCheckpoint(entry.middleQuestion, entry.middle, ` ${entry.middleUnit}`, "回到题目找一上一下的差。"),
+      },
+      ...trails.slice(1, trails.length - 1).map((t, idx) => {
+        const isPreSprint = idx === trails.length - 3;
+        if (isPreSprint) {
+          return {
+            tag: trails.length === 2 ? "准备冲顶" : `第 ${t.step} ${roundUnit}`,
+            title: entry.finalQuestion,
+            narration: `第 ${t.step} ${roundUnit}从 ${t.from}${spec.unit} 上爬到 ${t.peak}${spec.unit} 后下滑到 ${t.end}${spec.unit}，离终点只差最后的 ${spec.up}${spec.unit}！${entry.finalQuestion}`,
+            sceneState: scene(2, false, { focusRound: t.step }),
+            activeFormulaIndices: [0],
+            liveStats: stats(2),
+            checkpoint: numberCheckpoint(entry.finalQuestion, entry.answer, ` ${entry.unit}`, "下一轮一爬上去就到达终点，不再回退！"),
+          };
+        }
+        return {
+          tag: `第 ${t.step} ${roundUnit}`,
+          title: `第 ${t.step} ${roundUnit}：到达 ${t.peak}${spec.unit} 后回到 ${t.end}${spec.unit}`,
+          narration: `第 ${t.step} ${roundUnit}从 ${t.from}${spec.unit} 爬到 ${t.peak}${spec.unit}，还没到终点 ${spec.total}${spec.unit}，再退回 ${t.end}${spec.unit}，还差 ${spec.total - t.end}${spec.unit}。`,
+          sceneState: scene(2, false, { focusRound: t.step }),
+          activeFormulaIndices: [0],
+          liveStats: stats(2),
+        };
+      }),
+      ...(trails.length === 2
+        ? [
+            {
+              tag: "准备冲顶",
+              title: entry.finalQuestion,
+              narration: `${entry.explanation} 现在已经在 ${trails[0].end}${spec.unit}，离 ${spec.total}${spec.unit} 只差 ${spec.up}${spec.unit}！${entry.finalQuestion}`,
+              sceneState: scene(2, false, { focusRound: 1 }),
+              activeFormulaIndices: [0],
+              liveStats: stats(2),
+              checkpoint: numberCheckpoint(entry.finalQuestion, entry.answer, ` ${entry.unit}`, "下一轮直接冲到终点，不再下滑。"),
+            },
+          ]
+        : []),
+      {
+        tag: `第 ${trails.length} ${roundUnit}冲顶`,
+        title: "揭晓答案，回头检查",
+        narration: entry.result,
+        sceneState: scene(3, false, { focusRound: trails.length }),
+        activeFormulaIndices: allFormulaIndices,
+        liveStats: stats(3),
+        tipBody: entry.tip,
+      },
+    ];
+  };
+
+  const wellSteps = buildEnumerableWellSteps();
+
   return {id,modeLabel:label,bookPart:tier==="challenge"?"B版":"A版",tier,sectionId:"discovery",sectionKind:kind,questionNo:entry.number,title:label,subtitle:"读题后先想一想，再一步步验证。",defaultParams:{},paramDefs:[],build:()=>({
     problemStatement:entry.statement,formulas,
-    steps:teachingSteps(entry.secondMiddle
+    steps:teachingSteps(wellSteps ?? (entry.secondMiddle
       ? [
           {title:`先读题：在十字方位图上看清前后左右`,narration:`${modeHint[mode]} 先在十字图上分清前、后、左、右各有多少，想一想先从哪一条方向线数起？`,sceneState:scene(0),liveStats:stats(0)},
           {title:entry.middleQuestion,narration:`先专注一个方向来数一数：${entry.middleQuestion}`,sceneState:scene(1),liveStats:stats(1),checkpoint:numberCheckpoint(entry.middleQuestion,entry.middle,` ${entry.middleUnit}`,"先看高亮的这一条线。")},
@@ -87,7 +271,7 @@ function makeVariant(entry:Entry,mode:EarlyBookSceneState["mode"],kind:BookSecti
           {title:entry.finalQuestion,narration:`${entry.explanation} 得到 ${entry.middle} ${entry.middleUnit}。${entry.finalQuestion}`,sceneState:scene(2),activeFormulaIndices:[0],liveStats:stats(2),checkpoint:numberCheckpoint(entry.finalQuestion,entry.answer,` ${entry.unit}`,"利用刚刚找到的结果。")},
           ...(isComparison?[{title:entry.number===4?"哪只蜗牛先到井口？":"谁先到达目的地？",narration:`两次计算分别得到 ${entry.middle} ${entry.middleUnit}和 ${entry.answer} ${entry.unit}。比较一下，谁先到？`,sceneState:scene(2,true),activeFormulaIndices:[0,1],liveStats:[{label:"第一次数",value:`${entry.middle} ${entry.middleUnit}`},{label:"第二次数",value:`${entry.answer} ${entry.unit}`},{label:"谁先到",value:"?",tone:"coral" as const}],checkpoint:{question:entry.number===4?"哪只蜗牛先到井口？":"谁先到达目的地？",options:entry.number===4?["第一只蜗牛","第二只蜗牛"]:["小艾","小雅"],correctIndex:0,feedbackCorrect:"答对了！比较到达前需要的次数，就能判断先后。",feedbackWrong:"再比较一下两次计算得到的数字。"}}]:[]),
           {title:"揭晓答案，回头检查",narration:entry.result,sceneState:scene(3),activeFormulaIndices:formulas.map((_,i)=>i),liveStats:stats(3),tipBody:entry.tip},
-        ])
+        ]))
   })};
 }
 function buildLesson(id:string,title:string,chapterId:string,chapterTitle:string,page:string,mode:EarlyBookSceneState["mode"],entries:Entry[],warmup:number,practice:number):MathLesson {

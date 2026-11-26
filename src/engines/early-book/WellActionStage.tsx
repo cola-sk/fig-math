@@ -39,13 +39,15 @@ export function WellActionStage({ scene }: { scene: EarlyBookSceneState }) {
     : [];
 
   const defaultRound =
-    scene.phase === 0
-      ? 0
-      : scene.phase === 1
-        ? 1
-        : scene.phase === 2
-          ? Math.max(1, trails.length - 1)
-          : trails.length;
+    scene.focusRound !== undefined
+      ? scene.focusRound
+      : scene.phase === 0
+        ? 0
+        : scene.phase === 1
+          ? 1
+          : scene.phase === 2
+            ? Math.max(1, trails.length - 1)
+            : trails.length;
 
   const [subAction, setSubAction] = useState<SubAction>(
     scene.phase === 1 ? "up" : "done",
@@ -65,7 +67,13 @@ export function WellActionStage({ scene }: { scene: EarlyBookSceneState }) {
     clearTimers();
     setFastMode(false);
     setDemoRound(defaultRound);
-    if (scene.phase === 1) {
+    if (scene.focusRound !== undefined && scene.focusRound > 0) {
+      setSubAction("up");
+      const targetSub: SubAction =
+        scene.focusRound < trails.length || scene.hideCurrentEnd ? "down" : "done";
+      const id = window.setTimeout(() => setSubAction(targetSub), 650);
+      timersRef.current.push(id);
+    } else if (scene.phase === 1) {
       setSubAction("up");
       const id = window.setTimeout(() => setSubAction("down"), 650);
       timersRef.current.push(id);
@@ -73,19 +81,23 @@ export function WellActionStage({ scene }: { scene: EarlyBookSceneState }) {
       setSubAction("done");
     }
     return clearTimers;
-  }, [scene.phase, defaultRound, spec.total, spec.up, spec.down]);
+  }, [scene.phase, scene.focusRound, scene.hideCurrentEnd, defaultRound, spec.total, spec.up, spec.down, trails.length]);
 
   const schedule = (fn: () => void, ms: number) => {
     const id = window.setTimeout(fn, ms);
     timersRef.current.push(id);
   };
 
+  const targetRound = scene.focusRound ?? 1;
+
   const playDayNight = () => {
     clearTimers();
     setFastMode(false);
-    setDemoRound(1);
+    setDemoRound(targetRound);
     setSubAction("up");
-    schedule(() => setSubAction("down"), 650);
+    const targetSub: SubAction =
+      targetRound < trails.length || scene.hideCurrentEnd ? "down" : "done";
+    schedule(() => setSubAction(targetSub), 650);
   };
 
   const playSprintPrefix = () => {
@@ -170,6 +182,16 @@ export function WellActionStage({ scene }: { scene: EarlyBookSceneState }) {
     if (scene.phase === 0) {
       return `先看清目标与每轮动作：每次向前/上 ${spec.up}${spec.unit}，再回退 ${spec.down}${spec.unit}。`;
     }
+    if (scene.focusRound !== undefined && scene.phase < 3) {
+      const roundTrail = trails[scene.focusRound - 1];
+      if (isUpPhase) {
+        return `☀️ 第 ${scene.focusRound} 轮白天/前进动作：从 ${roundTrail?.from ?? 0}${spec.unit} 上升 +${spec.up}${spec.unit}${spec.hideTotal && scene.hideCurrentEnd ? "" : ` 到 ${roundTrail?.peak ?? spec.up}${spec.unit}`}。`;
+      }
+      if (scene.hideCurrentEnd) {
+        return `🌙 第 ${scene.focusRound} 轮夜晚/回退动作：再退回 ${spec.down}${spec.unit}，想一想现在到了多少${spec.unit}？`;
+      }
+      return `🌙 第 ${scene.focusRound} 轮夜晚/回退动作：下滑 ${spec.down}${spec.unit} 到 ${roundTrail?.end ?? 0}${spec.unit}，还差冲刺吗？`;
+    }
     if (scene.phase === 1) {
       if (isUpPhase) {
         return `☀️ 白天/前进动作：从 0 爬到 ${spec.up}${spec.unit}（上升 +${spec.up}${spec.unit}）。`;
@@ -192,6 +214,15 @@ export function WellActionStage({ scene }: { scene: EarlyBookSceneState }) {
         ? `目标 ?${spec.unit} · 上${spec.up} 退${spec.down}`
         : `目标 ${spec.total}${spec.unit} · 上${spec.up} 退${spec.down}`;
     }
+    if (scene.focusRound !== undefined && scene.phase < 3) {
+      if (isUpPhase) {
+        return `☀️ 第 ${scene.focusRound} 轮上爬 +${spec.up}${spec.unit}`;
+      }
+      if (scene.hideCurrentEnd) {
+        return `🌙 第 ${scene.focusRound} 轮回退 −${spec.down}${spec.unit} · 当前 ?${spec.unit}`;
+      }
+      return `第 ${activeRound} 轮 · 当前 ${currentPos}${spec.unit}`;
+    }
     if (scene.phase === 1) {
       return isUpPhase
         ? `☀️ 上爬 +${spec.up}${spec.unit}（到 ${spec.up}${spec.unit}）`
@@ -203,16 +234,20 @@ export function WellActionStage({ scene }: { scene: EarlyBookSceneState }) {
     return `🎉 到达终点 · ${scene.finalValue}`;
   })();
 
+  const showRoundControls =
+    scene.phase === 1 ||
+    (scene.phase === 2 && scene.focusRound !== undefined && scene.focusRound < trails.length);
+
   const controls = (
     <>
-      {scene.phase === 1 && (
+      {showRoundControls && (
         <>
           <Button
             aria-label="演示白天上爬动作"
             aria-pressed={isUpPhase}
             onClick={() => {
               clearTimers();
-              setDemoRound(1);
+              setDemoRound(targetRound);
               setSubAction("up");
             }}
             className={`inline-flex cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-bold transition ${
@@ -228,7 +263,7 @@ export function WellActionStage({ scene }: { scene: EarlyBookSceneState }) {
             aria-pressed={isDownPhase}
             onClick={() => {
               clearTimers();
-              setDemoRound(1);
+              setDemoRound(targetRound);
               setSubAction("down");
             }}
             className={`inline-flex cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-bold transition ${
@@ -244,11 +279,11 @@ export function WellActionStage({ scene }: { scene: EarlyBookSceneState }) {
             onClick={playDayNight}
             className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--accent-teal)] bg-[var(--accent-teal-soft)] px-2.5 py-1 text-xs font-bold text-[var(--accent-teal)] transition hover:brightness-95"
           >
-            ▶ 连演一昼夜
+            ▶ 连演本轮动作
           </Button>
         </>
       )}
-      {scene.phase === 2 && (
+      {scene.phase === 2 && (scene.focusRound === undefined || scene.focusRound >= trails.length) && (
         <Button
           aria-label="加速演示冲刺前各轮"
           onClick={playSprintPrefix}

@@ -94,7 +94,7 @@ describe("Grade 2 pause, reveal, and arithmetic review", () => {
           const built = variant.build(params);
           expect(built.steps.length).toBeGreaterThanOrEqual(4);
           if (variant.tier === "base")
-            expect(built.steps.length).toBeLessThanOrEqual(5);
+            expect(built.steps.length).toBeLessThanOrEqual(9);
           expect(built.steps[0].activeFormulaIndices).toEqual([]);
           expect(built.steps[0].title + built.steps[0].narration).toMatch(
             /[？?]/,
@@ -156,7 +156,9 @@ describe("Grade 2 pause, reveal, and arithmetic review", () => {
     };
     for (const [id, depth, climb, slide] of [["example", 6, 2, 1], ["q2", 5, 3, 1], ["q3", 11, 3, 1], ["q4", 20, 6, 4], ["q5", 5, 3, 2]] as const) {
       const built = lesson.variants.find((variant) => variant.id === id)!.build({});
-      const quiz = built.steps[2].checkpoint!;
+      const quiz = built.steps
+        .filter((s) => s.checkpoint && !s.checkpoint.question.includes("哪只") && !s.checkpoint.question.includes("谁先"))
+        .at(-1)!.checkpoint!;
       expect(quiz.options[quiz.correctIndex]).toContain(String(escape(depth, climb, slide)));
     }
   });

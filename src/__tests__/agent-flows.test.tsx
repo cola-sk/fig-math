@@ -511,10 +511,29 @@ it("驱动爬井、乘车与排队 2D 过程动画且不剧透答案", async () 
   const combo = await act(() => agent.act({ steps: [{ ref: "连续演示一昼夜上爬和下滑", action: "press" }] }));
   expect(combo.ok, combo.error?.message).toBe(true);
 
-  window.history.replaceState(null, "", "#/g2-well-climb/example/4");
+  window.history.replaceState(null, "", "#/g2-well-climb/example/6");
   window.dispatchEvent(new HashChangeEvent("hashchange"));
   const replay = await act(() => agent.act({ steps: [{ ref: "重播爬井完整过程", action: "press" }] }));
   expect(replay.ok, replay.error?.message).toBe(true);
+
+  await act(async () => {
+    window.history.replaceState(null, "", "#/g2-well-climb/example/3");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
+  entries = visibleControls();
+  expect(entries.every((e) => !!e.label)).toBe(true);
+  expect(new Set(entries.map((e) => e.label)).size).toBe(entries.length);
+  const round2Btn = await act(() => agent.act({ steps: [{ ref: "连续演示一昼夜上爬和下滑", action: "press" }] }));
+  expect(round2Btn.ok, round2Btn.error?.message).toBe(true);
+
+  await act(async () => {
+    window.history.replaceState(null, "", "#/g2-well-climb/q6/3");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
+  entries = visibleControls();
+  expect(entries.every((e) => !!e.label)).toBe(true);
+  expect(new Set(entries.map((e) => e.label)).size).toBe(entries.length);
+  expect(screen.getAllByText(/第 2 次跳/).length).toBeGreaterThan(0);
 
   window.history.replaceState(null, "", "#/g2-bus-ride/example/2");
   window.dispatchEvent(new HashChangeEvent("hashchange"));

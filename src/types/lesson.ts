@@ -317,6 +317,8 @@ export interface EarlyBookSceneState {
   subject?: string;
   comparison?: boolean;
   phase: number;
+  focusRound?: number;
+  hideCurrentEnd?: boolean;
   facts: string[];
   middleLabel: string;
   middleValue: string;
