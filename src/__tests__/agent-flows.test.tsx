@@ -630,4 +630,10 @@ it("驱动爬井、乘车与排队 2D 过程动画且不剧透答案", async () 
   expect(new Set(entries.map((e) => e.label)).size).toBe(entries.length);
   const gridFull = await act(() => agent.act({ steps: [{ ref: "演示十字补全方阵动画", action: "press" }] }));
   expect(gridFull.ok, gridFull.error?.message).toBe(true);
+
+  const nextBtn = screen.getByRole("button", { name: "下一步" });
+  const stepHeading = screen.getByRole("heading", { level: 2 });
+  expect(
+    Boolean(nextBtn.compareDocumentPosition(stepHeading) & Node.DOCUMENT_POSITION_FOLLOWING),
+  ).toBe(true);
 });

@@ -120,7 +120,7 @@ export function TeachingStage({
       </header>
 
       {/* Pure Centered Teaching Canvas */}
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-between gap-4 px-4 py-5 sm:px-8">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-start gap-4 px-4 py-5 sm:px-8">
         {/* Problem Statement */}
         <div className="flex items-start justify-between gap-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-5 py-3 shadow-xs">
           <p className="text-base font-semibold leading-relaxed text-[var(--ink-primary)] sm:text-lg">
@@ -180,8 +180,11 @@ export function TeachingStage({
           </motion.div>
         )}
 
-        {/* Bottom Step Switcher Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+      </main>
+
+      {/* Sticky Bottom Step Switcher Controls */}
+      <footer className="sticky bottom-0 z-10 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]/95 px-4 py-3 backdrop-blur-xs sm:px-8">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3">
           <Button
             disabled={clampedIdx === 0}
             onClick={() => onSelectStep(Math.max(0, clampedIdx - 1))}
@@ -244,7 +247,7 @@ export function TeachingStage({
               ))}
           </div>
         </div>
-      </main>
+      </footer>
     </div>
   );
 }
